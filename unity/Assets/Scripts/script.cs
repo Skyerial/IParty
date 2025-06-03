@@ -6,9 +6,9 @@ public class script : MonoBehaviour
     [Header("Spiral Settings")]
     public float radius = 5f;
     public float height = 5f;
-    public float revolutions = 3f;
     public Vector3 TargetPos;
     public GameObject objectToClone;
+    public int step_distance = 1;
 
     [Header("Runtime")]
     public bool regenerate = false;
@@ -42,7 +42,6 @@ public class script : MonoBehaviour
         float b = -radius / (8 * 3.14f);
         float a = radius;
         float theta = 0;
-        int step_distance = 1;
 
         for (int i = 0; i <= 1000; i++) {
             float r = a + b * theta;
