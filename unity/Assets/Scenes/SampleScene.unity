@@ -5385,7 +5385,7 @@ MonoBehaviour:
     meshQuery:
       layers: 33554440
       maskAndChannels: 8
-    surfaceParameter: 43408
+    surfaceParameter: 43456
     meshQueryIndex: 2
     subMeshQueryIndex: 0
     geometryHashValue: 7352126587734793896
@@ -15800,6 +15800,7 @@ GameObject:
   - component: {fileID: 837127851}
   - component: {fileID: 837127850}
   - component: {fileID: 837127852}
+  - component: {fileID: 837127853}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -15865,13 +15866,43 @@ MonoBehaviour:
   increment: 0
   step_spawner: {fileID: 737325767}
   characterController: {fileID: 837127850}
-  TargetPos: {x: 7, y: -0.2, z: 7}
+  TargetPos: {x: 7, y: 1.6, z: 7}
   radius: 7
   theta: 0
   step_distance: 1
   height: 5.7
-  taking_step: 0
+  step_counter: 0
   new_pos: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
+  jumpSpeed: 10
+  direction: {x: 0, y: 0, z: 0}
+--- !u!54 &837127853
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837127848}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!4 &837318961 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8903058273634951509, guid: f1fc5bb90ac285e4486771552d63bcb8, type: 3}
@@ -29803,7 +29834,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 43806
+    surfaceParameter: 26850
     meshQueryIndex: 0
     subMeshQueryIndex: 0
     geometryHashValue: -8892246732269472167
@@ -32313,7 +32344,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 43516
+    surfaceParameter: 43562
     meshQueryIndex: 1
     subMeshQueryIndex: 0
     geometryHashValue: 5761323406283997289
