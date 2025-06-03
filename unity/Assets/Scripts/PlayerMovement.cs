@@ -18,9 +18,16 @@ public class PlayerMovement : MonoBehaviour
     public float height;
     public int step_counter = 0;
     public Vector3 new_pos;
+    private Rigidbody rb;
+    public Vector3 velocity;
+    public float jumpSpeed = 10f;  // Speed of the jump
+    public Vector3 direction;
+    private bool isJumping = false;  // Flag to check if the object is jumping
+
 
     private void Start(){
         float radius = step_spawner.radius;
+        rb = GetComponent<Rigidbody>();
     }
 
     private void take_step() {
@@ -45,16 +52,33 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (increment > 0) {
+        // Trigger jump when space is pressed
+        if (increment > 0 && isJumping == false) {
             take_step();
-            step_counter = 0;
-        }
-        step_counter = step_counter + 1;
-        if (step_counter > 100) {
+            StartCoroutine(JumpToPosition());
+            transform.rotation = Quaternion.Euler(0, - (theta/(3.14f)*180f), 0);
+        } if (isJumping == false) {
             transform.position = new_pos;
         }
-        
-        characterController.Move((new_pos - transform.position) * Time.deltaTime);
-        transform.rotation = Quaternion.Euler(0, theta - 90f, 0);
+    }
+
+    private IEnumerator JumpToPosition()
+    {
+        isJumping = true;
+
+        // While the object is not close enough to the new position
+        while (Vector3.Distance(transform.position, new_pos) > 0.1f)
+        {
+            direction = (new_pos - transform.position);
+            // Calculate the velocity needed to move towards the new position
+            rb.linearVelocity = direction * jumpSpeed;
+
+            yield return null;  // Wait for the next frame
+        }
+
+        // Ensure the object ends up exactly at the target position
+        //rb.linearVelocity = Vector3.zero;  // Stop the movement once we're close enough
+
+        isJumping = false;
     }
 }
