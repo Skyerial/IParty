@@ -1,5 +1,5 @@
+import { ConnectController } from "./connectController.js";
 import { Controller } from "./controller.js";
-import { PlaceHolderController } from "./placeHolderController.js";
 
 export class HomeController extends Controller {
     constructor (container) {
@@ -8,10 +8,8 @@ export class HomeController extends Controller {
 
 
     bindEvents() {
-        let placeh = this.container.querySelector("#placeholder");
-
-        placeh.addEventListener("click", () => {
-            let placeholder = new PlaceHolderController(this.container, null);
+        document.querySelector(".home-button").addEventListener("click", () => {
+            new ConnectController(this.container);
         });
     }
 }

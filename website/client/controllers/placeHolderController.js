@@ -10,16 +10,16 @@ export class PlaceHolderController extends BaseController {
     bindEvents() {
 
         // For example, go back to the homepage
-        this.container.querySelector("#homebtn").addEventListener("click", () => {
+        document.querySelector("#homebtn").addEventListener("click", () => {
             new HomeController(this.container, null);
         });
 
         // Or maybe send input to the unity program
-        this.container.querySelector("#left").addEventListener("click", () => {
+        document.querySelector("#left").addEventListener("click", () => {
             this.sendInput("go_left");
         });
 
-        this.container.querySelector("#right").addEventListener("click", () => {
+        document.querySelector("#right").addEventListener("click", () => {
             this.sendInput("go_right");
         });
     }
