@@ -11,17 +11,30 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
-public class HttpAndWebSocketServer : MonoBehaviour
+public class ServerManager : MonoBehaviour
 {
+    private static ServerManager instance;
     private HttpListener httpListener;
     private Thread httpThread;
     private WebSocketServer wsServer;
-    private Dictionary<string, VirtualController> allControllers = new();
+    public static Dictionary<string, VirtualController> allControllers = new();
     public RawImage targetRenderer;
 
     // Command queue for thread-safe message handling
     private ConcurrentQueue<(string, string)> commandQueue = new ConcurrentQueue<(string, string)>();
-    private Queue<Action> connectionQueue = new();
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject); // Persist through scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Prevent duplicates
+        }
+    }
 
     void Start()
     {
@@ -133,7 +146,7 @@ public class HttpAndWebSocketServer : MonoBehaviour
                     device.remoteId = socket.ConnectionInfo.ClientIpAddress;
                     allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
 
-                    // Spawning a player
+                    // Spawning when player connected
                     PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 });
             };
