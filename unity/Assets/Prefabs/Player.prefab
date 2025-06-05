@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 756231341855169572}
   - component: {fileID: 6160899838840393880}
   - component: {fileID: 699552972045453526}
+  - component: {fileID: 1808755022741838392}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -160,7 +161,7 @@ MonoBehaviour:
   rotationSpeed: 360
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 4294967295
   groundCheckOffset: 0.05
   dashSpeed: 10
   dashDuration: 0.2
@@ -172,6 +173,36 @@ MonoBehaviour:
   dashStaminaCost: 25
   staminaRegenDelay: 1
   staminaBarFillImage: {fileID: 8194505491776517989}
+--- !u!114 &1808755022741838392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2182727445163831203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &3023961668899188611
 GameObject:
   m_ObjectHideFlags: 0
