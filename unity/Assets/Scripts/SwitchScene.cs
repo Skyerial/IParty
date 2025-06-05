@@ -23,7 +23,6 @@ public class SwitchScene : MonoBehaviour
             }
         }
 
-        // Run transition animation
         fader.gameObject.SetActive(true);
         LeanTween.scale(fader, new Vector3(1, 1, 1), 0f);
         LeanTween.scale(fader, Vector3.zero, 0.5f)
