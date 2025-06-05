@@ -7,8 +7,13 @@ export class ConnectController extends Controller {
     }
 
     bindEvents() {
+        let inputfield = document.querySelector(".lobby-input");
         document.querySelector(".lobby-button").addEventListener("click", () => {
-            new PlaceHolderController(this.container, null);
-        });    
+            this.connect(inputfield.value);
+        });
+    }
+
+    connect(code) {
+        const ws = new WebSocket(`ws://${location.hostname}:${code}`);
     }
 }

@@ -4,6 +4,7 @@ export class Controller {
         this.htmlFile = htmlFile;
         this.container = container;
         this.init();
+        this.controllers = controllers;
     }
 
     // Initialize and render view
