@@ -405,7 +405,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: bfb71d51e8d1c805688a95816fbc3f24, type: 3}
+  m_Texture: {fileID: 2800000, guid: a1cfac0cc2422e97cb69ab9135e44c0a, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -598,7 +598,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 0fe636cdf98733ce782e9f935f23985e, type: 3}
+  m_Texture: {fileID: 2800000, guid: d7c59773afdd2df5a8ba4129d89d0201, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -821,7 +821,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 0411627c1bc034142adfd0afc35e9140, type: 3}
+  m_Texture: {fileID: 2800000, guid: de85ef485e64130088c4f08d1eec9509, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3927,7 +3927,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: ee85243f3b4ed3aabbafe4f3ba8c5b4f, type: 3}
+  m_Texture: {fileID: 2800000, guid: 735d616ee71aa9c69adc55ec44c35209, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4254,7 +4254,7 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022980564}
+  m_GameObject: {fileID: 1931802428}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -4276,7 +4276,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022980564}
+  m_GameObject: {fileID: 1931802428}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
@@ -4291,7 +4291,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022980564}
+  m_GameObject: {fileID: 1931802428}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -4321,7 +4321,7 @@ CanvasRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2022980564}
+  m_GameObject: {fileID: 1931802428}
   m_CullTransparentMesh: 1
 --- !u!1 &2050966791
 GameObject:
