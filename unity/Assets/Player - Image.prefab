@@ -870,7 +870,7 @@ GameObject:
   - component: {fileID: 2021565657412368174}
   - component: {fileID: 7331278316259607758}
   m_Layer: 0
-  m_Name: Body.001
+  m_Name: Face
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -914,7 +914,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b811aa442fbbbca4b89e54f34e6adc3c, type: 2}
+  - {fileID: 2100000, guid: 9bbf5a85e63c55f4c859df19acb5ba1a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 4010947454854151956}
   - component: {fileID: 6574419031512920104}
   m_Layer: 0
-  m_Name: Body.008
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

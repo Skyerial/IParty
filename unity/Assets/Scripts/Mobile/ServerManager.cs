@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
+using System.Linq;
 
 public class ServerManager : MonoBehaviour
 {
@@ -151,7 +152,23 @@ public class ServerManager : MonoBehaviour
                 });
             };
 
-            socket.OnClose = () => Debug.Log("WS: Client disconnected, IP:" + socket.ConnectionInfo.ClientIpAddress); // Debug
+            socket.OnClose = () =>
+            {
+                Debug.Log("WS: Client disconnected, IP:" + socket.ConnectionInfo.ClientIpAddress); // Debug
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    var device = allControllers[socket.ConnectionInfo.ClientIpAddress];
+                    foreach (var player in PlayerInput.all)
+                    {
+                        if (player.devices.Contains(device))
+                        {
+                            Destroy(player.gameObject);
+                            break;
+                        }
+                    }
+                });
+            };
+            
             socket.OnMessage = msg =>
             {
                 Debug.Log("WS: Input received from:" + socket.ConnectionInfo.ClientIpAddress);
