@@ -74,7 +74,7 @@ public class ServerManager : MonoBehaviour
         string ip = ChooseIP();
         // string ip = "localhost"; // Local debugging
         httpListener.Prefixes.Add("http://"+ ip +":8080/"); // Localhost server on port 8080
-        QRCodeGenerator.GenerateQRCode("http://" + ip + ":8080/", targetRenderer);
+        QRCodeGenerator.GenerateQRCode("http://" + ip + ":8080/?code=8181", targetRenderer);
         // QRGen?.GenerateQRCode("http://"+ ip +":8080/");
         Debug.Log(ip);
         httpListener.Start();
@@ -87,7 +87,7 @@ public class ServerManager : MonoBehaviour
                 {
                     var context = httpListener.GetContext();
                     string urlPath = context.Request.Url.AbsolutePath.TrimStart('/');
-                    if (string.IsNullOrEmpty(urlPath)) urlPath = "og.html"; // Controller HTML
+                    if (string.IsNullOrEmpty(urlPath)) urlPath = "index.html"; // Controller HTML
 
                     // If we want to change the directories.
                     // string rootPath = Path.Combine(Application.streamingAssetsPath, "/");
