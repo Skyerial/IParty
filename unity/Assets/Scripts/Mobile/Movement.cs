@@ -18,14 +18,6 @@ public class Movement : MonoBehaviour
         MovePlayer();
     }
 
-    public void MoveLeft(){
-        Debug.Log("Moving");
-        transform.position += Vector3.left * moveSpeed * Time.deltaTime;
-    }
-
-    public void MoveRight(){
-        transform.position += Vector3.right * moveSpeed * Time.deltaTime;
-    }
     void MovePlayer(){
         Vector2 direction = moveAction.ReadValue<Vector2>();
         transform.position += new Vector3(direction.x, 0, direction.y) * moveSpeed * Time.deltaTime;
