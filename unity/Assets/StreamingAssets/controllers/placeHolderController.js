@@ -1,9 +1,9 @@
-import { BaseController } from "./baseController.js";
+import { Controller } from "./controller.js";
 import { HomeController } from "./homeController.js";
 
-export class PlaceHolderController extends BaseController {
+export class PlaceHolderController extends Controller {
     constructor (container, socket) {
-        super("../views/placeHolderView.html", container, socket);
+        super("../views/placeHolderView.html", container);
     }
 
     // Main logic of controller here

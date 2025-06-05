@@ -16,16 +16,6 @@
   font-weight: bold;
 }
 
-.nav-button {
-  color: white;
-  width: 60px;
-  height: 30px;
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 .site-logo {
   height: 40px;
   width: auto;
