@@ -27,21 +27,3 @@
 .lobby-input:focus {
   border-color: #1e90ff;
 }
-
-.lobby-button {
-  background-color: white;
-  color: #222;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.lobby-button:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-2px);
-}
