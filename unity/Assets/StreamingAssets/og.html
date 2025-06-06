@@ -60,7 +60,15 @@
     const joystick = document.getElementById('joystick');
     const stick = document.getElementById('stick');
 
-    const ws = new WebSocket(`ws://${location.hostname}:8181`);
+    const params = new URLSearchParams(window.location.search);
+    const hostId = params.get('hostId') || 'default-host-id'; // fallback
+    const RELAY_HOST = '178.128.247.108';
+	
+    const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
+    const wsUrl = isLocal
+      ? `ws://${location.hostname}:8181`
+      : `ws://${RELAY_HOST}:5000/host/${hostId}/ws`
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => statusEl.textContent = '🟢 Connected';
     ws.onclose = () => statusEl.textContent = '🔴 Disconnected';
