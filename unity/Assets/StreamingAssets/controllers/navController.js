@@ -9,10 +9,13 @@ export class NavController extends Controller {
     }
 
     bindEvents() {
+        this.updateNavItem();
         const viewContainer = document.querySelector(".view-container");
 
         document.querySelector(".site-logo").addEventListener("click", () => {
-            new HomeController(viewContainer);
+            if (!isConnected()) {
+                new HomeController(viewContainer);
+            }
         });
 
         document.querySelector(".nav-button").addEventListener("click", () => {
@@ -34,7 +37,5 @@ export class NavController extends Controller {
         } else {
             button.innerHTML = "Connect";
         }
-
-        console.log("Hey");
     }
 }

@@ -16,7 +16,7 @@ export class ConnectController extends Controller {
             }
 
             new JoystickController(this.container);
-            nav.updateNavItem();
+            nav.updateNavItem("Disconnect");
         });
     }
 }

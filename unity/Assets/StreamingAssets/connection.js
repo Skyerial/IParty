@@ -2,11 +2,15 @@ import { HomeController } from "./controllers/homeController.js";
 import { JoystickController } from "./controllers/joystickController.js";
 import { NavController } from "./controllers/navController.js";
 
-let root = document.querySelector(".view-container");
-let navContainer = document.querySelector(".nav-container");
-export let nav = new NavController(navContainer);
+export let socket = null;
+export let nav = null;
 
 window.addEventListener("DOMContentLoaded", () => {
+  let root = document.querySelector(".view-container");
+  let navContainer = document.querySelector(".nav-container");
+
+  nav = new NavController(navContainer);
+
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
 
@@ -14,13 +18,10 @@ window.addEventListener("DOMContentLoaded", () => {
     connectToServer(code);
     // Automatically load the controller when QR is used
     new JoystickController(root);
-    nav.updateNavItem();
   } else {
     new HomeController(root);
   }
 });
-
-export let socket = null;
 
 export function connectToServer(code) {
   if (socket) {
@@ -35,7 +36,7 @@ export function connectToServer(code) {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    handle_controller_change(data);
+    handle_data(data);
   };
 
   socket.onclose = () => {
@@ -78,6 +79,6 @@ export function isConnected() {
   return connectionStatus() === "connected";
 }
 
-function handle_controller_change() {
+function handle_controller_change() {}
 
-}
+function handle_data(data) {}
