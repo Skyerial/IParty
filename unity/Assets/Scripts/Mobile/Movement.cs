@@ -212,8 +212,7 @@ public class Movement : MonoBehaviour
         // Reset dash availability when grounded
         if (isGrounded)
         {
-            animator.SetBool("Jump", false);
-            animator.SetBool("Dash", false);
+            animator.SetTrigger("Grounded");
             hasDashed = false;
         }
 
@@ -234,7 +233,7 @@ public class Movement : MonoBehaviour
 
             if (jumpPressed)
             {
-                animator.SetBool("Jump", true);
+                animator.SetTrigger("Jump");
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
         }
@@ -318,7 +317,7 @@ public class Movement : MonoBehaviour
         dashDirection = (forward + Vector3.up * upwardDashFactor).normalized;
 
         // Immediately set velocity so dash “feels” instant:
-        animator.SetBool("Dash", true);
+        animator.SetTrigger("Dash");
         rb.linearVelocity = dashDirection * dashSpeed;
     }
 
