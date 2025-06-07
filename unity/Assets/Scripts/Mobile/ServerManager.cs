@@ -87,7 +87,7 @@ public class ServerManager : MonoBehaviour
                 {
                     var context = httpListener.GetContext();
                     string urlPath = context.Request.Url.AbsolutePath.TrimStart('/');
-                    if (string.IsNullOrEmpty(urlPath)) urlPath = "og.html"; // Controller HTML
+                    if (string.IsNullOrEmpty(urlPath)) urlPath = "index.html"; // Controller HTML
 
                     // If we want to change the directories.
                     // string rootPath = Path.Combine(Application.streamingAssetsPath, "/");

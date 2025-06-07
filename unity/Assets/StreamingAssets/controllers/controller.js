@@ -1,39 +1,28 @@
 import { send, isConnected} from "../connection.js";
 
 export class Controller {
-    constructor(htmlFile, container) {
+    constructor(htmlFile, container, type) {
         this.htmlFile = htmlFile;
         this.container = container;
 
+        this.type = type;
         this.inputInterval = 10;
         this.inputTimer = null;
 
         this.currentAnalog = { x: 0, y: 0 };
-        this.previousButtons = {};
-
-        this.init();
     }
 
     updateAnalogInput(partialAnalog) {
         this.currentAnalog = Object.assign({}, this.currentAnalog, partialAnalog);
     }
 
-    updateButtonInput(newButtons) {
-        for (const key in newButtons) {
-            if (this.previousButtons[key] !== newButtons[key]) {
-                this.previousButtons[key] = newButtons[key];
+    updateButtonInput(inputName, state) {
+        const input = {
+            type: this.type,
+            [inputName]: state
+        };
 
-                const input = {
-                    type: "control",
-                    x: this.currentAnalog.x,
-                    y: this.currentAnalog.y
-                };
-
-                input[key] = newButtons[key];
-
-                this.sendInput(input);
-            }
-        }
+        this.sendInput(input);
     }
 
     startSendingAnalog() {
@@ -52,7 +41,7 @@ export class Controller {
 
     sendAnalogInput() {
         this.sendInput({
-            type: "control",
+            type: this.type,
             x: this.currentAnalog.x,
             y: this.currentAnalog.y
         });
@@ -76,6 +65,10 @@ export class Controller {
             console.error(`Failed to load ${file}`);
         }
         return await response.text();
+    }
+
+    getContainer() {
+        return this.container;
     }
 
     bindEvents() {}

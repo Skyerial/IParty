@@ -1,15 +1,15 @@
-import { HomeController } from "./controllers/homeController.js";
+import { ConnectPage } from "./controllers/connectPage.js";
 import { JoystickController } from "./controllers/joystickController.js";
-import { NavController } from "./controllers/navController.js";
+import { NavBar } from "./controllers/navBar.js";
 
 export let socket = null;
-export let nav = null;
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
   let root = document.querySelector(".view-container");
   let navContainer = document.querySelector(".nav-container");
 
-  nav = new NavController(navContainer);
+  let nav = new NavBar(navContainer);
+  await nav.init();
 
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
@@ -17,9 +17,11 @@ window.addEventListener("DOMContentLoaded", () => {
   if (code && !isConnected()) {
     connectToServer(code);
     // Automatically load the controller when QR is used
-    new JoystickController(root);
+    let js = new JoystickController(root);
+    await js.init();
   } else {
-    new HomeController(root);
+    let cp = new ConnectPage(root);
+    await cp.init();
   }
 });
 
@@ -28,7 +30,7 @@ export function connectToServer(code) {
     return socket;
   }
 
-  socket = new WebSocket(`ws://192.168.1.102:${code}`);
+  socket = new WebSocket(`ws://${location.hostname}:${code}`);
 
   socket.onopen = () => {
     console.log("connected");
@@ -60,25 +62,8 @@ export function send(data) {
   }
 }
 
-export function connectionStatus() {
-  if (!socket) return "no_socket";
-  switch (socket.readyState) {
-    case WebSocket.CONNECTING: return "connecting";
-    case WebSocket.OPEN: return "connected";
-    case WebSocket.CLOSING: return "closing";
-    case WebSocket.CLOSED: return "closed";
-    default: return "unknown";
-  }
-}
-
-export function isConnecting() {
-  return connectionStatus() === "connecting";
-}
-
 export function isConnected() {
-  return connectionStatus() === "connected";
+  return socket && socket.readyState === WebSocket.OPEN;
 }
-
-function handle_controller_change() {}
 
 function handle_data(data) {}

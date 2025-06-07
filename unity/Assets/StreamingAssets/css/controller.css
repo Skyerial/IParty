@@ -1,0 +1,172 @@
+.controller-layout {
+    background-color: #222;
+    color: white;
+    font-family: sans-serif;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    touch-action: none;
+    gap: 20px;
+    padding-bottom:50px;
+    flex-direction: column;
+}
+
+.controller-slot {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.orientation-vertical {
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
+.orientation-horizontal {
+    transform: rotate(90deg);
+    transform-origin: center center;
+}
+
+.joystick-container {
+    width: 250px;
+    height: 250px;
+    background-color: #333;
+    border-radius: 50%;
+    position: relative;
+}
+
+.joystick-container .stick {
+    width: 100px;
+    height: 100px;
+    background-color: #555;
+    border-radius: 50%;
+    position: absolute;
+    left: 75px;
+    top: 75px;
+    transition: left 0.05s, top 0.05s;
+}
+
+.button-cluster {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    transform: rotate(90deg);
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-button {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    color: white;
+}
+
+.game-button.btn-c {
+    top: 0;
+    left: 60px;
+    background-color: #ffc107;
+    color: black;
+}
+
+.game-button.btn-a {
+    bottom: 0;
+    left: 60px;
+    background-color: #28a745;
+}
+
+.game-button.btn-d {
+    top: 60px;
+    left: 0;
+    background-color: #007bff;
+}
+
+.game-button.btn-b {
+    top: 60px;
+    right: 0;
+    background-color: #dc3545;
+}
+
+.dpad-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 200px;
+  height: 200px;
+  gap: 5px;
+  place-items: center;
+  background-color: #222;
+  border-radius: 16px;
+}
+
+.dpad-button {
+  width: 50px;
+  height: 50px;
+  background-color: #1f1f1f;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  user-select: none;
+}
+
+.dpad-left {
+  grid-column: 2;
+  grid-row: 1;
+}
+.dpad-down {
+  grid-column: 1;
+  grid-row: 2;
+}
+.dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: #333;
+  width: 40px;
+  height: 40px;
+}
+.dpad-up {
+  grid-column: 3;
+  grid-row: 2;
+}
+.dpad-right {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.big-button {
+  width: 200px;
+  height: 200px;
+  background-color: #1f1f1f;
+  border: none;
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  user-select: none;
+  touch-action: none; 
+}
+
+@media (max-height: 500px) {
+  .joystick-container,
+  .big-button,
+  .button-cluster,
+  .dpad-container {
+    transform: scale(0.8);
+  }
+}
