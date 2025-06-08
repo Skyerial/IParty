@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Fleck;
 using System.Collections.Concurrent;
 using UnityEngine.InputSystem;
@@ -141,14 +142,11 @@ public class ServerManager : MonoBehaviour
             {
                 Debug.Log("WS: Client connected, IP:" + socket.ConnectionInfo.ClientIpAddress); // Debug
                 MainThreadDispatcher.Enqueue(() =>
-                {
-                    // Making the controller
-                    var device = InputSystem.AddDevice<VirtualController>();
-                    device.remoteId = socket.ConnectionInfo.ClientIpAddress;
-                    allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
-
-                    // Spawning when player connected
-                    PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
+                {       
+                        var device = InputSystem.AddDevice<VirtualController>();
+                        device.remoteId = socket.ConnectionInfo.ClientIpAddress;
+                        allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
+                        PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);    
                 });
             };
 

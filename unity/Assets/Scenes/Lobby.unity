@@ -390,14 +390,10 @@ PrefabInstance:
       propertyPath: 'playerSlots.Array.data[3]'
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5982044762484705939, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 67426351839537206, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1385820782}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
 --- !u!1 &308408609
 GameObject:
@@ -1866,23 +1862,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1385820781 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 67426351839537206, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
-  m_PrefabInstance: {fileID: 187238357}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1385820782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385820781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa66897272f6f0c4ebc02f3f5262e1c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1490159037
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2435,12 +2414,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 816acfc90bafb9e5aa2def88a7bba407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avatarPrefab: {fileID: 919132149155446097, guid: cd05b51c1e8f58a40a6474985c0659b9, type: 3}
-  playerCards:
-  - {fileID: 2082310605}
-  - {fileID: 388440885}
-  - {fileID: 1490159038}
-  - {fileID: 2088526277}
 --- !u!1001 &2082310604
 PrefabInstance:
   m_ObjectHideFlags: 0
