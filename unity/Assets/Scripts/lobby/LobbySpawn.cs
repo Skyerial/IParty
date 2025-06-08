@@ -1,45 +1,52 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.TextCore;
-using UnityEngine.UI;
 
 public class LobbySpawn : MonoBehaviour
 {
-  private int playerIndex = 0;
-  private Transform[] playerSlots;
-
     public void OnPlayerJoined(PlayerInput playerInput)
     {
         GameObject playersParent = GameObject.Find("Players");
+        Transform spawnObj = GameObject.Find("Spawn").transform;
 
-        string cardName = $"PlayerCard ({playerIndex})";
-        Transform playerCardTransform = playersParent.transform.Find(cardName);
-
-        if (playerCardTransform == null)
+        // Find the first empty PlayerCard slot
+        Transform emptySlot = null;
+        for (int i = 0; i < playersParent.transform.childCount; i++)
         {
+            Transform playerCard = playersParent.transform.GetChild(i);
+            
+            // Consider the slot empty if it has no PlayerInput component among children
+            bool hasPlayer = false;
+            foreach (Transform child in playerCard)
+            {
+                if (child.GetComponent<PlayerInput>() != null)
+                {
+                    hasPlayer = true;
+                    break;
+                }
+            }
+
+            if (!hasPlayer)
+            {
+                emptySlot = playerCard;
+                break;
+            }
+        }
+
+        if (emptySlot == null)
+        {
+            Debug.LogWarning("No empty player slot found!");
             return;
         }
 
-        playerInput.transform.SetParent(playerCardTransform, false);
-        float offsetY = -playerCardTransform.GetComponent<RectTransform>().rect.height * 0.30f;
+        // Attach player to empty slot
+        playerInput.transform.SetParent(emptySlot, false);
+        float offsetY = -emptySlot.GetComponent<RectTransform>().rect.height * 0.30f;
         playerInput.transform.localPosition = new Vector3(0f, offsetY, 0f);
         playerInput.transform.localRotation = Quaternion.identity;
         playerInput.transform.localScale = Vector3.one * 150f;
 
-        GameObject spawnObj = GameObject.Find("Spawn");
-        playerIndex++;
-
-        string nextCardName = $"PlayerCard ({playerIndex})";
-        Transform nextCard = playersParent.transform.Find(nextCardName);
-        if (nextCard != null)
-        {
-            spawnObj.transform.SetParent(nextCard, false);
-            spawnObj.transform.localPosition = Vector3.zero;
-        }
-        else
-        {
-            spawnObj.SetActive(false);
-        }
+        // Move the Spawn object to the next available slot
+        spawnObj.SetParent(emptySlot, false);
+        spawnObj.localPosition = Vector3.zero;
     }
 }
