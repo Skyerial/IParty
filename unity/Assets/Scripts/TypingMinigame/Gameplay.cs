@@ -3,6 +3,7 @@ using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System.Collections;
 
 public class Gameplay : MonoBehaviour
 {
@@ -11,12 +12,15 @@ public class Gameplay : MonoBehaviour
     public TMP_InputField _inputField;
     private int _wordCount = 0;
     public GameObject _spawner;
-    public HorizontalLayoutGroup _layoutGroup;
+    public TextMeshProUGUI wordsLeftText;
 
     private void Start()
     {
         _enableAction = InputSystem.actions.FindAction("GameStart");
         _inputField.onValueChanged.AddListener(HandleText);
+
+        int wordsRemaining = _spawner.transform.childCount;
+        wordsLeftText.text = wordsRemaining.ToString();
     }
 
     void Update()
@@ -25,27 +29,44 @@ public class Gameplay : MonoBehaviour
         {
             _gameStart = true;
         }
+    }
 
-        if (_wordCount == 5)
+    IEnumerator AnimateAndDestroy(GameObject word)
+    {
+        Animator animator = word.GetComponent<Animator>();
+        if (animator != null)
         {
-            Debug.Log("won");
+            animator.SetTrigger("Break"); // Or whatever your trigger is
+            yield return new WaitForSeconds(0.5f); // Let the animation play
         }
+
+        Destroy(word);
     }
 
     void HandleText(string text)
     {
+        Transform firstChild = _spawner.transform.GetChild(0);
+        TextMeshProUGUI currentText = firstChild.GetComponent<TextMeshProUGUI>();
+
         string userInput = _inputField.text;
         Debug.Log("Player typed: " + userInput);
-        TextMeshProUGUI currentText = GameObject.Find("Child_" + _wordCount).GetComponent<TextMeshProUGUI>();
+        Debug.Log("Comparing: '" + userInput + "' to '" + currentText.text + "'");
 
-
-        if (userInput == currentText.text)
+        if (userInput.Trim().ToLower() == currentText.text.Trim().ToLower())
         {
-            Destroy(currentText);
-            var child = _spawner.transform.GetChild(0);
-            Destroy(child.gameObject);
+            StartCoroutine(AnimateAndDestroy(firstChild.gameObject));
+            // Destroy(firstChild.gameObject);
             _wordCount += 1;
             _inputField.text = "";
+
+            int wordsRemaining = _spawner.transform.childCount - 1;
+            wordsLeftText.text = wordsRemaining.ToString();
+
+            if (wordsRemaining == 0)
+            {
+                Debug.Log("won");
+                // handle winning
+            }
         }
     }
 }

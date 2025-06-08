@@ -27,9 +27,9 @@ public class TextSpawner : MonoBehaviour
     {
 
         TextMeshProUGUI textPlayer1 = GameObject.Find("SampleTextMeshPro").GetComponent<TextMeshProUGUI>();
-        textPlayer1.text = "testing words";
+        // textPlayer1.text = "testing";
 
-        for (int word = 0; word < 5; word++)
+        for (int word = 0; word < 10; word++)
         {
             TextMeshProUGUI obj = Instantiate(textPlayer1, spawner);
             obj.name = "Child_" + word;
