@@ -36,7 +36,7 @@ public class Gameplay : MonoBehaviour
     {
         string userInput = _inputField.text;
         Debug.Log("Player typed: " + userInput);
-        TextMeshPro currentText = GameObject.Find("Child_" + _wordCount).GetComponent<TextMeshPro>();
+        TextMeshProUGUI currentText = GameObject.Find("Child_" + _wordCount).GetComponent<TextMeshProUGUI>();
 
 
         if (userInput == currentText.text)

@@ -15,18 +15,26 @@ public class TextSpawner : MonoBehaviour
 
     public Transform spawner;
 
+    private string[] wordList = new string[]
+    {
+        "apple", "banana", "grape", "orange", "melon",
+        "cloud", "stream", "code", "unity", "keyboard",
+        "game", "level", "score", "player", "speed"
+    };
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
 
-        TextMeshPro textPlayer1 = GameObject.Find("SampleText").GetComponent<TextMeshPro>();
+        TextMeshProUGUI textPlayer1 = GameObject.Find("SampleTextMeshPro").GetComponent<TextMeshProUGUI>();
         textPlayer1.text = "testing words";
 
         for (int word = 0; word < 5; word++)
         {
-            TextMeshPro obj = Instantiate(textPlayer1, spawner);
+            TextMeshProUGUI obj = Instantiate(textPlayer1, spawner);
             obj.name = "Child_" + word;
-            obj.text = "test" + word;
+            string randomWord = wordList[Random.Range(0, wordList.Length)];
+            obj.text = randomWord;
         }
     }
 
