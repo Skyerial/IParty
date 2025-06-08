@@ -13,14 +13,14 @@ public class Gameplay : MonoBehaviour
     private int _wordCount = 0;
     public GameObject _spawner;
     public TextMeshProUGUI wordsLeftText;
+    public PlayerRaceController playerRaceController;
 
     private void Start()
     {
         _enableAction = InputSystem.actions.FindAction("GameStart");
         _inputField.onValueChanged.AddListener(HandleText);
 
-        int wordsRemaining = _spawner.transform.childCount;
-        wordsLeftText.text = wordsRemaining.ToString();
+        UpdateWordsLeftText();
     }
 
     void Update()
@@ -43,30 +43,52 @@ public class Gameplay : MonoBehaviour
         Destroy(word);
     }
 
+    void UpdateWordsLeftText()
+    {
+        int wordsRemaining = _spawner.transform.childCount;
+        wordsLeftText.text = wordsRemaining.ToString();
+    }
+
     void HandleText(string text)
     {
         Transform firstChild = _spawner.transform.GetChild(0);
         TextMeshProUGUI currentText = firstChild.GetComponent<TextMeshProUGUI>();
 
         string userInput = _inputField.text;
+
         Debug.Log("Player typed: " + userInput);
         Debug.Log("Comparing: '" + userInput + "' to '" + currentText.text + "'");
 
         if (userInput.Trim().ToLower() == currentText.text.Trim().ToLower())
         {
             StartCoroutine(AnimateAndDestroy(firstChild.gameObject));
-            // Destroy(firstChild.gameObject);
+
             _wordCount += 1;
             _inputField.text = "";
+
+            if (playerRaceController != null)
+            {
+                playerRaceController.OnWordTyped();
+            }
+            else
+            {
+                Debug.LogWarning("PlayerRaceController reference is not assigned!");
+            }
 
             int wordsRemaining = _spawner.transform.childCount - 1;
             wordsLeftText.text = wordsRemaining.ToString();
 
-            if (wordsRemaining == 0)
+            if (_spawner.transform.childCount == 1) // After destroying one, only one left
             {
-                Debug.Log("won");
-                // handle winning
+                Debug.Log("Player won!");
+                // Add your win logic here
             }
+
+            // if (wordsRemaining == 0)
+            // {
+            //     Debug.Log("won");
+            //     // handle winning
+            // }
         }
     }
 }
