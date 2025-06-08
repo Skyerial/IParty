@@ -19,8 +19,8 @@ public class TextSpawner : MonoBehaviour
     void Start()
     {
 
-        TextMeshPro textPlayer1 = GameObject.Find("TextPlayer1").GetComponent<TextMeshPro>();
-        textPlayer1.text = "test word game mario track";
+        TextMeshPro textPlayer1 = GameObject.Find("SampleText").GetComponent<TextMeshPro>();
+        textPlayer1.text = "testing words";
 
         for (int word = 0; word < 5; word++)
         {
