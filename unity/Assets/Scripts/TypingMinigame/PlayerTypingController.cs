@@ -14,6 +14,7 @@ public class PlayerTypingController : MonoBehaviour
     private string cursor = $"<color=yellow>|</color>";
     private int inputCounter = 0;
     private int cleanupCounter = 0;
+    private int wordsLeft = 0;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class PlayerTypingController : MonoBehaviour
         yield return new WaitUntil(() => spawner.transform.childCount >= 10);
 
         textSpawner = spawner.GetComponent<TextSpawner>();
+        wordsLeft = textSpawner.spawnedWords.Count;
         inputField.onValueChanged.AddListener(HandleInput);
         UpdateWordsLeftText();
         UpdateCursorPosition(0);
@@ -60,10 +62,13 @@ public class PlayerTypingController : MonoBehaviour
 
             inputCounter++;
             currentTargetWord = null;
+
+            wordsLeft--;
+            UpdateWordsLeftText();
+
             UpdateCursorPosition(inputCounter - cleanupCounter);
 
-
-            if (spawner.transform.childCount == 0)
+            if (wordsLeft == 0)
             {
                 Debug.Log($"{gameObject.name} finished!");
                 GameManager.Instance?.OnPlayerFinished(this);
@@ -73,7 +78,7 @@ public class PlayerTypingController : MonoBehaviour
 
     private void UpdateWordsLeftText()
     {
-        wordsLeftText.text = spawner.transform.childCount.ToString();
+        wordsLeftText.text = wordsLeft.ToString();
     }
 
     private void UpdateCursorPosition(int visualIndex)
