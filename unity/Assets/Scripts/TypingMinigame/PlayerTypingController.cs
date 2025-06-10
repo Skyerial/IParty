@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class PlayerTypingController : MonoBehaviour
 {
@@ -9,29 +10,39 @@ public class PlayerTypingController : MonoBehaviour
     public TextMeshProUGUI wordsLeftText;
     public PlayerRaceController raceController;
     private string currentTargetWord = null;
+    private string cursor = $"<color=yellow>|</color>";
+    private int counter = 0;
 
     private void Start()
     {
+        StartCoroutine(Prepare());
+    }
+
+    private IEnumerator Prepare()
+    {
+        yield return new WaitUntil(() => spawner.transform.childCount >= 10);
         inputField.onValueChanged.AddListener(HandleInput);
         UpdateWordsLeftText();
+        UpdateCursorPosition(0);
     }
 
     private void HandleInput(string input)
     {
         if (spawner.transform.childCount == 0) return;
 
-        Transform wordObj = spawner.transform.GetChild(0);
+        Transform wordObj = spawner.transform.GetChild(counter);
         TextMeshProUGUI targetText = wordObj.GetComponent<TextMeshProUGUI>();
 
         if (currentTargetWord == null)
         {
-            currentTargetWord = targetText.text;
+            currentTargetWord = targetText.text.Substring(cursor.Length);
         }
 
         string inputLower = input.Trim().ToLower();
         string originalLower = currentTargetWord.ToLower();
 
-        UpdateWordHighlight(inputLower, originalLower, targetText);
+        if (inputLower.Length > 0)
+            UpdateWordHighlight(inputLower, originalLower, targetText);
 
         if (inputLower == originalLower)
         {
@@ -52,8 +63,34 @@ public class PlayerTypingController : MonoBehaviour
         wordsLeftText.text = spawner.transform.childCount.ToString();
     }
 
+    private void UpdateCursorPosition(int child)
+    {
+
+        if (spawner.transform.childCount > child)
+        {
+            Transform wordObj = spawner.transform.GetChild(child);
+            TextMeshProUGUI targetText = wordObj.GetComponent<TextMeshProUGUI>();
+            targetText.text = cursor + targetText.text;
+        }
+    }
+
+    // own function, reset word to basic text so animation can color
+    private void ResetWordToPlainText()
+    {
+        Transform wordObj = spawner.transform.GetChild(0);
+        TextMeshProUGUI targetText = wordObj.GetComponent<TextMeshProUGUI>();
+        targetText.text = currentTargetWord;
+    }
+
     private IEnumerator AnimateAndDestroy(GameObject word)
     {
+        UpdateCursorPosition(1);
+        ResetWordToPlainText();
+
+        // jank: but needed to type around animation, we need next word faster than the animation
+        currentTargetWord = null;
+        counter += 1;
+
         Animator animator = word.GetComponent<Animator>();
 
         if (animator != null)
@@ -63,7 +100,7 @@ public class PlayerTypingController : MonoBehaviour
         }
 
         Destroy(word);
-        currentTargetWord = null;
+        counter -= 1;
 
         yield return null; // wait one frame for hierarchy update
         UpdateWordsLeftText();
@@ -83,7 +120,7 @@ public class PlayerTypingController : MonoBehaviour
         for (; i < userInput.Length && i < targetWord.Length; i++)
         {
             if (userInput[i] == targetWord[i])
-                result += $"<color=green>{targetWord[i]}</color>";
+                result += $"<color=yellow>{targetWord[i]}</color>";
             else
                 result += $"<color=red>{targetWord[i]}</color>";
         }
@@ -91,7 +128,7 @@ public class PlayerTypingController : MonoBehaviour
         if (i < targetWord.Length)
         {
             string remaining = targetWord.Substring(i);
-            result += $"<color=white>{remaining}</color>";
+            result += $"<color=yellow>|</color><color=white>{remaining}</color>";
         }
 
         wordText.text = result;

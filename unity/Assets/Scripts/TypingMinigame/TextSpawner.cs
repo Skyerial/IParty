@@ -21,6 +21,9 @@ public class TextSpawner : MonoBehaviour
         "cloud", "stream", "code", "unity", "keyboard",
         "game", "level", "score", "player", "speed"
     };
+    // {
+    //     "a"
+    // };
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
