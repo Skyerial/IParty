@@ -67,6 +67,7 @@ public class PlayerSpawn : MonoBehaviour
             playerInput.transform.localPosition = new Vector3(0f, offsetY, 0f);
             playerInput.transform.localRotation = Quaternion.identity;
             playerInput.transform.localScale = Vector3.one * 150f;
+            playerInput.DeactivateInput();
         }
     }
 }
