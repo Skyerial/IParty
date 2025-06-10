@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.InputSystem;
+using NUnit.Framework.Interfaces;
 
 public class PlayerTypingController : MonoBehaviour
 {
@@ -51,8 +52,7 @@ public class PlayerTypingController : MonoBehaviour
         string inputLower = input.Trim().ToLower();
         string originalLower = currentTargetWord.ToLower();
 
-        if (inputLower.Length > 0)
-            UpdateWordHighlight(inputLower, originalLower, targetText);
+        UpdateWordHighlight(inputLower, originalLower, targetText);
 
         if (inputLower == originalLower)
         {
@@ -151,8 +151,12 @@ public class PlayerTypingController : MonoBehaviour
         if (i < targetWord.Length)
         {
             string remaining = targetWord.Substring(i);
-            result += $"<color=yellow>|</color><color=white>{remaining}</color>";
+            result += $"{cursor}<color=white>{remaining}</color>";
         }
+
+        // add all extra letters as mistakes, but this shows how much you missed typed
+        if (userInput.Length >= targetWord.Length)
+            result += $"<color=#800000ff>{userInput.Substring(targetWord.Length)}</color>{cursor}";
 
         wordText.text = result;
     }
