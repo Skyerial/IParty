@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Unity Mobile Joystick</title>
+  <title>Unity Mobile Controller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     html, body {
@@ -11,21 +11,17 @@
       background-color: #222;
       color: white;
       font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
       overflow: hidden;
       touch-action: none;
     }
 
-    h1 {
-      margin-bottom: 10px;
-    }
-
-    #status {
-      margin-bottom: 20px;
+    .container {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        height: 100%;
     }
 
     .joystick-container {
@@ -46,19 +42,36 @@
       top: 75px;
       transition: left 0.05s, top 0.05s;
     }
+
+    .shoot-button {
+        width: 150px;
+        height: 150px;
+        background-color: #800;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        border: 5px solid #a00;
+    }
   </style>
 </head>
 <body>
-  <h1>Mobile Joystick</h1>
-  <div id="status">Connecting...</div>
-  <div class="joystick-container" id="joystick">
-    <div class="stick" id="stick"></div>
+  <div id="status" style="position: absolute; top: 10px; left: 10px;">Connecting...</div>
+  <div class="container">
+      <div class="joystick-container" id="joystick">
+        <div class="stick" id="stick"></div>
+      </div>
+      <div class="shoot-button" id="shoot">SHOOT</div>
   </div>
 
   <script>
     const statusEl = document.getElementById('status');
     const joystick = document.getElementById('joystick');
     const stick = document.getElementById('stick');
+    const shootButton = document.getElementById('shoot');
 
     const ws = new WebSocket(`ws://${location.hostname}:8181`);
 
@@ -69,6 +82,7 @@
     let dragging = false;
     let origin = { x: 0, y: 0 };
     let offset = { x: 0, y: 0 };
+    let shooting = false;
     let intervalId = null;
 
     function normalize(dx, dy, max = 75) {
@@ -79,12 +93,13 @@
       };
     }
 
-    function sendXY(x, y) {
+    function sendData(x, y, shoot) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: "control",
           x: parseFloat(x.toFixed(3)),
-          y: parseFloat(y.toFixed(3))
+          y: parseFloat(y.toFixed(3)),
+          shoot: shoot
         }));
       }
     }
@@ -110,7 +125,7 @@
     function startSending() {
       if (intervalId) clearInterval(intervalId);
       intervalId = setInterval(() => {
-        sendXY(offset.x, offset.y);
+        sendData(offset.x, offset.y, shooting);
       }, 10);
     }
 
@@ -118,16 +133,16 @@
       clearInterval(intervalId);
       intervalId = null;
       offset = { x: 0, y: 0 };
-      sendXY(0, 0); // Send reset
+      sendData(0, 0, shooting); // Continue sending shoot state
     }
 
-    // Touch events
+    // Touch events for joystick
     joystick.addEventListener('touchstart', e => {
       const touch = e.touches[0];
       origin.x = touch.clientX;
       origin.y = touch.clientY;
       dragging = true;
-      startSending();
+      if (!intervalId) startSending();
     });
 
     joystick.addEventListener('touchmove', e => {
@@ -141,6 +156,23 @@
       dragging = false;
       stopSending();
       resetStick();
+      if(shooting) startSending(); // restart sending if still shooting
+    });
+
+    // Touch events for shoot button
+    shootButton.addEventListener('touchstart', e => {
+        e.preventDefault();
+        shooting = true;
+        if (!intervalId) startSending();
+    });
+
+    shootButton.addEventListener('touchend', e => {
+        e.preventDefault();
+        shooting = false;
+        if (!dragging) {
+            stopSending();
+            sendData(0, 0, false); // Explicitly send shoot false
+        }
     });
   </script>
 </body>

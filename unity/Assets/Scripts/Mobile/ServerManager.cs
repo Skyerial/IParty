@@ -20,7 +20,6 @@ public class ServerManager : MonoBehaviour
     private WebSocketServer wsServer;
     public static Dictionary<string, VirtualController> allControllers = new();
     public RawImage targetRenderer;
-
     // Command queue for thread-safe message handling
     private ConcurrentQueue<(string, string)> commandQueue = new ConcurrentQueue<(string, string)>();
 
@@ -148,6 +147,7 @@ public class ServerManager : MonoBehaviour
                     allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
 
                     // Spawning when player connected
+                    PlayerManager.RegisterPlayer(device, 0);
                     PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 });
             };
@@ -162,6 +162,7 @@ public class ServerManager : MonoBehaviour
                     {
                         if (player.devices.Contains(device))
                         {
+                            PlayerManager.RemovePlayer(device);
                             Destroy(player.gameObject);
                             break;
                         }
@@ -188,6 +189,8 @@ public class ServerManager : MonoBehaviour
             var state = new GamepadState
                     {
                         leftStick = new Vector2(cmd.x, cmd.y),
+                        buttons = cmd.shoot ? (ushort)(1 << (int)GamepadButton.South) : (ushort)0
+                        
                     };
                     InputSystem.QueueStateEvent(controller, state);
                     InputSystem.Update();
@@ -204,7 +207,7 @@ public class ServerManager : MonoBehaviour
         public string type;
         public float x;
         public float y;
-
+        public bool shoot;
     }
 
     void OnApplicationQuit()

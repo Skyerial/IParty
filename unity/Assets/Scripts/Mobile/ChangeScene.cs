@@ -5,6 +5,6 @@ public class ChangeScene : MonoBehaviour
 {
     public void ReloadLevel()
     {
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("TankGame");
     }
 }
