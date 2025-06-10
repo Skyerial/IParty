@@ -8,6 +8,7 @@ public class PlayerTypingController : MonoBehaviour
     public GameObject spawner;
     public TextMeshProUGUI wordsLeftText;
     public PlayerRaceController raceController;
+    private string currentTargetWord = null;
 
     private void Start()
     {
@@ -22,7 +23,17 @@ public class PlayerTypingController : MonoBehaviour
         Transform wordObj = spawner.transform.GetChild(0);
         TextMeshProUGUI targetText = wordObj.GetComponent<TextMeshProUGUI>();
 
-        if (input.Trim().ToLower() == targetText.text.Trim().ToLower())
+        if (currentTargetWord == null)
+        {
+            currentTargetWord = targetText.text;
+        }
+
+        string inputLower = input.Trim().ToLower();
+        string originalLower = currentTargetWord.ToLower();
+
+        UpdateWordHighlight(inputLower, originalLower, targetText);
+
+        if (inputLower == originalLower)
         {
             inputField.text = "";
             raceController?.OnWordTyped();
@@ -52,8 +63,9 @@ public class PlayerTypingController : MonoBehaviour
         }
 
         Destroy(word);
-        yield return null; // wait one frame for hierarchy update
+        currentTargetWord = null;
 
+        yield return null; // wait one frame for hierarchy update
         UpdateWordsLeftText();
 
         if (spawner.transform.childCount == 0)
@@ -62,4 +74,27 @@ public class PlayerTypingController : MonoBehaviour
             GameManager.Instance?.OnPlayerFinished(this);
         }
     }
+
+    private void UpdateWordHighlight(string userInput, string targetWord, TextMeshProUGUI wordText)
+    {
+        string result = "";
+        int i = 0;
+
+        for (; i < userInput.Length && i < targetWord.Length; i++)
+        {
+            if (userInput[i] == targetWord[i])
+                result += $"<color=green>{targetWord[i]}</color>";
+            else
+                result += $"<color=red>{targetWord[i]}</color>";
+        }
+
+        if (i < targetWord.Length)
+        {
+            string remaining = targetWord.Substring(i);
+            result += $"<color=white>{remaining}</color>";
+        }
+
+        wordText.text = result;
+    }
+
 }
