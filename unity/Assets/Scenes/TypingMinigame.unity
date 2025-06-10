@@ -2023,6 +2023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44290248521dc6eed9a3318b895e96a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnedWords: []
   spawner: {fileID: 678055375}
 --- !u!1 &687351482
 GameObject:
@@ -2114,6 +2115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44290248521dc6eed9a3318b895e96a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnedWords: []
   spawner: {fileID: 687351483}
 --- !u!1 &740865613
 GameObject:
@@ -3357,6 +3359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44290248521dc6eed9a3318b895e96a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnedWords: []
   spawner: {fileID: 1312680055}
 --- !u!1 &1349750147
 GameObject:
@@ -4170,6 +4173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44290248521dc6eed9a3318b895e96a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnedWords: []
   spawner: {fileID: 1505018044}
 --- !u!1 &1506711590
 GameObject:

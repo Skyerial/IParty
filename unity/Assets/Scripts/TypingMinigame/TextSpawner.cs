@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
+using System.Collections.Generic;
 
 
 // words come at the player, player 'kills' the words
@@ -10,20 +11,22 @@ using UnityEngine;
 // have two text boxes, one what the player types, one what the player needs to type, this way you can do checks and maybe color the right or wrong letters as well
 
 
+
 public class TextSpawner : MonoBehaviour
 {
+    public List<string> spawnedWords = new List<string>();
 
     public Transform spawner;
 
     private string[] wordList = new string[]
-    {
-        "apple", "banana", "grape", "orange", "melon",
-        "cloud", "stream", "code", "unity", "keyboard",
-        "game", "level", "score", "player", "speed"
-    };
     // {
-    //     "a"
+    //     "apple", "banana", "grape", "orange", "melon",
+    //     "cloud", "stream", "code", "unity", "keyboard",
+    //     "game", "level", "score", "player", "speed"
     // };
+    {
+        "a"
+    };
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,6 +40,7 @@ public class TextSpawner : MonoBehaviour
             obj.name = "Child_" + word;
             string randomWord = wordList[Random.Range(0, wordList.Length)];
             obj.text = randomWord;
+            spawnedWords.Add(randomWord);
         }
     }
 
