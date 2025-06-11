@@ -16,6 +16,7 @@ public class PlayerSpawn : MonoBehaviour
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "Lobby") ServerManager.allControllers?.Clear();
     }
+
     public void OnPlayerJoined(PlayerInput playerInput)
     {
         GameObject playersParent = GameObject.Find("Players");
