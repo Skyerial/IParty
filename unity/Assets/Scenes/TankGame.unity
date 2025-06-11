@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe8fd53efb17afd48a5746b38ad7652d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 8562769641747288254, guid: 22262de6bce95924da0cd6d1efec60ee, type: 3}
+  prefab: {fileID: 5537730310437413220, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
 --- !u!4 &686913465
 Transform:
   m_ObjectHideFlags: 0
@@ -224,8 +224,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3471f201fd2ccc746bc0c9c2abdab106, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameActive: 1
-  gamePlayers: []
 --- !u!4 &770028769
 Transform:
   m_ObjectHideFlags: 0
