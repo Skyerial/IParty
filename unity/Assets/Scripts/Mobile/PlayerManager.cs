@@ -26,8 +26,6 @@ public class PlayerManager : MonoBehaviour
         {
             Destroy(gameObject); // Prevent duplicates
         }
-
-        Resources.Load
     }
 
     public static void RegisterPlayer(InputDevice device, int color)
