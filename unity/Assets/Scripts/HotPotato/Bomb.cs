@@ -8,10 +8,11 @@ public class Bomb : MonoBehaviour
     private Renderer rend;
     private Color originalColor;
     private bool isRed = false;
+    public GameObject explosion;
 
     void Start()
     {
-        countdownTime = Random.Range(10f, 30f);
+        countdownTime = Random.Range(2f, 8f);
         rend = GetComponentInChildren<Renderer>();
         originalColor = rend.material.color;
         flickerTimer = 0f;
@@ -40,6 +41,11 @@ public class Bomb : MonoBehaviour
 
     void Explode()
     {
+        if (explosion != null)
+        {
+            Instantiate(explosion, transform.position, Quaternion.identity);
+        }
+
         Destroy(gameObject);
     }
 }
