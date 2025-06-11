@@ -3,7 +3,7 @@ import { Controller } from "../controller.js";
 export class JoystickComponent extends Controller {
 
     constructor(container, vertical = false) {
-        super("../views/components/joystickComponentView.html", container, "analogInput" );
+        super("./views/components/joystickComponentView.html", container, "analogInput" );
 
         this.vertical = vertical;
         this.origin = { x: 0, y: 0 };

@@ -4,7 +4,7 @@ import { isConnected } from "../connection.js";
 
 export class NavBar extends Controller {
     constructor(container) {
-        super("../views/navView.html", container);
+        super("./views/navView.html", container);
     }
 
     bindEvents() {

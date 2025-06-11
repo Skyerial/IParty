@@ -6,7 +6,7 @@ import { Controller } from "./controller.js";
 
 export class ControllerLayout extends Controller {
     constructor(container, vertical = false) {
-        super("../views/controllerView.html",container);
+        super("./views/controllerView.html",container);
         this.slots = [];
         this.vertical = vertical;
     }

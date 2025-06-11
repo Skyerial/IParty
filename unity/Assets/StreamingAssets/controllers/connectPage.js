@@ -4,7 +4,7 @@ import { isConnected, connectToServer } from "../connection.js";
 
 export class ConnectPage extends Controller {
     constructor(container) {
-        super("../views/connectView.html", container);
+        super("./views/connectView.html", container);
     }
 
     bindEvents() {

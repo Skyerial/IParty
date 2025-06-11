@@ -2,7 +2,7 @@ import { Controller } from "../controller.js";
 
 export class ButtonComponent extends Controller {
     constructor(container, vertical = false) {
-        super("../views/components/buttonComponentView.html", container, "buttonInput");
+        super("./views/components/buttonComponentView.html", container, "buttonInput");
     }
 
     bindEvents() {

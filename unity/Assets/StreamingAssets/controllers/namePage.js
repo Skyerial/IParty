@@ -2,7 +2,7 @@ import { Controller } from "./controller.js";
 
 export class NameController extends Controller {
     constructor(container, socket) {
-        super("../views/userView.html", container, socket);
+        super("./views/userView.html", container, socket);
     }
 
     bindEvents() {

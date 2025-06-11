@@ -2,7 +2,7 @@ import { Controller } from "../controller.js";
 
 export class DpadComponent extends Controller {
     constructor(container, vertical) {
-        super("../views/components/dpadComponentView.html", container, "dpadInput");
+        super("./views/components/dpadComponentView.html", container, "dpadInput");
         this.vertical = vertical;
     }
 

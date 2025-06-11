@@ -12,7 +12,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await nav.init();
 
   const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
+  const code = params.get("hostId");
 
   if (code && !isConnected()) {
     connectToServer(code);
@@ -30,7 +30,14 @@ export function connectToServer(code) {
     return socket;
   }
 
-  socket = new WebSocket(`ws://${location.hostname}:${code}`);
+  const RELAY_HOST = '178.128.247.108';
+
+  const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
+  const wsUrl = isLocal
+    ? `ws://${location.hostname}:8181`
+    : `ws://${RELAY_HOST}:5000/host/${code}/ws`
+
+  socket = new WebSocket(wsUrl);
 
   socket.onopen = () => {
     console.log("connected");

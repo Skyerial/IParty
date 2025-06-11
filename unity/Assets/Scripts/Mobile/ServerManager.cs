@@ -1,14 +1,17 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
 using System.Threading;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using Fleck;
+using System.Collections;
 using System.Collections.Concurrent;
-using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+using Fleck;
+using NativeWebSocket;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 using System.Linq;
@@ -16,70 +19,87 @@ using System.Linq;
 public class ServerManager : MonoBehaviour
 {
     private static ServerManager instance;
+
+    [Header("Mode Settings")]
+    [Tooltip("Enable to use remote relay servers instead of local HTTP/WS servers.")]
+    public bool useRemote = true;
+
+    private string hostId;
+
+    // Local server fields
     private HttpListener httpListener;
     private Thread httpThread;
     private WebSocketServer wsServer;
-    public static Dictionary<string, VirtualController> allControllers = new();
-    public RawImage targetRenderer;
 
-    // Command queue for thread-safe message handling
-    private ConcurrentQueue<(string, string)> commandQueue = new ConcurrentQueue<(string, string)>();
+    // Remote tunnel fields
+    private WebSocket httpTunnel;
+    private WebSocket wsTunnel;
+
+    [Header("UI & Utilities")]
+    public RawImage targetRenderer;
+    public QRCodeGenerator QRCodeGenerator;
+
+    // Thread-safe command queue
+    private ConcurrentQueue<(string payloadJson, string senderId)> commandQueue = new ConcurrentQueue<(string, string)>();
+
+    // Map of remoteId (IP or tunnel‐clientId) → VirtualController
+    public static Dictionary<string, VirtualController> allControllers = new Dictionary<string, VirtualController>();
 
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // Persist through scenes
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // Prevent duplicates
+            Destroy(gameObject);
         }
     }
 
     void Start()
     {
+        hostId = SystemInfo.deviceUniqueIdentifier;
         InputSystem.RegisterLayout<VirtualController>();
-        StartHttpServer();
-        StartWebSocketServer();
+
+        if (useRemote)
+            StartRemoteServers();
+        else
+        {
+            StartHttpServer();
+            StartWebSocketServer();
+        }
     }
 
     void Update()
     {
-        // Handle queued WebSocket commands safely on the main thread
-        while (commandQueue.TryDequeue(out (string, string) jsonSender))
+        // Process incoming commands safely on main thread
+        while (commandQueue.TryDequeue(out var item))
+            HandleCommandOnMainThread(item.payloadJson, item.senderId);
+
+        // Pump NativeWebSocket queues when using remote mode
+        if (useRemote)
         {
-            var (json, sender) = jsonSender;
-            HandleCommandOnMainThread(json, sender);
+            httpTunnel?.DispatchMessageQueue();
+            wsTunnel?.DispatchMessageQueue();
         }
     }
 
-    string ChooseIP()
-    {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
+    // ===================== Local Servers =====================
 
-        foreach (var ip in host.AddressList)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-            {
-                return ip.ToString();
-            }
-        }
-
-        return "*";
-    }
     void StartHttpServer()
     {
         httpListener = new HttpListener();
-        string ip = ChooseIP();
-        // string ip = "localhost"; // Local debugging
-        httpListener.Prefixes.Add("http://"+ ip +":8080/"); // Localhost server on port 8080
-        QRCodeGenerator.GenerateQRCode("http://" + ip + ":8080/?code=8181", targetRenderer);
-        // QRGen?.GenerateQRCode("http://"+ ip +":8080/");
-        Debug.Log(ip);
-        httpListener.Start();
+        string ip = ChooseIP() ?? "localhost";
+        string prefix = $"http://{ip}:8080/";
+        httpListener.Prefixes.Add(prefix);
 
+        // Generate QR for clients
+        QRCodeGenerator.GenerateQRCode("http://" + ip + ":8080/index.html/?hostId=8181", targetRenderer);
+        Debug.Log($"[Local] HTTP server starting at {prefix}");
+
+        httpListener.Start();
         httpThread = new Thread(() =>
         {
             while (httpListener.IsListening)
@@ -88,107 +108,224 @@ public class ServerManager : MonoBehaviour
                 {
                     var context = httpListener.GetContext();
                     string urlPath = context.Request.Url.AbsolutePath.TrimStart('/');
-                    if (string.IsNullOrEmpty(urlPath)) urlPath = "index.html"; // Controller HTML
-
-                    // If we want to change the directories.
-                    // string rootPath = Path.Combine(Application.streamingAssetsPath, "/");
+                    if (string.IsNullOrEmpty(urlPath)) urlPath = "/index.html";
                     string filePath = Path.Combine(Application.streamingAssetsPath, urlPath);
-                    Debug.Log("Looking for file at: " + Path.GetFullPath(filePath));
+
                     if (File.Exists(filePath))
                     {
-                        if (filePath.EndsWith(".js"))
-                        {
-                            context.Response.ContentType = "application/javascript";
-                        }
-                        else if (filePath.EndsWith(".css"))
-                        {
-                            context.Response.ContentType = "text/css";
-                        }
-                        else if (filePath.EndsWith(".html"))
-                        {
-                            context.Response.ContentType = "text/html";
-                        }
-
                         byte[] content = File.ReadAllBytes(filePath);
+                        context.Response.ContentType = GetContentType(filePath);
                         context.Response.ContentLength64 = content.Length;
                         context.Response.OutputStream.Write(content, 0, content.Length);
                     }
                     else
                     {
                         context.Response.StatusCode = 404;
-                        using var writer = new StreamWriter(context.Response.OutputStream);
-                        writer.Write("404 - File Not Found");
+                        using var w = new StreamWriter(context.Response.OutputStream);
+                        w.Write("404 - File Not Found");
                     }
                     context.Response.OutputStream.Close();
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError("HTTP Server error: " + ex.Message);
+                    Debug.LogError("[Local][HTTP] " + ex.Message);
                 }
             }
-        });
+        }) { IsBackground = true };
         httpThread.Start();
 
-        Debug.Log("HTTP server started on port 8080");
+        Debug.Log("[Local] HTTP server started.");
     }
 
     void StartWebSocketServer()
     {
         FleckLog.Level = LogLevel.Debug;
-        wsServer = new WebSocketServer("ws://0.0.0.0:8181"); // Initializing websocket for controller data.
+        string ip = ChooseIP() ?? "0.0.0.0";
+        string wsPrefix = $"ws://{ip}:8181";
+        wsServer = new WebSocketServer(wsPrefix);
         wsServer.Start(socket =>
         {
             socket.OnOpen = () =>
             {
-                Debug.Log("WS: Client connected, IP:" + socket.ConnectionInfo.ClientIpAddress); // Debug
+                Debug.Log($"[Local][WS] Client connected: {socket.ConnectionInfo.ClientIpAddress}");
                 MainThreadDispatcher.Enqueue(() =>
-                {       
-                        var device = InputSystem.AddDevice<VirtualController>();
-                        device.remoteId = socket.ConnectionInfo.ClientIpAddress;
-                        allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
-                        PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);    
+                {
+                    var device = InputSystem.AddDevice<VirtualController>();
+                    device.remoteId = socket.ConnectionInfo.ClientIpAddress;
+                    allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
+                    PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 });
             };
 
             socket.OnClose = () =>
             {
-                Debug.Log("WS: Client disconnected, IP:" + socket.ConnectionInfo.ClientIpAddress); // Debug
+                Debug.Log($"[Local][WS] Disconnected: {socket.ConnectionInfo.ClientIpAddress}");
                 MainThreadDispatcher.Enqueue(() =>
                 {
-                    var device = allControllers[socket.ConnectionInfo.ClientIpAddress];
-                    foreach (var player in PlayerInput.all)
+                    if (allControllers.TryGetValue(socket.ConnectionInfo.ClientIpAddress, out var dev))
                     {
-                        if (player.devices.Contains(device))
+                        foreach (var p in PlayerInput.all)
                         {
-                            Destroy(player.gameObject);
-                            break;
+                            if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
                         }
+                        allControllers.Remove(socket.ConnectionInfo.ClientIpAddress);
                     }
                 });
             };
-            
+
             socket.OnMessage = msg =>
             {
-                Debug.Log("WS: Input received from:" + socket.ConnectionInfo.ClientIpAddress);
-                commandQueue.Enqueue((msg, socket.ConnectionInfo.ClientIpAddress)); // Main thread queue
+                Debug.Log($"[Local][WS] Msg from {socket.ConnectionInfo.ClientIpAddress}");
+                commandQueue.Enqueue((msg, socket.ConnectionInfo.ClientIpAddress));
             };
         });
 
-        Debug.Log("WebSocket server started on port 8181");
+        Debug.Log($"[Local] WS server started at {wsPrefix}");
+    }
+
+    // ===================== Remote Servers =====================
+
+    async void StartRemoteServers()
+    {
+        StartCoroutine(RemoteDispatchLoop());
+
+        string relayBase = "ws://178.128.247.108:5000";
+        string httpTunnelUrl = $"{relayBase}/unity/{hostId}/http";
+        string wsTunnelUrl   = $"{relayBase}/unity/{hostId}/ws";
+
+        // Generate QR for remote URLs
+        QRCodeGenerator.GenerateQRCode($"http://178.128.247.108:5000/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
+        Debug.Log($"[Remote] HTTP Tunnel = {httpTunnelUrl}");
+        Debug.Log($"[Remote] WS Tunnel   = {wsTunnelUrl}");
+
+        httpTunnel = new WebSocket(httpTunnelUrl);
+        httpTunnel.OnMessage += async bytes =>
+        {
+            string rawJson = Encoding.UTF8.GetString(bytes);
+            Debug.Log("[Remote][HTTP] Raw JSON: " + rawJson);
+            try
+            {
+                var req = JsonUtility.FromJson<HttpTunnelRequest>(rawJson);
+                string relPath = req.url.TrimStart('/');
+                if (string.IsNullOrEmpty(relPath)) relPath = "og.html";
+                string filePath = Path.Combine(Application.streamingAssetsPath, relPath);
+
+                byte[] bodyBytes;
+                int status=200;
+                string ct = GetContentType(filePath);
+
+                if (!File.Exists(filePath))
+                {
+                    status = 404;
+                    bodyBytes = Encoding.UTF8.GetBytes("404 - Not Found");
+                    ct = "text/plain";
+                }
+                else
+                {
+                    try { bodyBytes = File.ReadAllBytes(filePath); }
+                    catch { status=500; bodyBytes = Encoding.UTF8.GetBytes("500 - Error"); ct="text/plain"; }
+                }
+
+                string base64 = Convert.ToBase64String(bodyBytes);
+                var resp = new HttpTunnelResponse { requestId = req.requestId, status = status, bodyBase64 = base64, contentType = ct };
+                await httpTunnel.SendText(JsonUtility.ToJson(resp));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("[Remote][HTTP] " + ex);
+            }
+        };
+
+        wsTunnel = new WebSocket(wsTunnelUrl);
+        wsTunnel.OnMessage += bytes =>
+        {
+            var rawJson = Encoding.UTF8.GetString(bytes);
+            // Debug.Log($"[Remote][WS] Raw wrapper JSON: {rawJson}");
+
+            var wrapper = JsonUtility.FromJson<WSTunnelRequest>(rawJson);
+
+            // Disconnect-only
+            if (wrapper.payloadBase64 == null && wrapper.@event == "disconnect")
+            {
+                Debug.Log($"[Remote][WS] DISCONNECT: {wrapper.clientId}");
+                MainThreadDispatcher.Enqueue(() => CleanupController(wrapper.clientId));
+                return;
+            }
+
+            // Payloads
+            if (wrapper.payloadBase64 != null)
+            {
+                // Reserve the slot immediately
+                if (!allControllers.ContainsKey(wrapper.clientId))
+                {
+                    Debug.Log($"[Remote][WS] First payload from {wrapper.clientId}, scheduling spawn");
+                    // Insert a null placeholder so further messages won't re-spawn
+                    allControllers[wrapper.clientId] = null;
+                    MainThreadDispatcher.Enqueue(() => {
+                        // Now do the real spawn, replacing the null
+                        SpawnController(wrapper.clientId);
+                    });
+                    return;
+
+                }
+
+                // Decode & debug log
+                var payloadBytes = Convert.FromBase64String(wrapper.payloadBase64);
+                var json = Encoding.UTF8.GetString(payloadBytes);
+                // Debug.Log($"[Remote][WS] Decoded client JSON: {json}");
+
+                // Enqueue for processing
+                commandQueue.Enqueue((json, wrapper.clientId));
+            }
+        };
+
+        // Connect tunnels
+        try { await Task.WhenAll(httpTunnel.Connect(), wsTunnel.Connect()); }
+        catch { Debug.LogError("[Remote] Connect failed"); }
+
+        Debug.Log($"[Remote] HTTP={httpTunnel?.State}, WS={wsTunnel?.State}");
+    }
+
+    IEnumerator RemoteDispatchLoop()
+    {
+        while (true)
+        {
+            httpTunnel?.DispatchMessageQueue();
+            wsTunnel?.DispatchMessageQueue();
+            yield return null;
+        }
+    }
+
+    // ===================== Shared Helpers =====================
+
+    string ChooseIP()
+    {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        return host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
+    }
+
+    string GetContentType(string path)
+    {
+        return Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".html" => "text/html",
+            ".js"   => "application/javascript",
+            ".css"  => "text/css",
+            ".png"  => "image/png",
+            ".jpg"  => "image/jpeg",
+            _        => "application/octet-stream",
+        };
     }
 
     void HandleCommandOnMainThread(string json, string sender)
     {
         try
-        {   
+        {
             var cmd = JsonUtility.FromJson<CommandMessage>(json);
             var controller = allControllers[sender];
-            var state = new GamepadState
-                    {
-                        leftStick = new Vector2(cmd.x, cmd.y),
-                    };
-                    InputSystem.QueueStateEvent(controller, state);
-                    InputSystem.Update();
+            var state = new GamepadState { leftStick = new UnityEngine.Vector2(cmd.x, cmd.y) };
+            InputSystem.QueueStateEvent(controller, state);
+            InputSystem.Update();
         }
         catch (Exception e)
         {
@@ -196,19 +333,48 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    [Serializable]
-    public class CommandMessage
+    void SpawnController(string clientId)
     {
-        public string type;
-        public float x;
-        public float y;
+        var device = InputSystem.AddDevice<VirtualController>();
+        device.remoteId = clientId;
+        allControllers[clientId] = device;
+        PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
+    }
 
+    void CleanupController(string clientId)
+    {
+        if (allControllers.TryGetValue(clientId, out var dev))
+        {
+            foreach (var p in PlayerInput.all)
+                if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
+            allControllers.Remove(clientId);
+        }
     }
 
     void OnApplicationQuit()
     {
-        httpListener?.Stop();
-        httpThread?.Abort();
-        wsServer?.Dispose();
+        if (useRemote)
+        {
+            httpTunnel?.Close();
+            wsTunnel?.Close();
+        }
+        else
+        {
+            httpListener?.Stop();
+            httpThread?.Abort();
+            wsServer?.Dispose();
+        }
     }
+
+    [Serializable]
+    public class CommandMessage { public string type; public float x; public float y; }
+
+    [Serializable]
+    private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
+
+    [Serializable]
+    private class HttpTunnelResponse { public string requestId; public int status; public string bodyBase64; public string contentType; }
+
+    [Serializable]
+    private class WSTunnelRequest { public string clientId; public string payloadBase64; public string @event; }
 }
