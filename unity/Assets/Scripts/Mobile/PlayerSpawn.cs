@@ -15,6 +15,7 @@ public class PlayerSpawn : MonoBehaviour
         // Material mat = Resources.Load<Material>("Materials/Global/Blue");
         // render.material = mat;
 
+
         // Adding a custom face
         // var face = playerInput.transform.Find("Face");
         // var renderer = face.GetComponent<Renderer>();

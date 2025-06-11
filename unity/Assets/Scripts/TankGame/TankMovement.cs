@@ -94,7 +94,7 @@ public class TankMovement : MonoBehaviour
         // Freeze rotation on X/Z so we only rotate around Y manually
         rb.constraints = RigidbodyConstraints.FreezeRotationX
                        | RigidbodyConstraints.FreezeRotationZ
-                       | RigidbodyConstraints.FreezePositionY;
+                       | RigidbodyConstraints.FreezeRotationY;
 
         // Initialize stamina
         currentStamina = maxStamina;

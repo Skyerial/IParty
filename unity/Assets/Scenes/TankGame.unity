@@ -917,6 +917,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1538425888
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.999999
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1912013349536128933, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5537730310437413220, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_Name
+      value: Player - Tank
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
 --- !u!1 &1809656192
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,3 +1109,4 @@ SceneRoots:
   - {fileID: 770028769}
   - {fileID: 760294250}
   - {fileID: 686913465}
+  - {fileID: 1538425888}
