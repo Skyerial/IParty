@@ -325,7 +325,25 @@ public class ServerManager : MonoBehaviour
         {
             var cmd = JsonUtility.FromJson<CommandMessage>(json);
             var controller = allControllers[sender];
-            var state = new GamepadState { leftStick = new UnityEngine.Vector2(cmd.x, cmd.y) };
+            var state = new GamepadState();
+            Debug.Log(cmd.type);
+            switch (cmd.type)
+            {
+                case "analogInput":
+                    state = new GamepadState { leftStick = new Vector2(cmd.x, cmd.y) };
+                    break;
+                case "buttonInput":
+                    if (Enum.TryParse<GamepadButton>(cmd.button, ignoreCase: true, out var button))
+                    {
+                        Debug.Log(button);
+                        state = new GamepadState().WithButton(button, cmd.state);
+                    }
+                    else
+                    {
+                        Debug.Log("Control not found.");
+                    }
+                    break;
+            }
             InputSystem.QueueStateEvent(controller, state);
             InputSystem.Update();
         }
@@ -369,7 +387,7 @@ public class ServerManager : MonoBehaviour
     }
 
     [Serializable]
-    public class CommandMessage { public string type; public float x; public float y; }
+    public class CommandMessage { public string type; public float x; public float y; public string button; public bool state; }
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }

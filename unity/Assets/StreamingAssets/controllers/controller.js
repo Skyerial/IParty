@@ -19,7 +19,9 @@ export class Controller {
     updateButtonInput(inputName, state) {
         const input = {
             type: this.type,
-            [inputName]: state
+            "button": inputName,
+            "state": state
+            // [inputName]: state
         };
 
         this.sendInput(input);
