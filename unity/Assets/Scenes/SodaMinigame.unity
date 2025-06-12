@@ -1197,8 +1197,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1873187387}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -2, y: -1, z: 0.017}
   m_AnchorMin: {x: 0, y: 0}
@@ -2001,11 +2000,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ec8cdf253de66a49b56a9cb71125c82, type: 3}
---- !u!224 &1873187387 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 9143295037009820967, guid: 17dfe22105cfae26cbfd4496418a9778, type: 3}
-  m_PrefabInstance: {fileID: 5253579554047178600}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2064195953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2105,10 +2099,6 @@ PrefabInstance:
       propertyPath: gameplayObjects
       value: 
       objectReference: {fileID: 1251917312}
-    - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
-      propertyPath: countdownDuration
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 2669234019936366318, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: m_LocalPosition.x
       value: 960
@@ -2164,8 +2154,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1790727364}
   - {fileID: 94634985}
-  - {fileID: 2060285724}
-  - {fileID: 282185871}
   - {fileID: 1251917315}
   - {fileID: 622294297}
   - {fileID: 26441244}
@@ -2191,3 +2179,5 @@ SceneRoots:
   - {fileID: 868691379}
   - {fileID: 220956223}
   - {fileID: 1552053801}
+  - {fileID: 5253579554047178600}
+  - {fileID: 901682848}
