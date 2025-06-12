@@ -195,7 +195,6 @@
             height: 100vh;
             z-index: 0; /* background layer */
         }
-
     </style>
 </head>
 <body>
@@ -205,9 +204,11 @@
     </header>
     <video id="webcam" autoplay playsinline style="display: none;"></video>
     <video id="snapshotCanvas" style="display:none;"></video>
+    <!-- <canvas id="canvas" width="640" height="480" style="display:none;"></canvas> -->
     <div id="non-header">
         <div class="login-wrap">
             <button class="button-18" id="picture-snap">Take Picture</button>
+            <button class="button-18" id="picture-save">Save</button>
             <div class="label-and-input">
                 <label for="user" class="label">Player Name</label>
                 <input id="user" type="text" class="input" placeholder="Player Name" required>

@@ -57,7 +57,12 @@ function main() {
     // Loading live video feed
     const video = document.getElementById('webcam');
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true })
+      navigator.mediaDevices.getUserMedia({ 
+        video: {
+          width: {ideal: 480},
+          height: {ideal: 640},
+        }
+      })
         .then((stream) => {
           const video = document.getElementById('webcam');
           video.srcObject = stream;
@@ -81,6 +86,21 @@ function main() {
         snapButton.innerHTML = "Retake Picture";
       }
     });
+
+    const saveButton = document.getElementById('picture-save');
+    saveButton.addEventListener('click', () => {
+      const canvas = document.createElement('canvas');
+      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const img = canvas.toDataURL('image/png');
+      
+      const link = document.createElement('a');
+      link.href = img;
+      link.download = 'captured-image.png'; // File name
+      link.click(); // Trigger the download
+    })
 
     // Making a texture out of it
     const videoTexture = new THREE.VideoTexture(video);
