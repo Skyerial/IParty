@@ -6,7 +6,7 @@ public class MinigameHUDController : MonoBehaviour
     [Header("Countdown Settings")]
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private GameObject countDownFrame;
-    [SerializeField] private int countdownDuration = 3; // Display 3, 2, 1
+    [SerializeField] private int countdownDuration = 3;
 
     [Header("Gameplay Timer Settings")]
     [SerializeField] private TextMeshProUGUI timerText;
@@ -16,14 +16,20 @@ public class MinigameHUDController : MonoBehaviour
     [Header("Gameplay Activation")]
     [SerializeField] private GameObject gameplayObjects;
 
+    [Header("Custom Countdown Labels")]
+    [SerializeField] private string goText = "GO!";
+    [SerializeField] private string gameSetText = "Game Set!";
+
     private float countdownTimer;
     private float gameTimer;
     private bool gameStarted = false;
     private bool gameEnded = false;
 
+    public bool GameStarted => gameStarted;
+    public bool GameEnded => gameEnded;
+
     void Start()
     {
-        // Start slightly below full value so the first number switches fast (fixes long "3" issue)
         countdownTimer = countdownDuration + 0.5f;
         gameTimer = totalGameTime;
 
@@ -55,7 +61,7 @@ public class MinigameHUDController : MonoBehaviour
         }
         else if (countdownTimer > 0f)
         {
-            countdownText.text = "GO!";
+            countdownText.text = goText;
         }
         else
         {
@@ -80,7 +86,7 @@ public class MinigameHUDController : MonoBehaviour
             if (percentElapsed >= 0.9f)
                 timerText.color = Color.red;
             else if (percentElapsed >= 0.7f)
-                timerText.color = Color.orange;
+                timerText.color = new Color(1f, 0.65f, 0f); // orange
             else
                 timerText.color = Color.white;
         }
@@ -90,8 +96,8 @@ public class MinigameHUDController : MonoBehaviour
             gameEnded = true;
             timerFrame.SetActive(false);
             countDownFrame.SetActive(true);
-            countdownText.text = "Game Set!";
-            Debug.Log("Game Set!");
+            countdownText.text = gameSetText;
+            Debug.Log(gameSetText);
         }
     }
 }
