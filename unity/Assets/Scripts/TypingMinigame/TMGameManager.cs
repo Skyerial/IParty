@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class GameManager : MonoBehaviour
+public class TMGameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
+    public static TMGameManager Instance { get; private set; }
 
     public List<PlayerTypingController> players;
 

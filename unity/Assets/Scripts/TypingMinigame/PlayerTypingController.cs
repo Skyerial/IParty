@@ -71,7 +71,7 @@ public class PlayerTypingController : MonoBehaviour
             if (wordsLeft == 0)
             {
                 Debug.Log($"{gameObject.name} finished!");
-                GameManager.Instance?.OnPlayerFinished(this);
+                TMGameManager.Instance?.OnPlayerFinished(this);
             }
         }
     }
@@ -131,7 +131,7 @@ public class PlayerTypingController : MonoBehaviour
         if (spawner.transform.childCount == 0)
         {
             Debug.Log($"{gameObject.name} finished!");
-            GameManager.Instance?.OnPlayerFinished(this);
+            TMGameManager.Instance?.OnPlayerFinished(this);
         }
     }
 
