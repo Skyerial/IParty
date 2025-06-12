@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MobileSandbox.unity
     guid: 6cd82f28518635c4498c186539e5fb0a
+  - enabled: 1
+    path: Assets/Scenes/Spleef.unity
+    guid: 49b627804f092ea41ab536a4447b90d5
+  - enabled: 1
+    path: Assets/Scenes/Turf.unity
+    guid: dbed39707cd4cd8d887bca4f88e8cab2
+  - enabled: 1
+    path: Assets/Scenes/TankGame.unity
+    guid: f794345d1e324d04697a9b762c96a671
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
