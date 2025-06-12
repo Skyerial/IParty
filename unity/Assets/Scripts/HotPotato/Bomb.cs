@@ -9,6 +9,8 @@ public class Bomb : MonoBehaviour
     private Color originalColor;
     private bool isRed = false;
     public GameObject explosion;
+    public bool isBeingThrown = false;
+
 
     void Start()
     {
@@ -17,11 +19,16 @@ public class Bomb : MonoBehaviour
         originalColor = rend.material.color;
         flickerTimer = 0f;
         elapsedTime = 0f;
+
     }
 
     void Update()
     {
-        elapsedTime += Time.deltaTime;
+        if (!isBeingThrown)
+        {
+            elapsedTime += Time.deltaTime;
+            Debug.Log("Is being thrown: " + isBeingThrown);
+        }
 
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);
         flickerTimer += Time.deltaTime;
@@ -46,6 +53,13 @@ public class Bomb : MonoBehaviour
             Instantiate(explosion, transform.position, Quaternion.identity);
         }
 
+        if (transform.parent != null)
+        {
+            Destroy(transform.parent.gameObject);
+        }
+
         Destroy(gameObject);
+
+
     }
 }

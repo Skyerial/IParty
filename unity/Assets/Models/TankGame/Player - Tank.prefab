@@ -135,7 +135,7 @@ MonoBehaviour:
   rotationSpeed: 135
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   groundCheckOffset: 0.1
   cooldown: 3
   maxStamina: 100
