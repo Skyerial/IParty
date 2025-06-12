@@ -2105,6 +2105,10 @@ PrefabInstance:
       propertyPath: gameplayObjects
       value: 
       objectReference: {fileID: 1251917312}
+    - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
+      propertyPath: countdownDuration
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2669234019936366318, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: m_LocalPosition.x
       value: 960

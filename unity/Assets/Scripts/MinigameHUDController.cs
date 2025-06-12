@@ -1,18 +1,17 @@
 using UnityEngine;
 using TMPro;
-using System.Collections;
 
 public class MinigameHUDController : MonoBehaviour
 {
     [Header("Countdown Settings")]
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private GameObject countDownFrame;
-    [SerializeField] private float countdownDuration = 4f; // 3..2..1..GO!
+    [SerializeField] private int countdownDuration = 3; // Display 3, 2, 1
 
     [Header("Gameplay Timer Settings")]
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private GameObject timerFrame;
-    [SerializeField] private float totalGameTime = 10f;
+    [SerializeField] private int totalGameTime = 10;
 
     [Header("Gameplay Activation")]
     [SerializeField] private GameObject gameplayObjects;
@@ -20,13 +19,14 @@ public class MinigameHUDController : MonoBehaviour
     private float countdownTimer;
     private float gameTimer;
     private bool gameStarted = false;
+    private bool gameEnded = false;
 
     void Start()
     {
-        countdownTimer = countdownDuration;
+        // Start slightly below full value so the first number switches fast (fixes long "3" issue)
+        countdownTimer = countdownDuration + 0.5f;
         gameTimer = totalGameTime;
 
-        // Initial state
         timerFrame.SetActive(false);
         gameplayObjects.SetActive(false);
         countDownFrame.SetActive(true);
@@ -38,7 +38,7 @@ public class MinigameHUDController : MonoBehaviour
         {
             HandleCountdown();
         }
-        else
+        else if (!gameEnded)
         {
             HandleGameTimer();
         }
@@ -47,10 +47,10 @@ public class MinigameHUDController : MonoBehaviour
     private void HandleCountdown()
     {
         countdownTimer -= Time.deltaTime;
-        int display = Mathf.CeilToInt(countdownTimer);
 
         if (countdownTimer > 1f)
         {
+            int display = Mathf.FloorToInt(countdownTimer);
             countdownText.text = display.ToString();
         }
         else if (countdownTimer > 0f)
@@ -59,7 +59,6 @@ public class MinigameHUDController : MonoBehaviour
         }
         else
         {
-            // Transition
             countDownFrame.SetActive(false);
             timerFrame.SetActive(true);
             gameplayObjects.SetActive(true);
@@ -74,21 +73,25 @@ public class MinigameHUDController : MonoBehaviour
 
         if (timerText != null)
         {
-            timerText.text = gameTimer.ToString("F1");
+            int secondsLeft = Mathf.FloorToInt(gameTimer);
+            timerText.text = secondsLeft.ToString();
 
             float percentElapsed = 1f - (gameTimer / totalGameTime);
             if (percentElapsed >= 0.9f)
                 timerText.color = Color.red;
             else if (percentElapsed >= 0.7f)
-                timerText.color = new Color(1f, 0.65f, 0f); // orange
+                timerText.color = Color.orange;
             else
                 timerText.color = Color.white;
         }
 
-        if (gameTimer <= 0)
+        if (gameTimer <= 0 && !gameEnded)
         {
-            // TODO: End-game logic here
-            Debug.Log("Time's up!");
+            gameEnded = true;
+            timerFrame.SetActive(false);
+            countDownFrame.SetActive(true);
+            countdownText.text = "Game Set!";
+            Debug.Log("Game Set!");
         }
     }
 }
