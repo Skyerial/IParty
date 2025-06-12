@@ -450,6 +450,11 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &957684279 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8869364792590502985, guid: 17dfe22105cfae26cbfd4496418a9778, type: 3}
+  m_PrefabInstance: {fileID: 5253579554047178600}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1251917312
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,7 +687,7 @@ PrefabInstance:
     - target: {fileID: 1857712624995523158, guid: 17dfe22105cfae26cbfd4496418a9778, type: 3}
       propertyPath: timerHUD
       value: 
-      objectReference: {fileID: 901682847}
+      objectReference: {fileID: 957684279}
     - target: {fileID: 8869364792590502985, guid: 17dfe22105cfae26cbfd4496418a9778, type: 3}
       propertyPath: m_Name
       value: TimerFrame
