@@ -3,20 +3,23 @@ using UnityEngine.UI;
 
 public class SetCard : MonoBehaviour
 {
+    public Button cardButton;
+
     public GameObject symbolPrefab;
     public Transform symbolParent;
 
     public Sprite[] shapeSprites;
 
-    public void Initialize(int shape, int color)
+    public void Initialize(int number, int filling, int shape, int color)
     {
         foreach (Transform child in symbolParent)
             Destroy(child.gameObject);
 
         Image cardImage = symbolParent.GetComponent<Image>();
 
+        int index = 3*number + 9*filling + shape;
         Color cardColor = GetColor(color);
-        Sprite shapeSprite = shapeSprites[shape];
+        Sprite shapeSprite = shapeSprites[index];
 
         if (cardImage != null)
         {
@@ -26,9 +29,9 @@ public class SetCard : MonoBehaviour
         cardImage.color = cardColor;
     }
 
-    Color GetColor(int index)
+    Color GetColor(int color)
     {
-        return index switch
+        return color switch
         {
             0 => Color.red,
             1 => Color.green,
