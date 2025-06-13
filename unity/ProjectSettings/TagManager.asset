@@ -5,11 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - Hammer
+  - Mole
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Hammer
+  - Weapon
   - Water
   - UI
   - Mole

@@ -1,30 +1,62 @@
+// Mole.cs
 using UnityEngine;
+using System.Collections;
 
-public class MoleHitDetector : MonoBehaviour
+public class Mole : MonoBehaviour
 {
-    [Header("Overlap Settings")]
-    public Vector3 boxSize = new Vector3(0.2f, 0.2f, 0.2f);
-    public LayerMask hammerLayer;
+    [Tooltip("How far (in units) the mole dips when hit")]
+    public float popDownDistance = 0.5f;
+    [Tooltip("Seconds to dip down, and the same to pop back up")]
+    public float popTime = 0.2f;
 
-    private bool wasHit = false;
+    private Vector3 initialPosition;
+    private Coroutine popRoutine;
 
-    void Update()
+    void Awake()
     {
-        if (wasHit) return;
-
-        Collider[] hits = Physics.OverlapBox(transform.position, boxSize * 0.5f, Quaternion.identity, hammerLayer);
-
-        foreach (var hit in hits)
-        {
-            Debug.Log("🎯 Mole was hit by: " + hit.name);
-            wasHit = true;
-            break;
-        }
+        initialPosition = transform.position;
     }
 
-    private void OnDrawGizmosSelected()
+    public void OnHit()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(transform.position, boxSize);
+        Debug.Log("Mole was hit");
+
+        if (popRoutine != null)
+            StopCoroutine(popRoutine);
+
+        popRoutine = StartCoroutine(PopDownAndUp());
+    }
+
+    private IEnumerator PopDownAndUp()
+    {
+        Vector3 targetPos = initialPosition + Vector3.down * popDownDistance;
+        float elapsed = 0f;
+
+        while (elapsed < popTime)
+        {
+            transform.position = Vector3.Lerp(
+                initialPosition,
+                targetPos,
+                elapsed / popTime
+            );
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = targetPos;
+
+        elapsed = 0f;
+        while (elapsed < popTime)
+        {
+            transform.position = Vector3.Lerp(
+                targetPos,
+                initialPosition,
+                elapsed / popTime
+            );
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = initialPosition;
+
+        popRoutine = null;
     }
 }
