@@ -5,7 +5,7 @@ public class Throw : MonoBehaviour
     public float throwDuration = 0.5f;
     public float arcHeight = 2f;
 
-    public void ThrowToTarget(Transform target,  Bomb bombScript)
+    public void ThrowToTarget(Transform target, Bomb bombScript)
     {
         StartCoroutine(ThrowArc(target, bombScript));
     }

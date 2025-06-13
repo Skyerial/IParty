@@ -10,12 +10,12 @@ public class Bomb : MonoBehaviour
     private bool isRed = false;
     public GameObject explosion;
     public bool isBeingThrown = false;
-
-
+    AudioSource audioSource;
     void Start()
     {
         countdownTime = Random.Range(2f, 8f);
         rend = GetComponentInChildren<Renderer>();
+        audioSource = GetComponent<AudioSource>();
         originalColor = rend.material.color;
         flickerTimer = 0f;
         elapsedTime = 0f;
@@ -27,7 +27,9 @@ public class Bomb : MonoBehaviour
         if (!isBeingThrown)
         {
             elapsedTime += Time.deltaTime;
-            Debug.Log("Is being thrown: " + isBeingThrown);
+        } else
+        {
+            audioSource.Play();
         }
 
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);
@@ -52,6 +54,7 @@ public class Bomb : MonoBehaviour
 
     void Explode()
     {
+
         if (explosion != null)
         {
             Instantiate(explosion, transform.position, Quaternion.identity);

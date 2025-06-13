@@ -1032,7 +1032,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7402901101437262184}
   - component: {fileID: 7048795294245899444}
-  - component: {fileID: 5934517099957239718}
+  - component: {fileID: 4046502949389779178}
   m_Layer: 0
   m_Name: Player - Image
   m_TagString: Untagged
@@ -1088,7 +1088,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &5934517099957239718
+--- !u!114 &4046502949389779178
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1097,11 +1097,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5701168343763322210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca58f33f56e8bee468c76d3d2046ce4c, type: 3}
+  m_Script: {fileID: 11500000, guid: c0750a0407a8e4b47add1a3d553f5553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 0.5
   bombManager: {fileID: 0}
+  throwCooldown: 0.8
 --- !u!1 &5963846374430911265
 GameObject:
   m_ObjectHideFlags: 0
