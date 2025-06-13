@@ -24,4 +24,16 @@ public class ChangeScene : MonoBehaviour
         Debug.Log(level);
         SceneManager.LoadScene(level);
     }
+
+    public void SendDpad()
+    {
+        Debug.Log("Test data send.");
+        ServerManager.SendtoAllSockets("dpad-preset");
+    }
+    
+    public void SendJoystick()
+    {
+        Debug.Log("Test data send.");
+        ServerManager.SendtoAllSockets("joystick-preset"); 
+    }
 }

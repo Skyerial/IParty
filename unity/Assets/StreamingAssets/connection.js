@@ -1,4 +1,5 @@
 import { ConnectPage } from "./controllers/connectPage.js";
+import { DpadController } from "./controllers/dpadController.js";
 import { JoystickController } from "./controllers/joystickController.js";
 import { NavBar } from "./controllers/navBar.js";
 import { Login } from "./login/login.js";
@@ -47,6 +48,7 @@ export function connectToServer(code) {
   };
 
   socket.onmessage = (event) => {
+    console.log(event.data);
     const data = JSON.parse(event.data);
     handle_data(data);
   };
@@ -76,4 +78,23 @@ export function isConnected() {
   return socket && socket.readyState === WebSocket.OPEN;
 }
 
-function handle_data(data) {}
+function loadController(controller)
+{
+  let root = document.querySelector(".view-container");
+
+  if (controller == "dpad-preset") {
+    let js = new DpadController(root)
+    js.init()
+  } else if (controller == "joystick-preset") {
+    let js = new JoystickController(root)
+    js.init()
+  }
+}
+
+function handle_data(data) {
+  if (data.type == "controller") {
+    loadController(data.controller)
+  }
+  console.log(data.type);
+  console.log(data.controller);
+}

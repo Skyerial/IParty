@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.InputSystem.Controls;
 
 public class ServerManager : MonoBehaviour
 {
@@ -44,6 +45,8 @@ public class ServerManager : MonoBehaviour
 
     // Map of remoteId (IP or tunnel‐clientId) → VirtualController
     public static Dictionary<string, VirtualController> allControllers = new Dictionary<string, VirtualController>();
+    public static Dictionary<VirtualController, IWebSocketConnection> allSockets = new Dictionary<VirtualController, IWebSocketConnection>();
+
 
     void Awake()
     {
@@ -155,6 +158,8 @@ public class ServerManager : MonoBehaviour
                     var device = InputSystem.AddDevice<VirtualController>();
                     device.remoteId = socket.ConnectionInfo.ClientIpAddress;
                     allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
+                    allSockets[device] = socket;
+
                     // TESTING CHARACTER CREATION
                     // PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 });
@@ -172,6 +177,7 @@ public class ServerManager : MonoBehaviour
                             if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
                         }
                         PlayerManager.RemovePlayer(allControllers[socket.ConnectionInfo.ClientIpAddress]);
+                        allSockets.Remove(allControllers[socket.ConnectionInfo.ClientIpAddress]);
                         allControllers.Remove(socket.ConnectionInfo.ClientIpAddress);
                     }
                 });
@@ -320,6 +326,20 @@ public class ServerManager : MonoBehaviour
         };
     }
 
+    public static void SendtoAllSockets(string controller)
+    {
+        var messageObject = new MessagePlayers
+        {
+            type = "controller",
+            controller = controller
+        };
+
+        foreach (var sock in allSockets.Values.ToArray())
+        {
+            string json = JsonUtility.ToJson(messageObject);
+            sock.Send(json);
+        }
+    }
     void HandleCommandOnMainThread(string json, string sender)
     {
         try
@@ -405,6 +425,9 @@ public class ServerManager : MonoBehaviour
 
     [Serializable]
     public class PlayerConfig { public string name;  public string color; }
+
+    [Serializable]
+    public class MessagePlayers { public string type;  public string controller; }
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
