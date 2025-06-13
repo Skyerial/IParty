@@ -1,4 +1,4 @@
-import { send } from "../connection.js";
+import { socketManager } from "../main.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { color_change } from "./background_render.js";
 
@@ -60,7 +60,7 @@ function main() {
 
 
     // NEW CHARACTER CREATION
-    send(playerData)
+    socketManager.send(playerData)
     const js = new JoystickController(root);
     js.init();
     });

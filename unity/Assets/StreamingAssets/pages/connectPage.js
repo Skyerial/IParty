@@ -1,6 +1,7 @@
-import { JoystickController } from "./joystickController.js";
+import { JoystickController } from "../controllers/joystickController.js";
 import { ViewRenderer } from "../utils/viewRenderer.js";
 import { socketManager } from "../main.js";
+import { Login } from "../login/login.js";
 
 
 export class ConnectPage extends ViewRenderer {
@@ -17,12 +18,12 @@ export class ConnectPage extends ViewRenderer {
             }
                 
             // TEST: Init character login
-            // const js = new Login(this.container)
-            // await js.init()
+            const js = new Login(this.container)
+            await js.init()
 
             // Init joystick 
-            const js = new JoystickController(this.container);
-            await js.init();
+            // const js = new JoystickController(this.container);
+            // await js.init();
         });
     }
 }

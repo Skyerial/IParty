@@ -12,7 +12,7 @@ export class Login {
     }
 
     async init() {
-        const html = await this.loadHTML("/login/index.html");
+        const html = await this.loadHTML("./login/index.html");
         this.container.innerHTML = html;
         
         // Three
@@ -31,12 +31,12 @@ export class Login {
         // forum.js
         var forum = document.createElement("script")
         forum.type = "module"
-        forum.src = "/login/forum.js"
+        forum.src = "./login/forum.js"
 
         // background_renderer.js
         var back = document.createElement("script")
         back.type = "module"
-        back.src = "/login/background_render.js"
+        back.src = "./login/background_render.js"
 
 
         this.container.append(three)

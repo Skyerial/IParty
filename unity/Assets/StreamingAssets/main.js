@@ -1,16 +1,17 @@
-import { SocketManager } from "./utils/socketManager.js";
+import { DpadController } from "./controllers/dpadController.js";
+import { JoystickController } from "./controllers/joystickController.js";
+import { Login } from "./login/login.js";
 import { ConnectPage } from "./pages/connectPage.js";
-import { JoystickController } from "./pages/joystickController.js";
+import { SocketManager } from "./utils/socketManager.js";
 import { NavBar } from "./pages/navBar.js";
 
-// Create the shared socket manager instance
-export const socketManager = new SocketManager();
+export let socketManager = new SocketManager('178.128.247.108');
 
 window.addEventListener("DOMContentLoaded", async () => {
-  const root = document.querySelector(".view-container");
-  const navContainer = document.querySelector(".nav-container");
+  let root = document.querySelector(".view-container");
+  let navContainer = document.querySelector(".nav-container");
 
-  const nav = new NavBar(navContainer);
+  let nav = new NavBar(navContainer);
   await nav.init();
 
   const params = new URLSearchParams(window.location.search);
@@ -18,24 +19,13 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (code && !socketManager.isConnected()) {
     socketManager.connect(code);
-
-    socketManager.setHandlers({
-      onMessage: (data) => {
-        console.log("📩 Received:", data);
-        // Optionally route messages to a controller
-      },
-      onOpen: () => {
-        console.log("🟢 Socket connected");
-      },
-      onClose: () => {
-        console.log("🔴 Socket disconnected");
-      }
-    });
-
-    const controller = new JoystickController(root, socketManager);
-    await controller.init();
+    let l = new Login(root)
+    await l.init();
+    // Automatically load the controller when QR is used
+    // let js = new JoystickController(root);
+    // await js.init();
   } else {
-    const connectPage = new ConnectPage(root);
-    await connectPage.init();
+    let cp = new ConnectPage(root);
+    await cp.init();
   }
 });

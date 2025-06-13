@@ -6,10 +6,10 @@ export class JoystickController {
     }
 
     async init() {
-        const layout = new LayoutManager(this.container, true);
+        const layout = new LayoutManager(this.container, false);
         await layout.init();
 
-        await layout.addDpad();
+        await layout.addJoystick();
         await layout.addButtons();
     }
 }

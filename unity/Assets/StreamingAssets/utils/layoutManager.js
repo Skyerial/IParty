@@ -1,8 +1,8 @@
 import { socketManager } from "../main.js";
-import { ButtonComponent } from "../pages/components/buttonComponent.js";
-import { ButtonsComponent } from "../pages/components/buttonsComponent.js";
-import { DpadComponent } from "../pages/components/dpadComponent.js";
-import { JoystickComponent } from "../pages/components/joystickComponent.js";
+import { ButtonComponent } from "../controllers/components/buttonComponent.js";
+import { ButtonsComponent } from "../controllers/components/buttonsComponent.js";
+import { DpadComponent } from "../controllers/components/dpadComponent.js";
+import { JoystickComponent } from "../controllers/components/joystickComponent.js";
 import { ViewRenderer } from "./viewRenderer.js";
 
 export class LayoutManager extends ViewRenderer {

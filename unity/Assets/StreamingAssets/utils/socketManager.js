@@ -133,4 +133,11 @@ export class SocketManager {
     pick(obj, keys) {
         return keys.reduce((res, k) => { res[k] = obj[k]; return res; }, {});
     }
+
+    send(data) {
+        if (this.socket.readyState === WebSocket.OPEN) {
+            console.log("sending:", JSON.stringify(data));
+            this.socket.send(JSON.stringify(data));
+        }
+    }
 }

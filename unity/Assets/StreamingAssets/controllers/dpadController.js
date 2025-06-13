@@ -1,4 +1,4 @@
-import { ControllerLayout } from "./controllerLayout.js";
+import { LayoutManager } from "../utils/layoutManager.js";
 
 export class DpadController {
     constructor(container) {
@@ -6,7 +6,7 @@ export class DpadController {
     }
 
     async init() {
-        const layout = new ControllerLayout(this.container, false);
+        const layout = new LayoutManager(this.container, false);
         await layout.init();
 
         await layout.addDpad();
