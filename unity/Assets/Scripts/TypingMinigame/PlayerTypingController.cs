@@ -70,6 +70,7 @@ public class PlayerTypingController : MonoBehaviour
 
             if (wordsLeft == 0)
             {
+                raceController?.WinningAnim();
                 Debug.Log($"{gameObject.name} finished!");
                 TMGameManager.Instance?.OnPlayerFinished(this);
             }

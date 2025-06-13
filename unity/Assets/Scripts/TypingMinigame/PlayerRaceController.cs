@@ -8,9 +8,14 @@ public class PlayerRaceController : MonoBehaviour
     private Vector3 startPosition;
     private float stepDistance;
     private int wordsTyped = 0;
+    public GameObject player;
+    private Animator animator;
+    private bool gameEnd = false;
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
+
         startPosition = transform.position;
 
         // Total distance from start to finish
@@ -32,7 +37,8 @@ public class PlayerRaceController : MonoBehaviour
         Vector3 targetPosition = startPosition + direction * (stepDistance * wordsTyped);
 
         // Move smoothly to the new position
-        StartCoroutine(MovePlayerSmoothly(targetPosition));
+        StartCoroutine(MovePlayer(targetPosition));
+        // StartCoroutine(MovePlayerSmoothly(targetPosition));
     }
 
     private IEnumerator MovePlayerSmoothly(Vector3 targetPos)
@@ -49,5 +55,39 @@ public class PlayerRaceController : MonoBehaviour
         }
 
         transform.position = targetPos;
+    }
+
+    private IEnumerator MovePlayer(Vector3 targetPos)
+    {
+        animator.SetBool("IsRunning", true);
+        player.LeanMoveX(targetPos.x, 0.4f);
+
+        while (LeanTween.isTweening(player.gameObject))
+        {
+            yield return null;
+        }
+
+        animator.SetBool("IsRunning", false);
+    }
+
+    public void WinningAnim()
+    {
+        while (!gameEnd)
+        {
+            Debug.Log("chekc");
+            animator.SetTrigger("Jump");
+            StartCoroutine(WaitForAnimation(animator, "Jump"));
+        }
+    }
+    
+    private IEnumerator WaitForAnimation(Animator animator, string stateName)
+    {
+        // Wait until the Animator is in the desired state
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+            yield return null;
+
+        // Now wait for the animation to finish
+        float length = animator.GetCurrentAnimatorStateInfo(0).length;
+        yield return new WaitForSeconds(length);
     }
 }
