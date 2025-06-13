@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour
     public class PlayerStats
     {
         public int position;
-        public int color;
+        public string color;
         public bool winner;
         public string name;
     }
@@ -28,12 +28,13 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public static void RegisterPlayer(InputDevice device, int color)
+    public static void RegisterPlayer(InputDevice device, string color, string name)
     {
         playerStats[device] = new PlayerStats
         {
             position = 0,
-            color = color
+            color = color,
+            name = name
         };
     }
 

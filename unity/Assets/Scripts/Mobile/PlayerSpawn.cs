@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEngine.TextCore;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class PlayerSpawn : MonoBehaviour
 {
@@ -16,6 +17,28 @@ public class PlayerSpawn : MonoBehaviour
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "Lobby") ServerManager.allControllers?.Clear();
     }
+
+    Material findColor(InputDevice device)
+    {
+        Material mat = Resources.Load<Material>("Materials/Default");
+        switch (PlayerManager.playerStats[device].color)
+        {
+            case "Yellow":
+                mat = Resources.Load<Material>("Materials/Global/Yellow");
+                break;
+            case "Red":
+                mat = Resources.Load<Material>("Materials/Global/Red");
+                break;
+            case "Green":
+                mat = Resources.Load<Material>("Materials/Global/Green");
+                break;
+            case "Blue":
+                mat = Resources.Load<Material>("Materials/Global/Blue");
+                break;
+        }
+        return mat;
+    }
+
     public void OnPlayerJoined(PlayerInput playerInput)
     {
         GameObject playersParent = GameObject.Find("Players");
@@ -51,6 +74,12 @@ public class PlayerSpawn : MonoBehaviour
                     emptySlot = characterShow;
                     Debug.Log("Player not found in characterShow, looking for empty slot");
                     playerWaitingFrame.gameObject.SetActive(false);
+
+                    // TESTING PLAYER MANAGER
+                    TextMeshProUGUI nameField = characterFrame.Find("PlayerName").Find("PlayerName").GetComponent<TextMeshProUGUI>();
+                    // TextMeshProUGUI nameField = nameObject.GetComponent<TextMeshProUGUI>();
+                    string playerName = PlayerManager.playerStats[playerInput.devices[0]].name;
+                    nameField.text = playerName;
                     characterFrame.gameObject.SetActive(true);
                     break;
                 }
@@ -62,6 +91,13 @@ public class PlayerSpawn : MonoBehaviour
                 Debug.LogWarning("No empty player slot found!");
                 return;
             }
+
+            // TESTING PLAYER MANAGER
+            Transform body = playerInput.transform.Find("Body");
+            SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
+            renderer.material = findColor(playerInput.devices[0]);
+
+
             playerInput.transform.SetParent(emptySlot, false);
             float offsetY = -emptySlot.GetComponent<RectTransform>().rect.height * 0.15f;
             playerInput.transform.localPosition = new Vector3(0f, offsetY, 0f);

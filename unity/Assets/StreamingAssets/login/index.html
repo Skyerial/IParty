@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iParty</title>
+    <style>
+        html, body, #non-header {
+            height: 100%; /* Make them fill the entire screen height */
+            margin: 0;   /* Remove default browser margins */
+            padding: 0;  /* Remove default browser padding */
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        header {
+            display: flex;
+            height: 10vh;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        header img {
+            display: table;
+            height: 10vw;
+            margin: auto;
+            z-index: inherit;
+        }
+
+        body {
+            /* background-image: url("https://media.sketchfab.com/models/cd59f48ed6a7492da639efdc55f2c1f8/thumbnails/7b3a95250f974bd98272c32be80389cc/85aff66d3d3946de88ad555e2af0bd85.jpeg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center; */
+            font-family: Georgia;
+            font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        #non-header {
+            display:flex;
+            justify-content: flex-end;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        #webcamVideo {
+            width: fit-content;
+            height: 30%;
+            background-color: rgb(88, 88, 255);
+            object-fit: contain;
+            border: 3px solid black;
+        }
+
+        .login-wrap {
+            height: fit-content;
+            margin: 5vh auto;
+            padding: 5vh 5vw;
+            width: 90vw;
+            max-width: 400px;
+            background: rgba(50, 50, 50, 0.7);
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            border-radius: 10px;
+            z-index: inherit;
+        }
+
+        .label-and-input {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* spacing between label and input */
+            margin-bottom: 20px;
+        }
+
+        .label-and-input .label {
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .label-and-input .input {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            background-color: #f9f9f9;
+            color: #000;
+            transition: border-color 0.2s ease;
+        }
+
+        .label-and-input .input:focus {
+            border-color: #007bff;
+            background-color: #fff;
+        }
+
+
+        .color-picking-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .color-box {
+            width: 20%;
+            height: 5vw;
+            border-radius: 8px;
+            border: 2px solid #fff;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .color-box:hover,
+        .color-box:active,
+        .color-box:focus {
+        transform: scale(1.1);
+        transition: transform 0.2s ease;
+        outline: none; /* if you want */
+        }
+
+        .color-box.selected {
+            border: 3px solid #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.6);
+        }
+
+        /* Individual colors */
+        #Blue { background-color: #007bff; }
+        #Yellow { background-color: #ffc107; }
+        #Green { background-color: #28a745; }
+        #Red { background-color: #dc3545; }
+
+        .button-18 {
+        align-items: center;
+        background-color: #004992;
+        border: 0;
+        border-radius: 20px;
+        box-sizing: border-box;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-flex;
+        font-family: -apple-system, system-ui, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        justify-content: center;
+        line-height: 20px;
+        max-width: 480px;
+        min-height: 40px;
+        min-width: 0px;
+        overflow: hidden;
+        padding: 0px;
+        padding-left: 20px;
+        padding-right: 20px;
+        text-align: center;
+        touch-action: manipulation;
+        transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+        }
+
+        .button-18:hover,
+        .button-18:focus {
+        background-color: #16437E;
+        color: #ffffff;
+        }
+
+        .button-18:active {
+        background: #09223b;
+        color: rgb(255, 255, 255, .7);
+        }
+
+        .button-18:disabled {
+        cursor: not-allowed;
+        background: rgba(0, 0, 0, .08);
+        color: rgba(0, 0, 0, .3);
+        }
+
+        #play-button {
+            flex-grow: 1;
+            margin-left: 5%;
+            margin-right: 5%;
+            margin-bottom: 10%;
+        }
+
+        /* Note that this class is not part of the body*/
+        #model-background {
+            pointer-events: auto;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; /* background layer */
+        }
+    </style>
+</head>
+<body>
+    <div id="model-background"></div>
+    <header>
+        <img src="/login/logo.png">
+    </header>
+    <video id="webcam" autoplay playsinline style="display: none;"></video>
+    <video id="snapshotCanvas" style="display:none;"></video>
+    <!-- <canvas id="canvas" width="640" height="480" style="display:none;"></canvas> -->
+    <div id="non-header">
+        <div class="login-wrap">
+            <button class="button-18" id="picture-snap">Take Picture</button>
+            <button class="button-18" id="picture-save">[DEBUG] Save</button>
+            <div class="label-and-input">
+                <label for="user" class="label">Player Name</label>
+                <input id="user" type="text" class="input" placeholder="Player Name" required>
+            </div>
+
+            <div class="color-picking-grid">
+                <button class="color-box" id="Blue"></button>
+                <button class="color-box" id="Yellow"></button>
+                <button class="color-box" id="Green"></button>
+                <button class="color-box" id="Red"></button>
+            </div>
+            <button class="button-18" id="play-button">Play</button>
+        </div>
+    </div>
+</body>
+</html>
