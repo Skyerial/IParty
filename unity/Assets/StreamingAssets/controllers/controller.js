@@ -49,6 +49,10 @@ export class Controller {
         });
     }
 
+    sendAllInput() {
+        
+    }
+
     sendInput(input) {
         if (isConnected()) {
             send(input);

@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.iOS;
 
 public class JoinAll : MonoBehaviour
 {

@@ -1,6 +1,7 @@
 import { ConnectPage } from "./controllers/connectPage.js";
 import { JoystickController } from "./controllers/joystickController.js";
 import { NavBar } from "./controllers/navBar.js";
+import { Login } from "./login/login.js";
 
 export let socket = null;
 
@@ -16,9 +17,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (code && !isConnected()) {
     connectToServer(code);
+    let l = new Login(root)
+    await l.init();
     // Automatically load the controller when QR is used
-    let js = new JoystickController(root);
-    await js.init();
+    // let js = new JoystickController(root);
+    // await js.init();
   } else {
     let cp = new ConnectPage(root);
     await cp.init();

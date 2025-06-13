@@ -18,33 +18,16 @@ public class PlayerSpawn : MonoBehaviour
         if (currentScene == "Lobby") ServerManager.allControllers?.Clear();
     }
 
-    Material findColor(InputDevice device)
-    {
-        Material mat = Resources.Load<Material>("Materials/Default");
-        switch (PlayerManager.playerStats[device].color)
-        {
-            case "Yellow":
-                mat = Resources.Load<Material>("Materials/Global/Yellow");
-                break;
-            case "Red":
-                mat = Resources.Load<Material>("Materials/Global/Red");
-                break;
-            case "Green":
-                mat = Resources.Load<Material>("Materials/Global/Green");
-                break;
-            case "Blue":
-                mat = Resources.Load<Material>("Materials/Global/Blue");
-                break;
-        }
-        return mat;
-    }
-
     public void OnPlayerJoined(PlayerInput playerInput)
     {
         GameObject playersParent = GameObject.Find("Players");
         // if not in lobby. 
         if (playersParent == null)
         {
+            Transform body = playerInput.transform.Find("Body");
+            SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
+            renderer.material = PlayerManager.findColor(playerInput.devices[0]);
+            
             GameObject SpawnOBJ = GameObject.Find("Spawn");
             Transform Spawn = SpawnOBJ.GetComponent<Transform>();
             playerInput.transform.position = Spawn.transform.position;
@@ -95,7 +78,7 @@ public class PlayerSpawn : MonoBehaviour
             // TESTING PLAYER MANAGER
             Transform body = playerInput.transform.Find("Body");
             SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
-            renderer.material = findColor(playerInput.devices[0]);
+            renderer.material = PlayerManager.findColor(playerInput.devices[0]);
 
 
             playerInput.transform.SetParent(emptySlot, false);

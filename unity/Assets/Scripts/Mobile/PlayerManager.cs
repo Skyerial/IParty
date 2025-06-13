@@ -47,4 +47,25 @@ public class PlayerManager : MonoBehaviour
     {
         playerStats[device].position += position;
     }
+
+    public static Material findColor(InputDevice device)
+    {
+        Material mat = Resources.Load<Material>("Materials/Default");
+        switch (playerStats[device].color)
+        {
+            case "Yellow":
+                mat = Resources.Load<Material>("Materials/Global/Yellow");
+                break;
+            case "Red":
+                mat = Resources.Load<Material>("Materials/Global/Red");
+                break;
+            case "Green":
+                mat = Resources.Load<Material>("Materials/Global/Green");
+                break;
+            case "Blue":
+                mat = Resources.Load<Material>("Materials/Global/Blue");
+                break;
+        }
+        return mat;
+    }
 }

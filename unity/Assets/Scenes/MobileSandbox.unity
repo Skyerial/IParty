@@ -2381,7 +2381,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7075673326249793857, guid: abbe378b3a16b0149a0f41f7160e1e02, type: 3}
       propertyPath: m_Name
-      value: RawImage
+      value: QRCODE
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
