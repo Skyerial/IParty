@@ -1,4 +1,4 @@
-import { ControllerLayout } from "./controllerLayout.js";
+import { LayoutManager } from "../utils/layoutManager.js";
 
 export class JoystickController {
     constructor(container) {
@@ -6,10 +6,10 @@ export class JoystickController {
     }
 
     async init() {
-        const layout = new ControllerLayout(this.container, false);
+        const layout = new LayoutManager(this.container, true);
         await layout.init();
 
-        await layout.addJoystick();
+        await layout.addDpad();
         await layout.addButtons();
     }
 }

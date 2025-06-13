@@ -72,7 +72,7 @@
     color: white;
 }
 
-.game-button.btn-c {
+.game-button.btn-d {
     top: 0;
     left: 60px;
     background-color: #ffc107;
@@ -85,7 +85,7 @@
     background-color: #28a745;
 }
 
-.game-button.btn-d {
+.game-button.btn-c {
     top: 60px;
     left: 0;
     background-color: #007bff;

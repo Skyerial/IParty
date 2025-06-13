@@ -1,14 +1,16 @@
-import { ButtonComponent } from "./components/buttonComponent.js";
-import { ButtonsComponent } from "./components/buttonsComponent.js";
-import { DpadComponent } from "./components/dpadComponent.js";
-import { JoystickComponent } from "./components/joystickComponent.js";
-import { Controller } from "./controller.js";
+import { socketManager } from "../main.js";
+import { ButtonComponent } from "../pages/components/buttonComponent.js";
+import { ButtonsComponent } from "../pages/components/buttonsComponent.js";
+import { DpadComponent } from "../pages/components/dpadComponent.js";
+import { JoystickComponent } from "../pages/components/joystickComponent.js";
+import { ViewRenderer } from "./viewRenderer.js";
 
-export class ControllerLayout extends Controller {
+export class LayoutManager extends ViewRenderer {
     constructor(container, vertical = false) {
-        super("./views/controllerView.html",container);
+        super("./views/controllerView.html", container);
         this.slots = [];
         this.vertical = vertical;
+        this.hasMovementComponent = false;
     }
 
     bindEvents() {
@@ -17,11 +19,25 @@ export class ControllerLayout extends Controller {
     }
 
     async addDpad() {
+        if (this.hasMovementComponent){
+            alert("You can only use a joystick or a D-pad, not both.");
+            return;
+        }
+
+        socketManager.changeMovementType("dpad");
         await this.addComponent(DpadComponent);
+        this.hasMovementComponent = true;
     }
 
     async addJoystick() {
+        if (this.hasMovementComponent){
+            alert("You can only use a joystick or a D-pad, not both.");
+            return;
+        }
+
+        socketManager.changeMovementType("analog");
         await this.addComponent(JoystickComponent);
+        this.hasMovementComponent = true;
     }
 
     async addButtons() {
@@ -43,7 +59,7 @@ export class ControllerLayout extends Controller {
         let container = component.getContainer();
         const slot = document.createElement('div');
         slot.className = 'controller-slot';
-        
+
         slot.appendChild(container);
         this.layout.appendChild(slot);
         this.slots.push(slot);
