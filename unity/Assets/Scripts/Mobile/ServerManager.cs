@@ -352,19 +352,20 @@ public class ServerManager : MonoBehaviour
                 Debug.Log(cmd.type);
                 switch (cmd.type)
                 {
-                    case "analogInput":
-                        state = new GamepadState { leftStick = new Vector2(cmd.x, cmd.y) };
+                    case "analog":
+                        state = new GamepadState
+                        {
+                            leftStick = new Vector2(cmd.x, cmd.y),
+                             buttons =
+                            (ushort)(
+                                (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
+                                (cmd.D  ? (1 << (int)GamepadButton.North) : 0) |
+                                (cmd.B  ? (1 << (int)GamepadButton.East)  : 0) |
+                                (cmd.C  ? (1 << (int)GamepadButton.West)  : 0)
+                            )
+                        };
                         break;
-                    case "buttonInput":
-                        if (Enum.TryParse<GamepadButton>(cmd.button, ignoreCase: true, out var button))
-                        {
-                            Debug.Log(button);
-                            state = new GamepadState().WithButton(button, cmd.state);
-                        }
-                        else
-                        {
-                            Debug.Log("Control not found.");
-                        }
+                    case "dpad":
                         break;
                 }
                 InputSystem.QueueStateEvent(controller, state);
@@ -421,7 +422,17 @@ public class ServerManager : MonoBehaviour
     }
 
     [Serializable]
-    public class CommandMessage { public string type; public float x; public float y; public string button; public bool state; }
+    public class CommandMessage
+    {
+        public string type;
+        public float x;
+        public float y;
+        public bool A;
+        public bool B;
+        public bool C;
+        public bool D;
+
+    }
 
     [Serializable]
     public class PlayerConfig { public string name;  public string color; }

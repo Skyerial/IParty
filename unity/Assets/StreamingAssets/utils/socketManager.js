@@ -1,3 +1,6 @@
+import { DpadController } from "../controllers/dpadController.js";
+import { JoystickController } from "../controllers/joystickController.js";
+
 export class SocketManager {
     constructor(relayHost = '178.128.247.108', movementType = 'analog') {
         this.socket = null;
@@ -18,7 +21,7 @@ export class SocketManager {
         this.activeMovementType = type === 'dpad' ? 'dpad' : 'analog';
         // base controller buttons
         this.state = {
-            type: 'controllerState',
+            type: type,
             A: false,
             B: false,
             C: false,
@@ -41,8 +44,33 @@ export class SocketManager {
             : `ws://${this.relayHost}:5000/host/${code}/ws`;
         this.socket = new WebSocket(url);
         this.socket.onopen = () => { console.log('🟢 Connected'); if (this.onOpen) this.onOpen(); };
-        this.socket.onmessage = e => { const data = JSON.parse(e.data); if (this.onMessage) this.onMessage(data); };
+        this.socket.onmessage = (e) => { 
+            console.log(e.data);
+            const data = JSON.parse(e.data);
+            this.handleCommand(data);
+            // if (this.onMessage) this.onMessage(data); 
+        };
         this.socket.onclose = () => { console.log('🔴 Disconnected'); this.socket = null; if (this.onClose) this.onClose(); };
+    }
+
+    loadController(controller) {
+        let root = document.querySelector(".view-container");
+
+        if (controller == "dpad-preset") {
+            let js = new DpadController(root)
+            js.init()
+        } else if (controller == "joystick-preset") {
+            let js = new JoystickController(root)
+            js.init()
+        }
+    }
+
+    handleCommand(data) {
+          if (data.type == "controller") {
+                this.loadController(data.controller)
+            }
+            console.log(data.type);
+            console.log(data.controller);
     }
 
     disconnect() {
