@@ -7,8 +7,6 @@ public class Movement : MonoBehaviour
     InputAction throwAction;
     public float moveSpeed = 0.5f;
     public BombManager bombManager;
-    
-    private Animator animator;
 
     public float throwCooldown = 0.8f;
     private float cooldownTimer = 0f;
@@ -19,7 +17,6 @@ public class Movement : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         throwAction = playerInput.actions.FindAction("Throw");
         throwAction.Enable();
-        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -28,7 +25,6 @@ public class Movement : MonoBehaviour
         cooldownTimer += Time.deltaTime;
         if (IsHoldingBomb() && throwAction.triggered && cooldownTimer >= throwCooldown)
         {
-            animator.SetBool("IsThrown", true);
             ThrowBomb();
             cooldownTimer = 0f;
         }

@@ -33,6 +33,10 @@ public class Bomb : MonoBehaviour
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);
         flickerTimer += Time.deltaTime;
 
+        float scale = Mathf.Lerp(0.5f, 0.4f, Mathf.PingPong(flickerTimer * 4f, 1f));
+        transform.localScale = new Vector3(scale, scale, scale);
+
+
         if (flickerTimer >= flickerInterval)
         {
             rend.material.color = isRed ? originalColor : Color.red;
