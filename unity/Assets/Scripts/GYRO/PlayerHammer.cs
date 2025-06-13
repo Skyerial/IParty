@@ -1,51 +1,103 @@
 using UnityEngine;
-using System.Collections;
-using UnityEngine.InputSystem; // <-- 1. ADD THIS LINE
+using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerHammer : MonoBehaviour
 {
-    [Tooltip("Set this to 1, 2, 3, or 4 for each player instance.")]
-    public int playerID;
+    [Header("Hammer Settings")]
+    public Transform hammer;              // Reference to the actual hammer Transform (e.g., Hammer03 child object)
+    public float slamSpeed = 500f;        // Rotation speed for slamming
+    public float maxSlamAngle = 130f;     // How far down the hammer should rotate in degrees
+    public LayerMask moleLayer;           // LayerMask to detect moles only (assign "Mole" layer in inspector)
 
-    [Tooltip("Drag the GameManager object from the scene here.")]
-    public GameManager gameManager;
+    private Quaternion originalRotation;  // The hammer's default rotation to reset to after slam
+    private bool isSlamming = false;      // Lock to prevent double slam
+    private bool moleWasHit = false;      // Flag to track if a mole was hit during this slam
 
-    void Update()
+    private PlayerInput playerInput;      // Input System reference
+    private InputAction slamAction;       // Attack action (spacebar or button)
+
+    void Awake()
     {
-        if (playerID == 1 && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        // Setup input system and hook into Attack action
+        playerInput = GetComponent<PlayerInput>();
+        slamAction = playerInput.actions.FindAction("Attack");
+
+        if (slamAction != null)
+            slamAction.performed += ctx => TrySlam();
+        else
+            Debug.LogError("❌ No 'Attack' action found in InputActions.");
+    }
+
+    void Start()
+    {
+        // Cache original hammer rotation
+        originalRotation = hammer.localRotation;
+    }
+
+    void OnEnable() => slamAction?.Enable();
+    void OnDisable() => slamAction?.Disable();
+
+    private void TrySlam()
+    {
+        if (!isSlamming)
         {
-            TriggerSmack();
+            Debug.Log("🔨 Slam triggered!");
+            StartCoroutine(Slam());
         }
     }
 
-    public void TriggerSmack()
+    private System.Collections.IEnumerator Slam()
     {
-        if (gameManager == null) return;
+        isSlamming = true;
+        moleWasHit = false;
 
-        Debug.Log($"Player {playerID} triggered a smack!");
-        gameManager.PlayerAttemptedHit(playerID);
-        StartCoroutine(SmackAnimation());
+        Quaternion targetRotation = originalRotation * Quaternion.Euler(maxSlamAngle, 0f, 0f);
+
+        // --- Slam phase ---
+        while (!moleWasHit && Quaternion.Angle(hammer.localRotation, targetRotation) > 0.5f)
+        {
+            hammer.localRotation = Quaternion.RotateTowards(
+                hammer.localRotation,
+                targetRotation,
+                slamSpeed * Time.deltaTime
+            );
+
+            yield return null;
+        }
+
+        if (!moleWasHit)
+        {
+            Debug.LogWarning("❌ Slam finished but hit NOTHING. Make sure colliders and layers are correct.");
+        }
+
+        // --- Return phase ---
+        yield return new WaitForSeconds(0.1f);
+
+        float t = 0f;
+        float returnDuration = 0.1f;
+        Quaternion downRot = hammer.localRotation;
+
+        while (t < returnDuration)
+        {
+            hammer.localRotation = Quaternion.Slerp(downRot, originalRotation, t / returnDuration);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        hammer.localRotation = originalRotation;
+        isSlamming = false;
     }
 
-    IEnumerator SmackAnimation()
+    // ✅ Trigger detection (ensure hammer has a Trigger Collider and Rigidbody)
+    private void OnTriggerEnter(Collider other)
     {
-        Vector3 originalPosition = transform.position;
-        Vector3 targetPosition = Vector3.zero;
+        if (!isSlamming) return;
 
-        float duration = 0.05f;
-        for (float t = 0; t < duration; t += Time.deltaTime)
+        if (((1 << other.gameObject.layer) & moleLayer) != 0)
         {
-            transform.position = Vector3.Lerp(originalPosition, targetPosition, t / duration);
-            yield return null;
+            Debug.Log("🎯 Mole hit via trigger: " + other.name);
+            moleWasHit = true;
         }
-
-        duration = 0.2f;
-        for (float t = 0; t < duration; t += Time.deltaTime)
-        {
-            transform.position = Vector3.Lerp(targetPosition, originalPosition, t / duration);
-            yield return null;
-        }
-
-        transform.position = originalPosition;
     }
 }
