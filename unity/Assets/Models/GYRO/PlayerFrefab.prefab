@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 6425732207057946189}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: -1}
-  m_LocalPosition: {x: 9.9898205, y: 6.8263397, z: -34.89536}
+  m_LocalPosition: {x: 5, y: 8, z: -30}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -178,6 +178,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4841028818736464193}
     m_Modifications:
+    - target: {fileID: 66514430805052417, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 2645769060415038673, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.5
@@ -192,15 +196,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2645769060415038673, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.98982
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 2645769060415038673, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.82634
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2645769060415038673, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -18.895359
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 2645769060415038673, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: m_LocalRotation.w
@@ -230,13 +234,57 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3293520663727465578, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3509658742250819682, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: slamAngle
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: slamAngleX
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: slamAngleZ
+      value: -35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 1541048756515972662}
+    - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: dizzyDuration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: dizzyIntensity
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4258715321676603519, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: missReturnMultiplier
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4840536798797707559, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5270104406968576829, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5858630630548704907, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
       propertyPath: m_Name
       value: Baton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5858630630548704907, guid: f63d4adcbde4a33f7b41d96bc8abe060, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

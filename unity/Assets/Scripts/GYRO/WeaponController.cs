@@ -6,8 +6,6 @@ using UnityEngine.InputSystem;
 public class WeaponController : MonoBehaviour
 {
     [Header("Slam Settings")]
-    [Tooltip("Degrees to swing down on slam")]
-    public float slamAngle = 60f;
 
     [Tooltip("Total slam duration (down + up) in seconds")]
     public float slamDuration = 0.3f;
@@ -21,10 +19,10 @@ public class WeaponController : MonoBehaviour
     [Tooltip("Slam angle Z (sideways)")]
     public float slamAngleZ = -25f;
 
-
-    public CanvasGroup dizzyOverlay;
-
+    [Tooltip("for the dizzy effect")]
+    public Transform playerCamera;
     public float dizzyDuration = 2f;
+    public float dizzyIntensity = 1f;
 
     PlayerInput playerInput;
     InputAction slamAction;
@@ -106,36 +104,48 @@ public class WeaponController : MonoBehaviour
         else if (other.CompareTag("Bomb"))
         {
             hasHit = true;
-            Debug.Log("💣 Bomb hit! Player is dizzy!");
-            // StartCoroutine(HandleBombHit());
+            var Bomb = other.GetComponent<Bomb>();
+            Bomb?.OnHit();
+            StartCoroutine(BombEffect());
         }
     }
 
+    IEnumerator BombEffect()
+    {
+        Vector3 originalPosition = playerCamera.localPosition;
+        Quaternion originalRotation = playerCamera.localRotation;
 
-    // IEnumerator HandleBombHit()
-    // {
-    //     // Disable input
-    //     slamAction.Disable();
+        float elapsed = 0f;
 
-    //     // Show overlay
-    //     if (dizzyOverlay != null)
-    //     {
-    //         dizzyOverlay.alpha = 1f;
-    //         dizzyOverlay.blocksRaycasts = true;
-    //     }
+        while (elapsed < dizzyDuration)
+        {
+            float fade = 1f - (elapsed / dizzyDuration);
 
-    //     yield return new WaitForSeconds(dizzyDuration);
+            float x = Mathf.Sin(Time.time * 10f) * 0.05f * dizzyIntensity * fade;
+            float y = Mathf.Cos(Time.time * 12f) * 0.05f * dizzyIntensity * fade;
 
-    //     // Hide overlay
-    //     if (dizzyOverlay != null)
-    //     {
-    //         dizzyOverlay.alpha = 0f;
-    //         dizzyOverlay.blocksRaycasts = false;
-    //     }
+            float zRot = Mathf.Sin(Time.time * 6f) * 5f * fade;
+            playerCamera.localPosition = originalPosition + new Vector3(x, y, 0);
+            playerCamera.localRotation = originalRotation * Quaternion.Euler(0, 0, zRot);
 
-    //     // Re-enable input
-    //     slamAction.Enable();
-    // }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Smooth restore
+        float smoothTime = 0.2f;
+        float t = 0f;
+        while (t < smoothTime)
+        {
+            playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, originalPosition, t / smoothTime);
+            playerCamera.localRotation = Quaternion.Slerp(playerCamera.localRotation, originalRotation, t / smoothTime);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        playerCamera.localPosition = originalPosition;
+        playerCamera.localRotation = originalRotation;
+    }
 
 
 }
