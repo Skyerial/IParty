@@ -63,7 +63,7 @@ public class SquatManager : MonoBehaviour
         gameEnded = true;
         inputEnabled = false;
 
-        // Step 1: collect all mash counts
+        //collect all mash counts
         List<(GameObject player, int mashCount)> rankings = new List<(GameObject, int)>();
 
         foreach (GameObject player in playerList)
@@ -76,23 +76,19 @@ public class SquatManager : MonoBehaviour
             }
         }
 
-        // Step 2: sort by mash count descending
         rankings.Sort((a, b) => b.mashCount.CompareTo(a.mashCount));
 
-        // Step 3: save to rankingList
+        //save to rankingList
         rankingList.Clear();
         foreach (var entry in rankings)
         {
             rankingList.Add(entry.player);
         }
 
-        // Step 4: set highest player for camera
         if (rankingList.Count > 0)
         {
             highestPlayer = rankingList[0];
         }
-
-        // Step 5: start float animation after delay
         StartCoroutine(DelayedFloatAnimation(floatStartDelay));
     }
 
@@ -115,7 +111,6 @@ public class SquatManager : MonoBehaviour
             Camera.main.GetComponent<CameraFollow>()?.SetTarget(highestPlayer.transform);
         }
 
-        // Optional: log the ranking
         for (int i = 0; i < rankingList.Count; i++)
         {
             Debug.Log($"{i + 1} place: {rankingList[i].name}");
