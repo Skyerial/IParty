@@ -23,7 +23,7 @@ public class PlayerMash : MonoBehaviour
 
         if (mashAction == null)
         {
-            Debug.LogError("Error");
+            Debug.LogError("No input action named 'Mash' found!");
         }
     }
 
@@ -41,6 +41,12 @@ public class PlayerMash : MonoBehaviour
 
     private void OnMashPerformed(InputAction.CallbackContext context)
     {
+        if (!SquatManager.inputEnabled)
+        {
+            Debug.Log("No input allowed");
+            return;
+        }
+
         mashCounter++;
 
         animator.speed = baseSpeed + (mashCounter / pressesPerSpeedUp) * speedIncrement;

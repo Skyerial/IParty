@@ -4,23 +4,24 @@ using System.Collections;
 
 public class SquatManager : MonoBehaviour
 {
+    public static bool inputEnabled = false;
+
     public List<GameObject> playerList = new List<GameObject>();
     private bool gameEnded = false;
     private float gameDuration = 15f;
     private GameObject highestPlayer = null;
     [SerializeField] private float floatStartDelay = 2f;
 
-
     private float timer = 0f;
 
     void Start()
     {
-        StartNewRound();
+        StartCoroutine(CountdownThenStart());
     }
 
     void Update()
     {
-        if (!gameEnded)
+        if (!gameEnded && inputEnabled)
         {
             timer += Time.deltaTime;
             if (timer >= gameDuration)
@@ -28,6 +29,15 @@ public class SquatManager : MonoBehaviour
                 EndGame();
             }
         }
+    }
+
+    IEnumerator CountdownThenStart()
+    {
+        inputEnabled = false;
+        yield return new WaitForSeconds(4f);
+
+        StartNewRound();
+        inputEnabled = true;
     }
 
     void StartNewRound()
@@ -48,6 +58,7 @@ public class SquatManager : MonoBehaviour
     void EndGame()
     {
         gameEnded = true;
+        inputEnabled = false;
 
         int highestPressCount = 1;
         highestPlayer = null;
@@ -65,8 +76,8 @@ public class SquatManager : MonoBehaviour
                 }
             }
         }
-        StartCoroutine(DelayedFloatAnimation(floatStartDelay));
 
+        StartCoroutine(DelayedFloatAnimation(floatStartDelay));
     }
 
     private IEnumerator DelayedFloatAnimation(float delay)
@@ -88,7 +99,4 @@ public class SquatManager : MonoBehaviour
             Camera.main.GetComponent<CameraFollow>()?.SetTarget(highestPlayer.transform);
         }
     }
-
-
-
 }
