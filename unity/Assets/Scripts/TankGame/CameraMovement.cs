@@ -49,6 +49,8 @@ public class CameraMovement : MonoBehaviour
         // Snap to final position and rotation
         transform.position = p2;
         transform.rotation = endRot;
+        GameManager gm = FindAnyObjectByType<GameManager>();
+        gm.StartGame();
     }
 }
 
