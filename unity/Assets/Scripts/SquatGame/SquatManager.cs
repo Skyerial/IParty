@@ -31,10 +31,8 @@ public class SquatManager : MonoBehaviour
         hudController.OnCountdownFinished += HandleCountdownFinished;
         hudController.OnGameTimerFinished += HandleGameTimerFinished;
 
-        // Start countdown
         hudController.ShowCountdown();
     }
-
 
     private void HandleCountdownFinished()
     {
@@ -90,6 +88,33 @@ public class SquatManager : MonoBehaviour
 
         StartCoroutine(DelayedFloatAnimation(floatStartDelay));
     }
+
+    public void UpdateHighestPlayer()
+    {
+        GameObject topPlayer = null;
+        int topCount = -1;
+
+        foreach (GameObject player in playerList)
+        {
+            PlayerMash mash = player.GetComponent<PlayerMash>();
+            if (mash != null)
+            {
+                int count = mash.GetMashCounter();
+                if (count > topCount)
+                {
+                    topCount = count;
+                    topPlayer = player;
+                }
+            }
+        }
+
+        if (topPlayer != null)
+        {
+            CameraFollow cam = Camera.main.GetComponent<CameraFollow>();
+            cam.SetTarget(topPlayer.transform);
+        }
+    }
+
 
     private IEnumerator DelayedFloatAnimation(float delay)
     {

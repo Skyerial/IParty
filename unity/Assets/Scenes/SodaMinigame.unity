@@ -24624,7 +24624,9 @@ MonoBehaviour:
   playerList:
   - {fileID: 1806555231}
   - {fileID: 618650659}
+  rankingList: []
   floatStartDelay: 2
+  hudController: {fileID: 1803583111}
 --- !u!4 &698022819
 Transform:
   m_ObjectHideFlags: 0
@@ -61931,10 +61933,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f11b9eda2fa91eb419e874a6878c6367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followSpeed: 30
   yScreenOffset: 0
   minY: 5
   maxY: 10000
+  followSpeed: 100
 --- !u!1001 &1792665236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -62220,6 +62222,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17ad7ff826e37e94fb9b229fb799850a, type: 3}
+--- !u!114 &1803583111 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
+  m_PrefabInstance: {fileID: 5253579554047178600}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf31d2f329cf6c9028588f46821e9161, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1803942333
 PrefabInstance:
   m_ObjectHideFlags: 0

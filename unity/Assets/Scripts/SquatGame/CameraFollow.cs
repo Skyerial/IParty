@@ -4,13 +4,21 @@ public class CameraFollow : MonoBehaviour
 {
     private Transform target;
 
-    [SerializeField] private float followLerpFactor = 10f;
+    [Header("Volgpositie (Y-as)")]
     [SerializeField] private float yScreenOffset = 0f;
-    [SerializeField] private float minY = 0f;
-    [SerializeField] private float maxY = 100f;
+    [SerializeField] private float minY = -1f;
+    [SerializeField] private float maxY = 9999f;
 
+    [Header("Volgsnelheid")]
+    [SerializeField] private float followSpeed = 100f;
     public void SetTarget(Transform newTarget)
     {
+        if (newTarget == null)
+        {
+            Debug.LogWarning("Camera target was set to null.");
+            return;
+        }
+
         target = newTarget;
         Debug.Log("Camera target set to: " + target.name);
     }
@@ -19,10 +27,11 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null) return;
 
-        float targetY = Mathf.Clamp(target.position.y + yScreenOffset, minY, maxY);
         Vector3 current = transform.position;
+
+        float targetY = Mathf.Clamp(target.position.y + yScreenOffset, minY, maxY);
         Vector3 desired = new Vector3(current.x, targetY, current.z);
 
-        transform.position = Vector3.Lerp(current, desired, followLerpFactor * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(current, desired, followSpeed * Time.deltaTime);
     }
 }
