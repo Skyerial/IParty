@@ -10,6 +10,10 @@ public class Mole : MonoBehaviour
     [Tooltip("How long the mole stays visible after popping up")]
     public float stayUpTime = 0.6f;
 
+    public GameObject hitEffect;
+    public Transform effectSpawnPoint;
+
+
     private Vector3 upPosition;
     private Vector3 downPosition;
     private Coroutine currentRoutine;
@@ -37,6 +41,14 @@ public class Mole : MonoBehaviour
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
 
+        // 🔥 Spawn hit effect (e.g., WHAM!) at the defined spawn point
+        if (hitEffect && effectSpawnPoint)
+        {
+            GameObject fx = Instantiate(hitEffect, effectSpawnPoint.position, Quaternion.identity);
+            // Destroy(fx, 2f); // Optional: destroy after 2 seconds
+        }
+
+        // 🕳 Immediately hide the mole
         currentRoutine = StartCoroutine(MoveTo(downPosition));
     }
 

@@ -10,6 +10,11 @@ public class Bomb : MonoBehaviour
     [Tooltip("How long the bomb stays visible after popping up")]
     public float stayUpTime = 0.6f;
 
+    public GameObject explosionEffect;  // smoke or fire effect
+    public GameObject boomTextEffect;  // optional boom text
+    public Transform effectSpawnPoint; // where to spawn the effect (usually transform.position)
+
+
     private Vector3 upPosition;
     private Vector3 downPosition;
     private Coroutine currentRoutine;
@@ -36,6 +41,13 @@ public class Bomb : MonoBehaviour
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
+
+        // Spawn effects
+        if (explosionEffect)
+            Instantiate(explosionEffect, effectSpawnPoint.position, Quaternion.identity);
+
+        if (boomTextEffect)
+            Instantiate(boomTextEffect, effectSpawnPoint.position, Quaternion.identity);
 
         currentRoutine = StartCoroutine(MoveTo(downPosition));
     }

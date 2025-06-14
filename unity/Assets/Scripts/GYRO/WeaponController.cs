@@ -106,46 +106,46 @@ public class WeaponController : MonoBehaviour
             hasHit = true;
             var Bomb = other.GetComponent<Bomb>();
             Bomb?.OnHit();
-            StartCoroutine(BombEffect());
+            // StartCoroutine(BombEffect());
         }
     }
 
-    IEnumerator BombEffect()
-    {
-        Vector3 originalPosition = playerCamera.localPosition;
-        Quaternion originalRotation = playerCamera.localRotation;
+    // IEnumerator BombEffect()
+    // {
+    //     Vector3 originalPosition = playerCamera.localPosition;
+    //     Quaternion originalRotation = playerCamera.localRotation;
 
-        float elapsed = 0f;
+    //     float elapsed = 0f;
 
-        while (elapsed < dizzyDuration)
-        {
-            float fade = 1f - (elapsed / dizzyDuration);
+    //     while (elapsed < dizzyDuration)
+    //     {
+    //         float fade = 1f - (elapsed / dizzyDuration);
 
-            float x = Mathf.Sin(Time.time * 10f) * 0.05f * dizzyIntensity * fade;
-            float y = Mathf.Cos(Time.time * 12f) * 0.05f * dizzyIntensity * fade;
+    //         float x = Mathf.Sin(Time.time * 10f) * 0.05f * dizzyIntensity * fade;
+    //         float y = Mathf.Cos(Time.time * 12f) * 0.05f * dizzyIntensity * fade;
 
-            float zRot = Mathf.Sin(Time.time * 6f) * 5f * fade;
-            playerCamera.localPosition = originalPosition + new Vector3(x, y, 0);
-            playerCamera.localRotation = originalRotation * Quaternion.Euler(0, 0, zRot);
+    //         float zRot = Mathf.Sin(Time.time * 6f) * 5f * fade;
+    //         playerCamera.localPosition = originalPosition + new Vector3(x, y, 0);
+    //         playerCamera.localRotation = originalRotation * Quaternion.Euler(0, 0, zRot);
 
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
+    //         elapsed += Time.deltaTime;
+    //         yield return null;
+    //     }
 
-        // Smooth restore
-        float smoothTime = 0.2f;
-        float t = 0f;
-        while (t < smoothTime)
-        {
-            playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, originalPosition, t / smoothTime);
-            playerCamera.localRotation = Quaternion.Slerp(playerCamera.localRotation, originalRotation, t / smoothTime);
-            t += Time.deltaTime;
-            yield return null;
-        }
+    //     // Smooth restore
+    //     float smoothTime = 0.2f;
+    //     float t = 0f;
+    //     while (t < smoothTime)
+    //     {
+    //         playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, originalPosition, t / smoothTime);
+    //         playerCamera.localRotation = Quaternion.Slerp(playerCamera.localRotation, originalRotation, t / smoothTime);
+    //         t += Time.deltaTime;
+    //         yield return null;
+    //     }
 
-        playerCamera.localPosition = originalPosition;
-        playerCamera.localRotation = originalRotation;
-    }
+    //     playerCamera.localPosition = originalPosition;
+    //     playerCamera.localRotation = originalRotation;
+    // }
 
 
 }
