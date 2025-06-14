@@ -44,19 +44,18 @@ public class SquatManager : MonoBehaviour
     {
         gameEnded = true;
 
-        int highestPressCount = 0;
-        PlayerMash winner = null;
+        int highestPressCount = 1;
 
+        // First pass: find the highest mash count
         foreach (GameObject player in playerList)
         {
             PlayerMash mash = player.GetComponent<PlayerMash>();
             if (mash != null)
             {
-                int currentMashCount = mash.GetMashCounter();
-                if (currentMashCount > highestPressCount)
+                int count = mash.GetMashCounter();
+                if (count > highestPressCount)
                 {
-                    highestPressCount = currentMashCount;
-                    winner = mash;
+                    highestPressCount = count;
                 }
             }
         }
@@ -67,10 +66,10 @@ public class SquatManager : MonoBehaviour
             if (mash != null)
             {
                 int mashCount = mash.GetMashCounter();
-                float floatHeight = Mathf.Clamp(mashCount * 1f, 0f, 10f);
+                float floatHeight = mashCount * 1f;
+
                 mash.TriggerFloatAnimation(floatHeight);
             }
         }
-
     }
 }

@@ -1,51 +1,71 @@
 using UnityEngine;
 using System.Collections;
 
-
 public class PlayerMash : MonoBehaviour
 {
     public KeyCode mashKey = KeyCode.Space;
     public Animator animator;
     private int mashCounter = 0;
 
+    private float baseSpeed = 1f;
+    private float speedIncrement = 0.25f;
+    private int pressesPerSpeedUp = 5;
+
+    private bool isSquatting = false;
+
     public void StartNewRound()
     {
         mashCounter = 0;
-        animator.ResetTrigger("Squat");
+        animator.speed = baseSpeed;
+        animator.ResetTrigger("Float");
+        isSquatting = false;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(mashKey))
         {
-            Debug.Log("Mash key pressed");
-            animator.SetTrigger("Squat");
             mashCounter++;
-            Debug.Log("Counter: " + mashCounter);
+
+            // Increase animation speed based on mash count
+            animator.speed = baseSpeed + (mashCounter / pressesPerSpeedUp) * speedIncrement;
+
+            // Start the squat animation only once
+            if (!isSquatting)
+            {
+                animator.Play("Squat");
+                isSquatting = true;
+            }
+
+            Debug.Log($"Mash count: {mashCounter}, Animator Speed: {animator.speed}");
         }
     }
 
-    // Get the current count of button presses
     public int GetMashCounter()
     {
         return mashCounter;
     }
 
-    // Trigger the float animation when the game ends
     public void TriggerFloatAnimation(float height)
     {
+        StartCoroutine(DoFinalSquatAndFloat(height));
+    }
+
+    private IEnumerator DoFinalSquatAndFloat(float height)
+    {
+        // Final squat at normal speed
+        animator.speed = 1f;
+        animator.Play("Squat");
+        yield return new WaitForSeconds(0.7f); // let the final squat loop once
+
+        // Float upward
         animator.SetTrigger("Float");
 
         float groundY = 19.4f;
         float targetY = groundY + height;
 
-        StopAllCoroutines();
-        StartCoroutine(FloatUpward(targetY, 2f));
-    }
-
-    private IEnumerator FloatUpward(float targetY, float duration)
-    {
         float elapsed = 0f;
+        float duration = 2f;
         Vector3 startPos = transform.position;
         Vector3 endPos = new Vector3(startPos.x, targetY, startPos.z);
 
@@ -58,5 +78,4 @@ public class PlayerMash : MonoBehaviour
 
         transform.position = endPos;
     }
-
 }
