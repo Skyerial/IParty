@@ -1,17 +1,17 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
-public class Mole : MonoBehaviour
+public class Bomb : MonoBehaviour
 {
-    [Tooltip("How far the mole dips when hiding")]
+    [Tooltip("How far the bomb dips when hiding")]
     public float popDownDistance = 2f;
     [Tooltip("Seconds it takes to move down/up")]
     public float moveSpeed = 5f;
-    [Tooltip("How long the mole stays visible after popping up")]
+    [Tooltip("How long the bomb stays visible after popping up")]
     public float stayUpTime = 0.6f;
-    [Tooltip("Min time before mole pops back up again")]
+    [Tooltip("Min time before bomb pops back up again")]
     public float minDelay = 0.5f;
-    [Tooltip("Max time before mole pops back up again")]
+    [Tooltip("Max time before bomb pops back up again")]
     public float maxDelay = 2.5f;
 
     private Vector3 upPosition;
@@ -22,7 +22,7 @@ public class Mole : MonoBehaviour
     {
         upPosition = transform.position + Vector3.up * Mathf.Abs(popDownDistance);
         downPosition = transform.position;
-        transform.position = downPosition; // Start hidden
+        transform.position = downPosition;
     }
 
 
@@ -33,8 +33,7 @@ public class Mole : MonoBehaviour
 
     public void OnHit()
     {
-        Debug.Log("🐹 Mole was hit!");
-
+        Debug.Log("💥 Bomb hit!");
         if (activeRoutine != null)
             StopCoroutine(activeRoutine);
 
@@ -57,46 +56,27 @@ public class Mole : MonoBehaviour
 
     private IEnumerator PopThenWaitAndHide()
     {
-        // Quickly go up
         yield return StartCoroutine(MoveTo(upPosition));
-
-        // Stay visible
         yield return new WaitForSeconds(stayUpTime);
-
-        // Hide again
         yield return StartCoroutine(MoveTo(downPosition));
-
-        // Wait before repeating
-        float delay = Random.Range(minDelay, maxDelay);
-        yield return new WaitForSeconds(delay);
-
-        StartPopLoop(); // Repeat
+        yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
+        StartPopLoop();
     }
 
     private IEnumerator HideThenWaitAndPop()
     {
-        // Go down fast after hit
         yield return StartCoroutine(MoveTo(downPosition));
-
-        // Wait before popping back up
-        float delay = Random.Range(minDelay, maxDelay);
-        yield return new WaitForSeconds(delay);
-
-        StartPopLoop(); // Continue loop
+        yield return new WaitForSeconds(Random.Range(minDelay, maxDelay));
+        StartPopLoop();
     }
 
     private IEnumerator MoveTo(Vector3 target)
     {
         while (Vector3.Distance(transform.position, target) > 0.01f)
         {
-            transform.position = Vector3.MoveTowards(
-                transform.position,
-                target,
-                moveSpeed * Time.deltaTime
-            );
+            transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
             yield return null;
         }
-
         transform.position = target;
     }
 }

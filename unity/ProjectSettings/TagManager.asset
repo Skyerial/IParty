@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Hammer
   - Mole
+  - Bomb
   layers:
   - Default
   - TransparentFX
