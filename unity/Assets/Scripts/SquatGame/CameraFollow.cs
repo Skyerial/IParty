@@ -4,10 +4,10 @@ public class CameraFollow : MonoBehaviour
 {
     private Transform target;
 
-    public float followSpeed = 30f;
-    public float yScreenOffset = 0f; // zet deze op 0 om speler in het midden te houden
-    public float minY = 0f;
-    public float maxY = 100f;
+    [SerializeField] private float followLerpFactor = 10f;
+    [SerializeField] private float yScreenOffset = 0f;
+    [SerializeField] private float minY = 0f;
+    [SerializeField] private float maxY = 100f;
 
     public void SetTarget(Transform newTarget)
     {
@@ -23,6 +23,6 @@ public class CameraFollow : MonoBehaviour
         Vector3 current = transform.position;
         Vector3 desired = new Vector3(current.x, targetY, current.z);
 
-        transform.position = Vector3.MoveTowards(current, desired, followSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(current, desired, followLerpFactor * Time.deltaTime);
     }
 }
