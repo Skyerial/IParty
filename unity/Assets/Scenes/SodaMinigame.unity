@@ -6247,6 +6247,7 @@ MonoBehaviour:
   playerList:
   - {fileID: 1806555231}
   - {fileID: 618650659}
+  floatStartDelay: 2
 --- !u!4 &698022819
 Transform:
   m_ObjectHideFlags: 0
@@ -16823,6 +16824,7 @@ GameObject:
   - component: {fileID: 1790727363}
   - component: {fileID: 1790727362}
   - component: {fileID: 1790727365}
+  - component: {fileID: 1790727366}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -16948,6 +16950,22 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &1790727366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1790727361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f11b9eda2fa91eb419e874a6878c6367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  followSpeed: 30
+  yScreenOffset: 0
+  minY: 5
+  maxY: 10000
 --- !u!1001 &1792665236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20220,6 +20238,10 @@ PrefabInstance:
     - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: gameSetText
       value: Game Finished!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
+      propertyPath: totalGameTime
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: gameplayObjects

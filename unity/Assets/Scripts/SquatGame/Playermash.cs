@@ -15,7 +15,7 @@ public class PlayerMash : MonoBehaviour
 
     public void StartNewRound()
     {
-        mashCounter = 0;
+        mashCounter = Random.Range(20, 60);
         animator.speed = baseSpeed;
         animator.ResetTrigger("Float");
         isSquatting = false;

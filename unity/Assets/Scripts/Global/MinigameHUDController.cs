@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
+
 
 public class MinigameHUDController : MonoBehaviour
 {
@@ -19,6 +21,9 @@ public class MinigameHUDController : MonoBehaviour
     [Header("Custom Countdown Labels")]
     [SerializeField] private string goText = "GO!";
     [SerializeField] private string gameSetText = "Game Set!";
+    [Header("End Text Display")]
+    [SerializeField] private float finishTextDuration = 2f;
+
 
     private float countdownTimer;
     private float gameTimer;
@@ -98,6 +103,16 @@ public class MinigameHUDController : MonoBehaviour
             countDownFrame.SetActive(true);
             countdownText.text = gameSetText;
             Debug.Log(gameSetText);
+
+            StartCoroutine(HideFinishTextAfterDelay(finishTextDuration));
         }
+
     }
+    private IEnumerator HideFinishTextAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        countDownFrame.SetActive(false);
+    }
+
+
 }

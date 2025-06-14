@@ -1,11 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class SquatManager : MonoBehaviour
 {
     public List<GameObject> playerList = new List<GameObject>();
     private bool gameEnded = false;
     private float gameDuration = 15f;
+    private GameObject highestPlayer = null;
+    [SerializeField] private float floatStartDelay = 2f;
+
+
     private float timer = 0f;
 
     void Start()
@@ -45,8 +50,8 @@ public class SquatManager : MonoBehaviour
         gameEnded = true;
 
         int highestPressCount = 1;
+        highestPlayer = null;
 
-        // First pass: find the highest mash count
         foreach (GameObject player in playerList)
         {
             PlayerMash mash = player.GetComponent<PlayerMash>();
@@ -56,20 +61,34 @@ public class SquatManager : MonoBehaviour
                 if (count > highestPressCount)
                 {
                     highestPressCount = count;
+                    highestPlayer = player;
                 }
             }
         }
+        StartCoroutine(DelayedFloatAnimation(floatStartDelay));
+
+    }
+
+    private IEnumerator DelayedFloatAnimation(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
         foreach (GameObject player in playerList)
         {
             PlayerMash mash = player.GetComponent<PlayerMash>();
             if (mash != null)
             {
-                int mashCount = mash.GetMashCounter();
-                float floatHeight = mashCount * 1f;
-
+                float floatHeight = mash.GetMashCounter() * 1f;
                 mash.TriggerFloatAnimation(floatHeight);
             }
         }
+
+        if (highestPlayer != null)
+        {
+            Camera.main.GetComponent<CameraFollow>()?.SetTarget(highestPlayer.transform);
+        }
     }
+
+
+
 }
