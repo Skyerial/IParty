@@ -750,7 +750,7 @@ MonoBehaviour:
   rotationSpeed: 360
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 0
   groundCheckOffset: 0.1
   turfCheckDistance: 3
   turfSpeedPenalty: 0.4
@@ -774,7 +774,7 @@ MonoBehaviour:
   maxSpreadAngle: 5
   paintLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   maxAmmo: 100
   ammoRegenRate: 15
   ammoBarFill: {fileID: 4425303499918052300}
