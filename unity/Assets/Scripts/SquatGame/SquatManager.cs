@@ -1,6 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SquatManager : MonoBehaviour
 {
@@ -9,44 +9,49 @@ public class SquatManager : MonoBehaviour
     public List<GameObject> playerList = new List<GameObject>();
     public List<GameObject> rankingList = new List<GameObject>();
 
-    private bool gameEnded = false;
-    private float gameDuration = 15f;
-    private GameObject highestPlayer = null;
 
     [SerializeField] private float floatStartDelay = 2f;
+    [SerializeField] private MinigameHUDController hudController;
 
-    private float timer = 0f;
+
+    private bool gameEnded = false;
+    private GameObject highestPlayer = null;
 
     void Start()
     {
-        StartCoroutine(CountdownThenStart());
-    }
+        inputEnabled = false;
 
-    void Update()
-    {
-        if (!gameEnded && inputEnabled)
+        if (hudController == null)
         {
-            timer += Time.deltaTime;
-            if (timer >= gameDuration)
-            {
-                EndGame();
-            }
+            Debug.LogError("hudController is not assigned in the inspector!", this);
+            return;
         }
+
+        // Abonneer op HUD events
+        hudController.OnCountdownFinished += HandleCountdownFinished;
+        hudController.OnGameTimerFinished += HandleGameTimerFinished;
+
+        // Start countdown
+        hudController.ShowCountdown();
     }
 
-    IEnumerator CountdownThenStart()
+
+    private void HandleCountdownFinished()
+    {
+        inputEnabled = true;
+        StartNewRound();
+        hudController.StartGameTimer();
+    }
+
+    private void HandleGameTimerFinished()
     {
         inputEnabled = false;
-        yield return new WaitForSeconds(4f);
-
-        StartNewRound();
-        inputEnabled = true;
+        EndGame();
     }
 
     void StartNewRound()
     {
         gameEnded = false;
-        timer = 0f;
 
         foreach (GameObject player in playerList)
         {
@@ -61,9 +66,7 @@ public class SquatManager : MonoBehaviour
     void EndGame()
     {
         gameEnded = true;
-        inputEnabled = false;
 
-        //collect all mash counts
         List<(GameObject player, int mashCount)> rankings = new List<(GameObject, int)>();
 
         foreach (GameObject player in playerList)
@@ -71,14 +74,11 @@ public class SquatManager : MonoBehaviour
             PlayerMash mash = player.GetComponent<PlayerMash>();
             if (mash != null)
             {
-                int count = mash.GetMashCounter();
-                rankings.Add((player, count));
+                rankings.Add((player, mash.GetMashCounter()));
             }
         }
 
         rankings.Sort((a, b) => b.mashCount.CompareTo(a.mashCount));
-
-        //save to rankingList
         rankingList.Clear();
         foreach (var entry in rankings)
         {
@@ -86,9 +86,8 @@ public class SquatManager : MonoBehaviour
         }
 
         if (rankingList.Count > 0)
-        {
             highestPlayer = rankingList[0];
-        }
+
         StartCoroutine(DelayedFloatAnimation(floatStartDelay));
     }
 

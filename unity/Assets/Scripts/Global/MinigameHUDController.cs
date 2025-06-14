@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-
 public class MinigameHUDController : MonoBehaviour
 {
     [Header("Countdown Settings")]
@@ -21,69 +20,59 @@ public class MinigameHUDController : MonoBehaviour
     [Header("Custom Countdown Labels")]
     [SerializeField] private string goText = "GO!";
     [SerializeField] private string gameSetText = "Game Set!";
+
     [Header("End Text Display")]
     [SerializeField] private float finishTextDuration = 2f;
 
-
     private float countdownTimer;
     private float gameTimer;
-    private bool gameStarted = false;
-    private bool gameEnded = false;
 
-    public bool GameStarted => gameStarted;
-    public bool GameEnded => gameEnded;
+    // EVENTS
+    public event System.Action OnCountdownFinished;
+    public event System.Action OnGameTimerFinished;
 
-    void Start()
+    public void ShowCountdown()
     {
         countdownTimer = countdownDuration + 0.5f;
-        gameTimer = totalGameTime;
+        StartCoroutine(DoCountdown());
+    }
 
+    private IEnumerator DoCountdown()
+    {
+        countDownFrame.SetActive(true);
         timerFrame.SetActive(false);
         gameplayObjects.SetActive(false);
-        countDownFrame.SetActive(true);
+
+        while (countdownTimer > 0)
+        {
+            countdownTimer -= Time.deltaTime;
+
+            if (countdownTimer > 1f)
+                countdownText.text = Mathf.FloorToInt(countdownTimer).ToString();
+            else if (countdownTimer > 0f)
+                countdownText.text = goText;
+
+            yield return null;
+        }
+
+        countDownFrame.SetActive(false);
+        timerFrame.SetActive(true);
+        gameplayObjects.SetActive(true);
+
+        OnCountdownFinished?.Invoke();
     }
 
-    void Update()
+    public void StartGameTimer()
     {
-        if (!gameStarted)
-        {
-            HandleCountdown();
-        }
-        else if (!gameEnded)
-        {
-            HandleGameTimer();
-        }
+        gameTimer = totalGameTime;
+        StartCoroutine(GameTimerRoutine());
     }
 
-    private void HandleCountdown()
+    private IEnumerator GameTimerRoutine()
     {
-        countdownTimer -= Time.deltaTime;
-
-        if (countdownTimer > 1f)
+        while (gameTimer > 0)
         {
-            int display = Mathf.FloorToInt(countdownTimer);
-            countdownText.text = display.ToString();
-        }
-        else if (countdownTimer > 0f)
-        {
-            countdownText.text = goText;
-        }
-        else
-        {
-            countDownFrame.SetActive(false);
-            timerFrame.SetActive(true);
-            gameplayObjects.SetActive(true);
-            gameStarted = true;
-        }
-    }
-
-    private void HandleGameTimer()
-    {
-        gameTimer -= Time.deltaTime;
-        gameTimer = Mathf.Max(0, gameTimer);
-
-        if (timerText != null)
-        {
+            gameTimer -= Time.deltaTime;
             int secondsLeft = Mathf.FloorToInt(gameTimer);
             timerText.text = secondsLeft.ToString();
 
@@ -94,25 +83,21 @@ public class MinigameHUDController : MonoBehaviour
                 timerText.color = new Color(1f, 0.65f, 0f); // orange
             else
                 timerText.color = Color.white;
+
+            yield return null;
         }
 
-        if (gameTimer <= 0 && !gameEnded)
-        {
-            gameEnded = true;
-            timerFrame.SetActive(false);
-            countDownFrame.SetActive(true);
-            countdownText.text = gameSetText;
-            Debug.Log(gameSetText);
+        timerFrame.SetActive(false);
+        countDownFrame.SetActive(true);
+        countdownText.text = gameSetText;
+        StartCoroutine(HideFinishTextAfterDelay(finishTextDuration));
 
-            StartCoroutine(HideFinishTextAfterDelay(finishTextDuration));
-        }
-
+        OnGameTimerFinished?.Invoke();
     }
+
     private IEnumerator HideFinishTextAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
         countDownFrame.SetActive(false);
     }
-
-
 }
