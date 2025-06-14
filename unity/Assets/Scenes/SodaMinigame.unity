@@ -20214,6 +20214,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
+      propertyPath: goText
+      value: SHAKE!!!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
+      propertyPath: gameSetText
+      value: Game Finished!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: gameplayObjects
       value: 
       objectReference: {fileID: 1251917312}
