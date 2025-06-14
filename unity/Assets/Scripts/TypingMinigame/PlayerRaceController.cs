@@ -72,12 +72,12 @@ public class PlayerRaceController : MonoBehaviour
 
     public void WinningAnim()
     {
-        while (!gameEnd)
-        {
-            Debug.Log("chekc");
-            animator.SetTrigger("Jump");
-            StartCoroutine(WaitForAnimation(animator, "Jump"));
-        }
+        // while (!gameEnd)
+        // {
+        Debug.Log("chekc");
+        animator.SetTrigger("Jump");
+        // StartCoroutine(WaitForAnimation(animator, "Jump"));
+        // }
     }
     
     private IEnumerator WaitForAnimation(Animator animator, string stateName)
