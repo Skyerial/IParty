@@ -10,7 +10,7 @@ using TMPro;
 
 public class PlayerSpawn : MonoBehaviour
 {
-
+    int i = 0;
     void Start()
     {
         //Remove players from the lobby scene 
@@ -23,14 +23,20 @@ public class PlayerSpawn : MonoBehaviour
         GameObject playersParent = GameObject.Find("Players");
         // if not in lobby. 
         if (playersParent == null)
-        {
-            Transform body = playerInput.transform.Find("Body");
-            SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
-            renderer.material = PlayerManager.findColor(playerInput.devices[0]);
-            
+        {   
+            // Only works for standard prefab.
+            // Transform body = playerInput.transform.Find("Body");
+            // SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
+            // renderer.material = PlayerManager.findColor(playerInput.devices[0]);
+
             GameObject SpawnOBJ = GameObject.Find("Spawn");
-            Transform Spawn = SpawnOBJ.GetComponent<Transform>();
-            playerInput.transform.position = Spawn.transform.position;
+            foreach (Transform child in SpawnOBJ.transform)
+            {
+                Debug.Log("Child name: " + child.name);
+            }
+            Transform[] Spawn = SpawnOBJ.GetComponentsInChildren<Transform>();
+            playerInput.transform.position = Spawn[i].transform.position;
+            i++;
         }
         else
         {

@@ -6,6 +6,8 @@ public class Movement : MonoBehaviour
     PlayerInput playerInput;
     InputAction moveAction;
 
+    public bool MovementEnabled = true;
+
 
     public float moveSpeed = 0.5f;
 
@@ -15,6 +17,7 @@ public class Movement : MonoBehaviour
     }
 
     void Update(){
+        if (!MovementEnabled) return;
         MovePlayer();
     }
 
