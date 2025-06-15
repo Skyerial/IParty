@@ -19,17 +19,27 @@ public class PlayerTypingController : MonoBehaviour
     private int wordsLeft = 0;
 
 
-    private void Start()
-    {
-        StartCoroutine(Prepare());
-    }
+    // private void Start()
+    // {
+    //     StartCoroutine(Prepare());
+    // }
 
-    private IEnumerator Prepare()
-    {
-        yield return new WaitUntil(() => spawner.transform.childCount >= 10);
+    // private IEnumerator Prepare()
+    // {
+    //     yield return new WaitUntil(() => spawner.transform.childCount >= 10);
 
+    //     textSpawner = spawner.GetComponent<TextSpawner>();
+    //     wordsLeft = textSpawner.spawnedWords.Count;
+    //     inputField.onValueChanged.AddListener(HandleInput);
+    //     UpdateWordsLeftText();
+    //     UpdateCursorPosition(0);
+    // }
+
+    public void Initialize()
+    {
         textSpawner = spawner.GetComponent<TextSpawner>();
         wordsLeft = textSpawner.spawnedWords.Count;
+        inputField.onValueChanged.RemoveAllListeners(); // Prevent duplicate listeners
         inputField.onValueChanged.AddListener(HandleInput);
         UpdateWordsLeftText();
         UpdateCursorPosition(0);

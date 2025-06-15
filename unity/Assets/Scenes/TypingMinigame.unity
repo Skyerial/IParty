@@ -7919,7 +7919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d51da29e6732c74fa239f8280e03f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wordsPerPlayer: 25
+  wordsPerPlayer: 4
   players:
   - {fileID: 232139156}
   - {fileID: 776138614}

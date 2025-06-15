@@ -8,7 +8,7 @@ public class TMGameManager : MonoBehaviour
 
     public int wordsPerPlayer = 10;
 
-    public List<PlayerTypingController> players;
+    public List<PlayerTypingController> players; // list of row1, ro2, etc
 
     private bool gameStarted = false;
 
@@ -38,6 +38,7 @@ public class TMGameManager : MonoBehaviour
             player.textSpawner.SpawnWords();
 
             player.raceController.InitializeRace(wordsPerPlayer);
+            player.Initialize();
 
             player.inputField.interactable = true;
             player.inputField.text = "";
