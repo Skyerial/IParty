@@ -19,14 +19,14 @@ public class TextSpawner : MonoBehaviour
     public Transform spawner;
 
     private string[] wordList = new string[]
-    {
-        "apple", "banana", "grape", "orange", "melon",
-        "cloud", "stream", "code", "unity", "keyboard",
-        "game", "level", "score", "player", "speed"
-    };
     // {
-    //     "a"
+    //     "apple", "banana", "grape", "orange", "melon",
+    //     "cloud", "stream", "code", "unity", "keyboard",
+    //     "game", "level", "score", "player", "speed"
     // };
+    {
+        "a"
+    };
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

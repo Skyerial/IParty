@@ -17,6 +17,7 @@ public class PlayerTypingController : MonoBehaviour
     private int cleanupCounter = 0;
     private int wordsLeft = 0;
 
+
     private void Start()
     {
         StartCoroutine(Prepare());
@@ -56,6 +57,8 @@ public class PlayerTypingController : MonoBehaviour
 
         if (inputLower == originalLower)
         {
+            TM_MusicController.Instance.PlayCorrectWordSFX();
+
             inputField.text = "";
             raceController?.OnWordTyped();
             StartCoroutine(AnimateAndDestroy(wordObj.gameObject));
