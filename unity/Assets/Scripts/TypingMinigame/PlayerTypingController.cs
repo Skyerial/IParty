@@ -11,7 +11,7 @@ public class PlayerTypingController : MonoBehaviour
     public GameObject spawner;
     public TextMeshProUGUI wordsLeftText;
     public PlayerRaceController raceController;
-    private TextSpawner textSpawner;
+    public TextSpawner textSpawner;
     private string currentTargetWord = null;
     private string cursor = $"<color=yellow>|</color>";
     private int inputCounter = 0;

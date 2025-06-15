@@ -1237,6 +1237,7 @@ MonoBehaviour:
   spawner: {fileID: 1505018043}
   wordsLeftText: {fileID: 2121423797}
   raceController: {fileID: 353457922}
+  textSpawner: {fileID: 1505018047}
 --- !u!1 &248097043
 GameObject:
   m_ObjectHideFlags: 0
@@ -3456,6 +3457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnedWords: []
+  words: 0
   spawner: {fileID: 678055375}
 --- !u!1 &687351482
 GameObject:
@@ -3548,6 +3550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnedWords: []
+  words: 0
   spawner: {fileID: 687351483}
 --- !u!1001 &699146507
 PrefabInstance:
@@ -4030,6 +4033,7 @@ MonoBehaviour:
   spawner: {fileID: 687351482}
   wordsLeftText: {fileID: 456078253}
   raceController: {fileID: 1162920734}
+  textSpawner: {fileID: 687351486}
 --- !u!1001 &790479601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4776,6 +4780,7 @@ MonoBehaviour:
   spawner: {fileID: 1312680054}
   wordsLeftText: {fileID: 13933331}
   raceController: {fileID: 1660175070}
+  textSpawner: {fileID: 1312680058}
 --- !u!4 &1031902053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 57d3eed6d2253d24994d5ad37e00aedc, type: 3}
@@ -5632,6 +5637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnedWords: []
+  words: 0
   spawner: {fileID: 1312680055}
 --- !u!1 &1349750147
 GameObject:
@@ -6613,6 +6619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnedWords: []
+  words: 0
   spawner: {fileID: 1505018044}
 --- !u!1 &1506711590
 GameObject:
@@ -7912,6 +7919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d51da29e6732c74fa239f8280e03f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wordsPerPlayer: 25
   players:
   - {fileID: 232139156}
   - {fileID: 776138614}
@@ -9328,6 +9336,7 @@ MonoBehaviour:
   spawner: {fileID: 678055374}
   wordsLeftText: {fileID: 1349750150}
   raceController: {fileID: 546109047}
+  textSpawner: {fileID: 678055378}
 --- !u!1001 &2062745384
 PrefabInstance:
   m_ObjectHideFlags: 0

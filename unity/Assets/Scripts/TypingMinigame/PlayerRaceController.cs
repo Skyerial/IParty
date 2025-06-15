@@ -12,16 +12,27 @@ public class PlayerRaceController : MonoBehaviour
     private Animator animator;
     private bool gameEnd = false;
 
-    private void Start()
+    // private void Start()
+    // {
+    //     animator = GetComponent<Animator>();
+
+    //     startPosition = transform.position;
+
+    //     // Total distance from start to finish
+    //     float totalDistance = Vector3.Distance(startPosition, finishLine.position);
+
+    //     // How far to move per word typed
+    //     stepDistance = totalDistance / totalWords;
+    // }
+
+    public void InitializeRace(int totalWordsCount)
     {
         animator = GetComponent<Animator>();
+        totalWords = totalWordsCount;
 
         startPosition = transform.position;
 
-        // Total distance from start to finish
         float totalDistance = Vector3.Distance(startPosition, finishLine.position);
-
-        // How far to move per word typed
         stepDistance = totalDistance / totalWords;
     }
 

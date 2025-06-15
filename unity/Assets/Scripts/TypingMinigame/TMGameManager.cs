@@ -6,6 +6,8 @@ public class TMGameManager : MonoBehaviour
 {
     public static TMGameManager Instance { get; private set; }
 
+    public int wordsPerPlayer = 10;
+
     public List<PlayerTypingController> players;
 
     private bool gameStarted = false;
@@ -32,6 +34,11 @@ public class TMGameManager : MonoBehaviour
 
         foreach (var player in players)
         {
+            player.textSpawner.words = wordsPerPlayer;
+            player.textSpawner.SpawnWords();
+
+            player.raceController.InitializeRace(wordsPerPlayer);
+
             player.inputField.interactable = true;
             player.inputField.text = "";
         }
