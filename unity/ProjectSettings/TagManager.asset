@@ -7,6 +7,8 @@ TagManager:
   - Hammer
   - Mole
   - Bomb
+  - FxTemporaire
+  - p1Cam
   layers:
   - Default
   - TransparentFX

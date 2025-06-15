@@ -54,7 +54,7 @@ public class Bomb : MonoBehaviour
 
     private IEnumerator MoveTo(Vector3 target)
     {
-        float timeout = 0.5f; // Max time to try moving
+        float timeout = 0.5f;
         float elapsed = 0f;
 
         while (Vector3.Distance(transform.position, target) > 0.01f)

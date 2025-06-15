@@ -13,6 +13,8 @@ public class Mole : MonoBehaviour
     public GameObject hitEffect;
     public Transform effectSpawnPoint;
 
+    public Camera playerCamera;
+
 
     private Vector3 upPosition;
     private Vector3 downPosition;
@@ -42,10 +44,10 @@ public class Mole : MonoBehaviour
             StopCoroutine(currentRoutine);
 
         // 🔥 Spawn hit effect (e.g., WHAM!) at the defined spawn point
-        if (hitEffect && effectSpawnPoint)
+        if (hitEffect && playerCamera)
         {
-            GameObject fx = Instantiate(hitEffect, effectSpawnPoint.position, Quaternion.identity);
-            // Destroy(fx, 2f); // Optional: destroy after 2 seconds
+            Vector3 centerPos = playerCamera.transform.position + playerCamera.transform.forward * 5f;
+            GameObject fx = Instantiate(hitEffect, centerPos, Quaternion.identity);
         }
 
         // 🕳 Immediately hide the mole

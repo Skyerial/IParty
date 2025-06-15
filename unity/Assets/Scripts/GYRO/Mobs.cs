@@ -15,8 +15,12 @@ public class MobManager : MonoBehaviour
     [Tooltip("Weighted list of mob entries")]
     public List<MobEntry> mobEntries = new List<MobEntry>();
 
-    [Tooltip("Delay between each mob pop-up")]
-    public float spawnDelay = 1.5f;
+    [Tooltip("Minimum time between spawns")]
+    public float minSpawnDelay = 0.5f;
+
+    [Tooltip("Maximum time between spawns")]
+    public float maxSpawnDelay = 2f;
+
 
     private MonoBehaviour currentActiveMob;
 
@@ -29,7 +33,8 @@ public class MobManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(spawnDelay);
+            float delay = Random.Range(minSpawnDelay, maxSpawnDelay);
+            yield return new WaitForSeconds(delay);
 
             currentActiveMob = GetWeightedRandomMob();
 
