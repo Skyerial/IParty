@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GameMaster : MonoBehaviour
 {
-    private int current_player = -1;
+    public int current_player = 0;
     public int change_player = 0;
     public GameObject[] players;
     public TextMeshProUGUI numberText;
@@ -37,7 +37,7 @@ public class GameMaster : MonoBehaviour
             //numberText.text = randomNumber.ToString();
             //numberShown = true; // Prevent multiple updates
             players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
-            numberText.text = randomNumber.ToString();
+            //numberText.text = randomNumber.ToString();
             press_random = 2;
         }
         if (press_random == 2 && players[current_player].GetComponent<PlayerMovement>().increment == 0) {
