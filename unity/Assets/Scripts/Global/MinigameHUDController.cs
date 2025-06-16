@@ -4,6 +4,10 @@ using System.Collections;
 
 public class MinigameHUDController : MonoBehaviour
 {
+    [Header("Activation Toggles")]
+    [SerializeField] private bool useCountdown = true;
+    [SerializeField] private bool useTimer = true;
+
     [Header("Countdown Settings")]
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private GameObject countDownFrame;
@@ -27,14 +31,24 @@ public class MinigameHUDController : MonoBehaviour
     private float countdownTimer;
     private float gameTimer;
 
-    // EVENTS
     public event System.Action OnCountdownFinished;
     public event System.Action OnGameTimerFinished;
 
     public void ShowCountdown()
     {
-        countdownTimer = countdownDuration + 0.5f;
-        StartCoroutine(DoCountdown());
+        if (useCountdown)
+        {
+            countdownTimer = countdownDuration + 0.5f;
+            StartCoroutine(DoCountdown());
+        }
+        else
+        {
+            // Direct skip countdown if not used
+            countDownFrame.SetActive(false);
+            timerFrame.SetActive(true);
+            gameplayObjects.SetActive(true);
+            OnCountdownFinished?.Invoke();
+        }
     }
 
     private IEnumerator DoCountdown()
@@ -64,8 +78,17 @@ public class MinigameHUDController : MonoBehaviour
 
     public void StartGameTimer()
     {
-        gameTimer = totalGameTime;
-        StartCoroutine(GameTimerRoutine());
+        if (useTimer)
+        {
+            gameTimer = totalGameTime;
+            StartCoroutine(GameTimerRoutine());
+        }
+        else
+        {
+            // Skip timer, show gameplay directly and signal "finished"
+            timerFrame.SetActive(false);
+            OnGameTimerFinished?.Invoke();
+        }
     }
 
     private IEnumerator GameTimerRoutine()
