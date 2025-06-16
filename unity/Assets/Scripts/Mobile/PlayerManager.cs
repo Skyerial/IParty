@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour
     public class PlayerStats
     {
         public int position;
-        public int color;
+        public string color;
         public bool winner;
         public string name;
     }
@@ -28,12 +28,13 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public static void RegisterPlayer(InputDevice device, int color)
+    public static void RegisterPlayer(InputDevice device, string color, string name)
     {
         playerStats[device] = new PlayerStats
         {
             position = 0,
-            color = color
+            color = color,
+            name = name
         };
     }
 
@@ -45,5 +46,26 @@ public class PlayerManager : MonoBehaviour
     public static void AddPosition(InputDevice device, int position)
     {
         playerStats[device].position += position;
+    }
+
+    public static Material findColor(InputDevice device)
+    {
+        Material mat = Resources.Load<Material>("Materials/Default");
+        switch (playerStats[device].color)
+        {
+            case "Yellow":
+                mat = Resources.Load<Material>("Materials/Global/Yellow");
+                break;
+            case "Red":
+                mat = Resources.Load<Material>("Materials/Global/Red");
+                break;
+            case "Green":
+                mat = Resources.Load<Material>("Materials/Global/Green");
+                break;
+            case "Blue":
+                mat = Resources.Load<Material>("Materials/Global/Blue");
+                break;
+        }
+        return mat;
     }
 }

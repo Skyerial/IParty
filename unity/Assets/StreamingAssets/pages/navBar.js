@@ -1,8 +1,8 @@
 import { ConnectPage } from "./connectPage.js";
-import { Controller } from "./controller.js";
-import { isConnected } from "../connection.js";
+import { ViewRenderer } from "../utils/viewRenderer.js";
+import { socketManager } from "../main.js";
 
-export class NavBar extends Controller {
+export class NavBar extends ViewRenderer {
     constructor(container) {
         super("./views/navView.html", container);
     }
@@ -11,7 +11,7 @@ export class NavBar extends Controller {
         const viewContainer = document.querySelector(".view-container");
 
         document.querySelector(".site-logo").addEventListener("click", () => {
-            if (!isConnected()) {
+            if (!socketManager.isConnected()) {
                 new ConnectPage(viewContainer);
             }
         });

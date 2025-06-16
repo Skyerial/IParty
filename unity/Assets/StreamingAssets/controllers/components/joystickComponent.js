@@ -1,76 +1,47 @@
-import { Controller } from "../controller.js";
+import { socketManager } from "../../main.js";
+import { ViewRenderer } from "../../utils/viewRenderer.js";
 
-export class JoystickComponent extends Controller {
+export class JoystickComponent extends ViewRenderer{
+  constructor(container, vertical = false) {
+    super("./views/components/joystickComponentView.html", container, "analogInput");
+    this.vertical  = vertical;
+    this.origin = { x: 0, y: 0 };
+  }
 
-    constructor(container, vertical = false) {
-        super("./views/components/joystickComponentView.html", container, "analogInput" );
+  bindEvents() {
+    const joystick = this.container.querySelector('#joystick');
+    const stick    = this.container.querySelector('.stick');
 
-        this.vertical = vertical;
-        this.origin = { x: 0, y: 0 };
-        this.offset = { x: 0, y: 0 };
-    }
+    joystick.addEventListener('touchstart', e => {
+      const t = e.touches[0];
+      this.origin.x = t.clientX;
+      this.origin.y = t.clientY;
+    });
 
-    bindEvents() {
-        const joystick = this.container.querySelector("#joystick");
-        const stick = this.container.querySelector(".stick");
+    joystick.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const t  = e.touches[0];
+      const dx = t.clientX - this.origin.x;
+      const dy = t.clientY - this.origin.y;
+      const cx = Math.max(-75, Math.min(75, dx));
+      const cy = Math.max(-75, Math.min(75, dy));
 
-        joystick.addEventListener("touchstart", (event) => {
-            const touch = event.touches[0];
-            this.origin.x = touch.clientX;
-            this.origin.y = touch.clientY;
-            this.startSendingAnalog();
-        });
+      stick.style.left = `${75 + cx}px`;
+      stick.style.top  = `${75 + cy}px`;
 
-        joystick.addEventListener("touchmove", (event) => {
-            event.preventDefault();
-            const touch = event.touches[0];
+      let x = Math.max(-1, Math.min(1, cx / 75));
+      let y = Math.max(-1, Math.min(1, -cy / 75));
 
-            const dx = touch.clientX - this.origin.x;
-            const dy = touch.clientY - this.origin.y;
+      // rotate axes for horizontal dpad if needed
+      if (!this.vertical) [x, y] = [-y, x];
 
-            const clampedX = Math.max(-75, Math.min(75, dx));
-            const clampedY = Math.max(-75, Math.min(75, dy));
+      socketManager.updateAnalog(x, y);
+    }, { passive: false });
 
-            stick.style.left = `${75 + clampedX}px`;
-            stick.style.top = `${75 + clampedY}px`;
-
-            this.offset = this.normalize(clampedX, clampedY, 75);
-
-            const adjusted = this.applyOrientationRotation(this.offset);
-
-            this.updateAnalogInput(adjusted);
-        }, { passive: false });
-
-        joystick.addEventListener("touchend", () => {
-            const stick = this.container.querySelector(".stick");
-    
-            stick.style.left = "75px";
-            stick.style.top = "75px";
-
-            this.updateAnalogInput({ x: 0, y: 0 });
-            this.sendAnalogInput();
-            this.stopSendingAnalog();
-        });
-    }
-
-    normalize(dx, dy, max) {
-        const x = Math.max(-1, Math.min(1, dx / max));
-        const y = Math.max(-1, Math.min(1, -dy / max));
-        return { x, y };
-    }
-
-    applyOrientationRotation(input) {
-        let adjustedInput = {
-                x: -input.y,
-                y: input.x
-            };
-
-        if (this.vertical) {
-            adjustedInput = {
-                x: input.x,
-                y: input.y
-            };
-        }
-        return adjustedInput;
-    }
+    joystick.addEventListener('touchend', () => {
+      stick.style.left = '75px';
+      stick.style.top  = '75px';
+      socketManager.updateAnalog(0, 0);
+    });
+  }
 }

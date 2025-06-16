@@ -1,19 +1,14 @@
-import { Controller } from "../controller.js";
+import { ViewRenderer } from "../../utils/viewRenderer.js";
+import { socketManager } from '../../main.js';
 
-export class ButtonComponent extends Controller {
-    constructor(container, vertical = false) {
-        super("./views/components/buttonComponentView.html", container, "buttonInput");
-    }
+export class ButtonComponent extends ViewRenderer{
+  constructor(container) {
+    super("./views/components/buttonComponentView.html", container);
+  }
 
-    bindEvents() {
-        let button = this.container.querySelector(".big-button");
-
-        button.addEventListener("touchstart", () => {
-            this.updateButtonInput("button", true);
-        });
-
-        button.addEventListener("touchend", () => {
-            this.updateButtonInput("button", false);
-        });
-    }
-} 
+  bindEvents() {
+    const btn = this.container.querySelector('.big-button');
+    btn.addEventListener('touchstart', () => socketManager.updateButton('button', true));
+    btn.addEventListener('touchend',   () => socketManager.updateButton('button', false));
+  }
+}

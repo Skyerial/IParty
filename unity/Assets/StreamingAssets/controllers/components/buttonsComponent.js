@@ -1,29 +1,22 @@
-import { Controller } from "../controller.js";
+import { ViewRenderer } from '../../utils/viewRenderer.js';
+import { socketManager } from '../../main.js';
 
-export class ButtonsComponent extends Controller {
-    constructor(container, vertical = false) {
-        super("./views/components/buttonsComponentView.html", container, "buttonInput");
-        this.vertical = vertical;
+export class ButtonsComponent extends ViewRenderer{
+  constructor(container, vertical = false) {
+    super("./views/components/buttonsComponentView.html", container, "buttonInput");
+    this.vertical = vertical;
+  }
+
+  bindEvents() {
+    if (this.vertical) {
+      this.container.querySelector('.button-container')
+                    .classList.add('orientation-vertical');
     }
 
-    bindEvents() {
-        if (this.vertical) {
-            let container = this.container.querySelector(".button-container");
-            container.classList.add("orientation-vertical");
-        }
-
-        let buttons = this.container.querySelectorAll(".game-button");
-
-        for (const button of buttons) {
-            button.addEventListener("touchstart", () => {
-                let buttonText = button.innerHTML.toLowerCase();
-                this.updateButtonInput(buttonText, true);
-            });
-
-            button.addEventListener("touchend", () => {
-                let buttonText = button.innerHTML.toLowerCase();
-                this.updateButtonInput(buttonText, false);
-            });
-        }
-    }
+    this.container.querySelectorAll('.game-button').forEach(button => {
+      const name = button.innerText;
+      button.addEventListener('touchstart', () => socketManager.updateButton(name, true));
+      button.addEventListener('touchend',   () => socketManager.updateButton(name, false));
+    });
+  }
 }

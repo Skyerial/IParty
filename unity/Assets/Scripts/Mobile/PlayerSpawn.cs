@@ -6,25 +6,37 @@ using System.Linq;
 using UnityEngine.TextCore;
 using UnityEngine.UI;
 using System;
+using TMPro;
 
 public class PlayerSpawn : MonoBehaviour
 {
-
+    int i = 0;
     void Start()
     {
         //Remove players from the lobby scene 
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "Lobby") ServerManager.allControllers?.Clear();
     }
+
     public void OnPlayerJoined(PlayerInput playerInput)
     {
         GameObject playersParent = GameObject.Find("Players");
         // if not in lobby. 
         if (playersParent == null)
-        {
+        {   
+            // Only works for standard prefab.
+            // Transform body = playerInput.transform.Find("Body");
+            // SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
+            // renderer.material = PlayerManager.findColor(playerInput.devices[0]);
+
             GameObject SpawnOBJ = GameObject.Find("Spawn");
-            Transform Spawn = SpawnOBJ.GetComponent<Transform>();
-            playerInput.transform.position = Spawn.transform.position;
+            foreach (Transform child in SpawnOBJ.transform)
+            {
+                Debug.Log("Child name: " + child.name);
+            }
+            Transform[] Spawn = SpawnOBJ.GetComponentsInChildren<Transform>();
+            playerInput.transform.position = Spawn[i].transform.position;
+            i++;
         }
         else
         {
@@ -51,6 +63,12 @@ public class PlayerSpawn : MonoBehaviour
                     emptySlot = characterShow;
                     Debug.Log("Player not found in characterShow, looking for empty slot");
                     playerWaitingFrame.gameObject.SetActive(false);
+
+                    // TESTING PLAYER MANAGER
+                    TextMeshProUGUI nameField = characterFrame.Find("PlayerName").Find("PlayerName").GetComponent<TextMeshProUGUI>();
+                    // TextMeshProUGUI nameField = nameObject.GetComponent<TextMeshProUGUI>();
+                    string playerName = PlayerManager.playerStats[playerInput.devices[0]].name;
+                    nameField.text = playerName;
                     characterFrame.gameObject.SetActive(true);
                     break;
                 }
@@ -62,6 +80,13 @@ public class PlayerSpawn : MonoBehaviour
                 Debug.LogWarning("No empty player slot found!");
                 return;
             }
+
+            // TESTING PLAYER MANAGER
+            Transform body = playerInput.transform.Find("Body");
+            SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
+            renderer.material = PlayerManager.findColor(playerInput.devices[0]);
+
+
             playerInput.transform.SetParent(emptySlot, false);
             float offsetY = -emptySlot.GetComponent<RectTransform>().rect.height * 0.15f;
             playerInput.transform.localPosition = new Vector3(0f, offsetY, 0f);
