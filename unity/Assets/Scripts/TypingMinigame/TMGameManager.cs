@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEditor.Experimental.GraphView;
+using Unity.VisualScripting;
 
 public class TMGameManager : MonoBehaviour
 {
@@ -32,16 +35,44 @@ public class TMGameManager : MonoBehaviour
 
         TM_MusicController.Instance.FadeInBGM(2f); // fade in over 2 seconds
 
-        foreach (var player in players)
+        AttachMobilePlayer();
+
+        // foreach (var player in players)
+        // {
+        //     player.textSpawner.words = wordsPerPlayer;
+        //     player.textSpawner.SpawnWords();
+
+        //     player.raceController.InitializeRace(wordsPerPlayer);
+        //     player.Initialize();
+
+        //     player.inputField.interactable = true;
+        //     player.inputField.text = "";
+        // }
+    }
+
+    private void AttachMobilePlayer()
+    {
+        int i = 0;
+        foreach (var mobilePlayer in PlayerManager.playerStats)
         {
-            player.textSpawner.words = wordsPerPlayer;
-            player.textSpawner.SpawnWords();
+            players[i].textSpawner.words = wordsPerPlayer;
+            players[i].textSpawner.SpawnWords();
+            players[i].raceController.InitializeRace(wordsPerPlayer);
+            players[i].Initialize();
+            players[i].inputField.interactable = true;
+            players[i].inputField.text = "";
 
-            player.raceController.InitializeRace(wordsPerPlayer);
-            player.Initialize();
 
-            player.inputField.interactable = true;
-            player.inputField.text = "";
+            TextMeshProUGUI name = players[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            name.text = mobilePlayer.Value.name;
+
+            i++;
+        }
+
+        while (i < 4)
+        {
+            players[i].gameObject.GetComponent<Renderer>().enabled = false;
+            i++;
         }
     }
 
