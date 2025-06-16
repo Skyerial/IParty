@@ -62,6 +62,9 @@ export class SocketManager {
         } else if (controller == "joystick-preset") {
             let js = new JoystickController(root)
             js.init()
+        } else if (controller == "one-button") {
+            let js = new OneButton(root)
+            js.init()
         }
     }
 
