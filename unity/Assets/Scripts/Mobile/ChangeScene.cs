@@ -20,6 +20,9 @@ public class ChangeScene : MonoBehaviour
             case 2:
                 level = "TankGame";
                 break;
+            case 3:
+                level = "SkyGlutes";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);
