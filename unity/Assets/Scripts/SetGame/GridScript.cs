@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using TMPro;
 
 public class GridScript : MonoBehaviour {
     public GameObject cardPrefab;
+    public TMP_Text scoreText;
     private List<CardData> allCards = new List<CardData>();
     private List<CardData> dealtCards = new List<CardData>();
     private List<CardData> selectedSet = new List<CardData>();
@@ -16,6 +18,7 @@ public class GridScript : MonoBehaviour {
         Shuffle();
         DealCards();
         CreateCardGrid();
+        UpdateScoreUI();
     }
 
     // Checks if cards c1, c2 and c3 form a valid set.
@@ -110,9 +113,18 @@ public class GridScript : MonoBehaviour {
             CardData data = dealtCards[i];
             setCard.Initialize(data);
             setCard.SetGridScript(this);
+            if (selectedSet.Contains(dealtCards[i])) {
+                setCard.GetComponent<Image>().color = new Color(0.8f, 0.8f, 0.8f);
+            }
         }
     }
 
+    // Adds or removes the selected ard from the selectedSet list,
+    // depending on if it's already present or not.
+    //
+    // If the selectedSet list reaches 3 elements it checks if this is a valid set,
+    // adding a point to the score when it is valid, and removing the cards from the dealtCards.
+    // It clears the selectedCard list whenever it reaches 3 elements.
     public void CardSelected(CardData selectedCard) {
         if (selectedSet.Contains(selectedCard)) {
             selectedSet.Remove(selectedCard);
@@ -121,12 +133,10 @@ public class GridScript : MonoBehaviour {
             if (selectedSet.Count == 3) {
                 if (isSet(selectedSet[0], selectedSet[1], selectedSet[2])) {
                     score++;
+                    UpdateScoreUI();
                     dealtCards.Remove(selectedSet[0]);
                     dealtCards.Remove(selectedSet[1]);
                     dealtCards.Remove(selectedSet[2]);
-                    Debug.Log("Valid set! Score: " + score);
-                } else {
-                    Debug.Log("Invalid set.");
                 }
                 selectedSet.Clear();
             }
@@ -138,6 +148,11 @@ public class GridScript : MonoBehaviour {
 
         DealCards();
         CreateCardGrid();
+    }
+
+    void UpdateScoreUI() {
+        if (scoreText != null)
+            scoreText.text = "Score:\n" + score;
     }
 }
 

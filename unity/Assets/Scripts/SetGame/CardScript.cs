@@ -39,20 +39,15 @@ public class SetCard : MonoBehaviour{
     }
 
     void OnCardSelect() {
-        if (img.color == new Color(1.0f, 1.0f, 1.0f)) {
-            img.color = Color.grey;
-        } else {
-            img.color = Color.white;
-        }
         gridScript.CardSelected(cardData);
     }
 
     Color GetColor(int color) {
         return color switch {
-            0 => Color.red,
-            1 => Color.green,
-            2 => new Color(0.5f, 0, 1f), // purple
-            _ => Color.black
+            0 => new Color(1f, 0, 0),       // red
+            1 => new Color(0, 1f, 0),       // green
+            2 => new Color(0.5f, 0, 1f),    // purple
+            _ => new Color(0, 0, 0)         // black
         };
     }
 }
