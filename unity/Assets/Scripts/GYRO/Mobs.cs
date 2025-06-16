@@ -7,7 +7,7 @@ public class MobManager : MonoBehaviour
     [System.Serializable]
     public class MobEntry
     {
-        public MonoBehaviour mobScript; // Mole or Bomb
+        public MonoBehaviour mobScript;
         [Range(0f, 1f)]
         public float spawnWeight = 0.5f;
     }
@@ -46,6 +46,11 @@ public class MobManager : MonoBehaviour
             {
                 yield return StartCoroutine(bomb.PopCycle());
             }
+            else if (currentActiveMob is OilBarrel oil)
+            {
+                yield return StartCoroutine(oil.PopCycle());
+            }
+
         }
     }
 

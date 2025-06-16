@@ -38,25 +38,23 @@ public class Mole : MonoBehaviour
 
     public void OnHit()
     {
-        Debug.Log("🐹 Mole was hit!");
+        Debug.Log("Mole was hit!");
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
 
-        // 🔥 Spawn hit effect (e.g., WHAM!) at the defined spawn point
         if (hitEffect && playerCamera)
         {
             Vector3 centerPos = playerCamera.transform.position + playerCamera.transform.forward * 5f;
             GameObject fx = Instantiate(hitEffect, centerPos, Quaternion.identity);
         }
 
-        // 🕳 Immediately hide the mole
         currentRoutine = StartCoroutine(MoveTo(downPosition));
     }
 
     private IEnumerator MoveTo(Vector3 target)
     {
-        float timeout = 0.5f; // Max time to try moving
+        float timeout = 0.5f;
         float elapsed = 0f;
 
         while (Vector3.Distance(transform.position, target) > 0.01f)

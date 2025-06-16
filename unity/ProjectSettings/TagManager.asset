@@ -9,6 +9,7 @@ TagManager:
   - Bomb
   - FxTemporaire
   - p1Cam
+  - OilBarrel
   layers:
   - Default
   - TransparentFX

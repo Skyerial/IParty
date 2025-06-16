@@ -23,7 +23,6 @@ public class WeaponController : MonoBehaviour
     public Transform playerCamera;
     public float dizzyDuration = 2f;
     public float dizzyIntensity = 1f;
-
     PlayerInput playerInput;
     InputAction slamAction;
 
@@ -108,6 +107,12 @@ public class WeaponController : MonoBehaviour
             Bomb?.OnHit();
             StartCoroutine(BombEffect());
         }
+        else if (other.CompareTag("OilBarrel"))
+        {
+            hasHit = true;
+            var barrel = other.GetComponent<OilBarrel>();
+            barrel?.OnHit();
+        }
     }
 
     IEnumerator BombEffect()
@@ -132,7 +137,6 @@ public class WeaponController : MonoBehaviour
             yield return null;
         }
 
-        // Smooth restore
         float smoothTime = 0.2f;
         float t = 0f;
         while (t < smoothTime)

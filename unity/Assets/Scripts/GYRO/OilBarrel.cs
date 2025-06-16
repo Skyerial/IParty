@@ -1,19 +1,22 @@
 using UnityEngine;
 using System.Collections;
 
-public class Bomb : MonoBehaviour
+public class OilBarrel : MonoBehaviour
 {
-    [Tooltip("How far the bomb dips when hiding")]
+    [Header("Movement")]
     public float popDownDistance = 2f;
-    [Tooltip("Seconds it takes to move down/up")]
     public float moveSpeed = 5f;
-    [Tooltip("How long the bomb stays visible after popping up")]
     public float stayUpTime = 0.6f;
 
-    public GameObject explosionEffect;
-    public GameObject boomTextEffect;
+    [Header("Effects")]
+    public GameObject splashFX;
+    public GameObject splashTextEffect;
     public Transform effectSpawnPoint;
 
+    [Header("Screen Effect")]
+    public OilSplatEffect oilSplatEffect;
+
+    public float splatdelay = 0.6f;
 
     private Vector3 upPosition;
     private Vector3 downPosition;
@@ -33,23 +36,35 @@ public class Bomb : MonoBehaviour
         yield return StartCoroutine(MoveTo(downPosition));
     }
 
-
-
     public void OnHit()
     {
-        Debug.Log("Bomb hit!");
+        Debug.Log("Oil barrel hit!");
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
 
-        if (explosionEffect)
-            Instantiate(explosionEffect, effectSpawnPoint.position, Quaternion.identity);
+        if (splashFX && effectSpawnPoint)
+            Instantiate(splashFX, effectSpawnPoint.position, Quaternion.identity);
 
-        if (boomTextEffect)
-            Instantiate(boomTextEffect, effectSpawnPoint.position, Quaternion.identity);
+        if (splashTextEffect && effectSpawnPoint)
+            Instantiate(splashTextEffect, effectSpawnPoint.position, Quaternion.identity);
+
+
+        StartCoroutine(DelayedOilSplat());
+
 
         currentRoutine = StartCoroutine(MoveTo(downPosition));
     }
+
+
+    private IEnumerator DelayedOilSplat()
+    {
+        yield return new WaitForSeconds(splatdelay);
+
+        if (oilSplatEffect != null)
+            oilSplatEffect.ShowSplat();
+    }
+
 
     private IEnumerator MoveTo(Vector3 target)
     {
@@ -60,17 +75,10 @@ public class Bomb : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
             elapsed += Time.deltaTime;
-
-            if (elapsed > timeout)
-            {
-                Debug.LogWarning($"{gameObject.name} movement timed out aborting and resetting.");
-                break;
-            }
-
+            if (elapsed > timeout) break;
             yield return null;
         }
 
         transform.position = target;
     }
-
 }
