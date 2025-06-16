@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 1, b: 0.05708027, a: 1}
+  m_Color: {r: 0, g: 0.4573648, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -315,7 +315,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -389,6 +389,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5891652139597114617, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3673f653460b51a9088656bb2308e199, type: 2}
     - target: {fileID: -5512944345145251879, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -744,13 +748,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  sprintMultiplier: 1.5
-  sprintRampUpTime: 2
   jumpForce: 7
   rotationSpeed: 360
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 72
   groundCheckOffset: 0.1
   turfCheckDistance: 3
   turfSpeedPenalty: 0.4
@@ -774,7 +776,8 @@ MonoBehaviour:
   maxSpreadAngle: 5
   paintLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
+  projectileLifeTime: 3
   maxAmmo: 100
   ammoRegenRate: 15
   ammoBarFill: {fileID: 4425303499918052300}
