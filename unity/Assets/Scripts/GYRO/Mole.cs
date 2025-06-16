@@ -39,6 +39,7 @@ public class Mole : MonoBehaviour
     public void OnHit()
     {
         Debug.Log("Mole was hit!");
+        GameManager.Instance.AddMoleHit();
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
@@ -64,7 +65,7 @@ public class Mole : MonoBehaviour
 
             if (elapsed > timeout)
             {
-                Debug.LogWarning($"{gameObject.name} movement timed out — aborting and resetting.");
+                Debug.LogWarning($"{gameObject.name} movement timed out aborting and resetting.");
                 break;
             }
 

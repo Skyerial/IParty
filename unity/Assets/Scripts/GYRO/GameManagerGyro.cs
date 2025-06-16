@@ -1,14 +1,36 @@
 using UnityEngine;
 
-public class GameManagerGyro : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    void Start()
-    {
+    public static GameManager Instance;
 
+    [Header("Score Tracking")]
+    public int moleHits = 0;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    void Update()
+    public void AddMoleHit()
     {
+        moleHits++;
+        Debug.Log($"Mole hit! Total: {moleHits}");
+    }
 
+    public void RemoveMoleHit()
+    {
+        if (moleHits != 0)
+        {
+            moleHits--;
+            Debug.Log($"Bomb hit! Total: {moleHits}");
+        }
     }
 }

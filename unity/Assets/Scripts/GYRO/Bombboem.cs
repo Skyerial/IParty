@@ -38,6 +38,7 @@ public class Bomb : MonoBehaviour
     public void OnHit()
     {
         Debug.Log("Bomb hit!");
+        GameManager.Instance.RemoveMoleHit();
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
