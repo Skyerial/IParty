@@ -13,6 +13,7 @@ export class SocketManager {
         this.onMessage = null;
         this.onClose = null;
 
+        this.lastSentMessage = null;
         this.changeMovementType(movementType);
     }
 
@@ -46,9 +47,17 @@ export class SocketManager {
         console.log(url)
         this.socket = new WebSocket(url);
         this.socket.onopen = () => { console.log('🟢 Connected'); };
-        this.socket.onmessage = (e) => { 
+        this.socket.onmessage = async (e) => { 
             console.log(e.data);
-            const data = JSON.parse(e.data);
+            let rawData;
+
+            if (e.data instanceof Blob) {
+                rawData = await e.data.text();
+            }
+            else {
+                rawData = e.data;  // Already a string
+            }
+            const data = JSON.parse(rawData);
             this.handleCommand(data);
             // if (this.onMessage) this.onMessage(data); 
         };
@@ -101,6 +110,13 @@ export class SocketManager {
 
     updateAnalog(x, y) {
         if (this.activeMovementType !== 'analog') return;
+
+        const threshold = 0.01;
+        const xChanged = Math.abs(x - this.state.x) > threshold;
+        const yChanged = Math.abs(y - this.state.y) > threshold;
+
+        if (!xChanged && !yChanged && (x !== 0 || y !== 0)) return;
+
         this.state.x = x;
         this.state.y = y;
         this.updateActivity();
@@ -130,8 +146,11 @@ export class SocketManager {
 
     sendFiltered() {
         if (!this.isConnected()) return;
-        console.log(JSON.stringify(this.getFilteredState()));
-        this.socket.send(JSON.stringify(this.getFilteredState()));
+        const message = JSON.stringify(this.getFilteredState());
+        if (message === this.lastSentMessage) return; // Don't send duplicates
+        this.lastSentMessage = message;
+        console.log(message);
+        this.socket.send(message);
     }
 
     startLoop() {

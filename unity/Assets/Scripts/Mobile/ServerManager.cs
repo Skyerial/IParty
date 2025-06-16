@@ -268,15 +268,10 @@ public class ServerManager : MonoBehaviour
                 // Reserve the slot immediately
                 if (!allControllers.ContainsKey(wrapper.clientId))
                 {
-                    Debug.Log($"[Remote][WS] First payload from {wrapper.clientId}, scheduling spawn");
-                    // Insert a null placeholder so further messages won't re-spawn
-                    allControllers[wrapper.clientId] = null;
-                    MainThreadDispatcher.Enqueue(() => {
-                        // Now do the real spawn, replacing the null
-                        SpawnController(wrapper.clientId);
-                    });
-                    return;
-
+                    Debug.Log($"[Remote][WS] First payload from {wrapper.clientId}, creating controller");
+                    var device = InputSystem.AddDevice<VirtualController>();
+                    device.remoteId = wrapper.clientId;
+                    allControllers[wrapper.clientId] = device;
                 }
 
                 // Decode & debug log
@@ -334,10 +329,36 @@ public class ServerManager : MonoBehaviour
             controller = controller
         };
 
-        foreach (var sock in allSockets.Values.ToArray())
+        string json = JsonUtility.ToJson(messageObject);
+
+        if (instance.useRemote)
         {
-            string json = JsonUtility.ToJson(messageObject);
-            sock.Send(json);
+            // Remote mode: send via wsTunnel to each remote client
+            if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
+            {
+                string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+
+                foreach (var clientId in allControllers.Keys)
+                {
+                    var wrapper = new WSTunnelRequest
+                    {
+                        clientId = clientId,
+                        payloadBase64 = base64Payload,
+                        @event = null
+                    };
+
+                    string wrapperJson = JsonUtility.ToJson(wrapper);
+                    instance.wsTunnel.SendText(wrapperJson);
+                }
+            }
+        }
+        else
+        {
+            // Local mode: send directly via IWebSocketConnection
+            foreach (var sock in allSockets.Values.ToArray())
+            {
+                sock.Send(json);
+            }
         }
     }
     void HandleCommandOnMainThread(string json, string sender)

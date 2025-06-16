@@ -111,7 +111,7 @@ function main() {
     let mixer;
     const loader = new FBXLoader();
     loader.load(
-      '/login/player.fbx', // Your FBX file
+      './login/player.fbx', // Your FBX file
       (object) => {
         object.scale.set(0.01, 0.01, 0.01);
         object.traverse((child) => {
@@ -126,7 +126,7 @@ function main() {
         });
 
         const anim = new FBXLoader();
-        anim.load('/login/IdleW.fbx', (anim) => {
+        anim.load('./login/IdleW.fbx', (anim) => {
           mixer = new THREE.AnimationMixer(object);
           const action = mixer.clipAction(anim.animations[0]);
           action.play();
