@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public int player_id = 0;
     public int current_pos = 0;
     public int increment = 0;
-    public script step_spawner;
+    private script step_spawner;
     public CharacterController characterController;
     public Vector3 TargetPos;
     
@@ -27,7 +27,8 @@ public class PlayerMovement : MonoBehaviour
     private float sum_xz;
 
 
-    private void Start(){
+    private void Start() {
+        step_spawner = FindAnyObjectByType<script>();
         radius = step_spawner.radius;
         step_distance = step_spawner.step_distance;
         height = step_spawner.height;

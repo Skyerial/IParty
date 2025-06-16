@@ -4,9 +4,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
+    private static int currentPlayers = 0;
     private static PlayerManager instance;
     public class PlayerStats
     {
+        public int playerID;
         public int position;
         public string color;
         public bool winner;
@@ -32,15 +34,19 @@ public class PlayerManager : MonoBehaviour
     {
         playerStats[device] = new PlayerStats
         {
+            playerID = currentPlayers,
             position = 0,
             color = color,
             name = name
         };
+
+        currentPlayers++;
     }
 
     public static void RemovePlayer(InputDevice device)
     {
         playerStats.Remove(device);
+        currentPlayers--;
     }
 
     public static void AddPosition(InputDevice device, int position)

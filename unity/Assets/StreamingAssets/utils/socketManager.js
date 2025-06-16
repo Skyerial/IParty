@@ -38,19 +38,28 @@ export class SocketManager {
 
     connect(code) {
         if (this.socket) return;
-        const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
-        const url = isLocal
+        const isRemote = location.hostname === this.relayHost
+        // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
+        const url = !isRemote
             ? `ws://${location.hostname}:8181`
             : `ws://${this.relayHost}:5000/host/${code}/ws`;
+        console.log(url)
         this.socket = new WebSocket(url);
-        this.socket.onopen = () => { console.log('🟢 Connected'); if (this.onOpen) this.onOpen(); };
+        this.socket.onopen = () => { console.log('🟢 Connected'); };
         this.socket.onmessage = (e) => { 
             console.log(e.data);
             const data = JSON.parse(e.data);
             this.handleCommand(data);
             // if (this.onMessage) this.onMessage(data); 
         };
-        this.socket.onclose = () => { console.log('🔴 Disconnected'); this.socket = null; if (this.onClose) this.onClose(); };
+        this.socket.onclose = (e) => { 
+            console.log('🔴 Disconnected'); 
+            console.log(e.code);
+            console.log(e.reason);
+            console.log(e.wasClean); 
+            this.socket = null; 
+            // if (this.onClose) this.onClose(); 
+        };
     }
 
     loadController(controller) {

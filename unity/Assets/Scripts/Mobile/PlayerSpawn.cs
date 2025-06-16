@@ -23,11 +23,12 @@ public class PlayerSpawn : MonoBehaviour
         GameObject playersParent = GameObject.Find("Players");
         // if not in lobby. 
         if (playersParent == null)
-        {   
+        {
             // Only works for standard prefab.
             // Transform body = playerInput.transform.Find("Body");
             // SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
             // renderer.material = PlayerManager.findColor(playerInput.devices[0]);
+            if (i == 4) i = 0;
 
             GameObject SpawnOBJ = GameObject.Find("Spawn");
             foreach (Transform child in SpawnOBJ.transform)
