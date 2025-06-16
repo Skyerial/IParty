@@ -789,6 +789,10 @@ PrefabInstance:
       propertyPath: oilSplatEffect
       value: 
       objectReference: {fileID: 1184621667707163961}
+    - target: {fileID: 2537123134295160321, guid: 7d9290d732db20157badb10da368a81c, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 298355645401745249}
     - target: {fileID: 4549723129707667829, guid: 7d9290d732db20157badb10da368a81c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -868,8 +872,48 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6425732207057946189, guid: 7d9290d732db20157badb10da368a81c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4198970370048103038}
   m_SourcePrefab: {fileID: 100100000, guid: 7d9290d732db20157badb10da368a81c, type: 3}
+--- !u!1 &245038266863440774 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6425732207057946189, guid: 7d9290d732db20157badb10da368a81c, type: 3}
+  m_PrefabInstance: {fileID: 6506087811529840075}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4198970370048103038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245038266863440774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowDebugText: 0
+  ShowCameraFrustum: 1
+  IgnoreTimeScale: 0
+  WorldUpOverride: {fileID: 0}
+  ChannelMask: -1
+  UpdateMethod: 2
+  BlendUpdateMethod: 1
+  LensModeOverride:
+    Enabled: 0
+    DefaultMode: 2
+  DefaultBlend:
+    Style: 1
+    Time: 2
+    CustomCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  CustomBlends: {fileID: 0}
 --- !u!20 &298355645401745249 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6803175987901846186, guid: 7d9290d732db20157badb10da368a81c, type: 3}

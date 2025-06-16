@@ -35,6 +35,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WinScreen.unity
     guid: fff0e1f83f9cbab41b8bb915dd871f07
+  - enabled: 1
+    path: Assets/Scenes/GYRO.unity
+    guid: c01a1077fc01eb41aad27dddb7866b39
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
