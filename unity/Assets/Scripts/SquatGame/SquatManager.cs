@@ -72,7 +72,7 @@ public class SquatManager : MonoBehaviour
             PlayerMash mash = player.GetComponent<PlayerMash>();
             if (mash != null)
             {
-                rankings.Add((player, mash.GetMashCounter()));
+                rankings.Add((player, mash.GetshCounter()));
             }
         }
 
