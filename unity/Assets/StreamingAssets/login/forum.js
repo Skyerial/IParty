@@ -1,6 +1,7 @@
 import { socketManager } from "../main.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { color_change } from "./background_render.js";
+import { OneButton } from "../controllers/oneButton.js";
 
 function main() {
     let root = document.querySelector(".view-container");
@@ -61,7 +62,7 @@ function main() {
 
     // NEW CHARACTER CREATION
     socketManager.send(playerData)
-    const js = new JoystickController(root);
+    const js = new OneButton(root);
     js.init();
     });
 }

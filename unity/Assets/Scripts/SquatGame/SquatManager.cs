@@ -1,6 +1,8 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SquatManager : MonoBehaviour
 {
@@ -9,10 +11,11 @@ public class SquatManager : MonoBehaviour
     public List<GameObject> playerList = new List<GameObject>();
     public List<GameObject> rankingList = new List<GameObject>();
 
-
     [SerializeField] private float floatStartDelay = 2f;
     [SerializeField] private MinigameHUDController hudController;
 
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform spawnParent; // Parent object containing spawn points
 
     private bool gameEnded = false;
     private GameObject highestPlayer = null;
@@ -27,7 +30,47 @@ public class SquatManager : MonoBehaviour
             return;
         }
 
-        // Abonneer op HUD events
+        // ✅ SPAWN PLAYERS
+        if (ServerManager.allControllers != null)
+        {
+            var devices = ServerManager.allControllers.Values.ToArray();
+
+            Transform[] spawnPoints = spawnParent.GetComponentsInChildren<Transform>()
+                .Where(t => t != spawnParent) // exclude the parent itself
+                .ToArray();
+
+            for (int i = 0; i < devices.Length; i++)
+            {
+                InputDevice device = devices[i];
+
+                Debug.Log("Spawning player for device: " + device.displayName);
+
+                PlayerInputManager.instance.playerPrefab = playerPrefab;
+
+                PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
+
+                if (playerInput != null)
+                {
+                    GameObject player = playerInput.gameObject;
+                    playerList.Add(player);
+
+                    // ✅ Move player to assigned spawn point
+                    if (i < spawnPoints.Length)
+                    {
+                        player.transform.position = spawnPoints[i].position;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Not enough spawn points for player {i + 1}");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Failed to join player.");
+                }
+            }
+        }
+
         hudController.OnCountdownFinished += HandleCountdownFinished;
         hudController.OnGameTimerFinished += HandleGameTimerFinished;
 
@@ -78,6 +121,7 @@ public class SquatManager : MonoBehaviour
 
         rankings.Sort((a, b) => b.mashCount.CompareTo(a.mashCount));
         rankingList.Clear();
+
         foreach (var entry in rankings)
         {
             rankingList.Add(entry.player);
@@ -114,7 +158,6 @@ public class SquatManager : MonoBehaviour
             cam.SetTarget(topPlayer.transform);
         }
     }
-
 
     private IEnumerator DelayedFloatAnimation(float delay)
     {
