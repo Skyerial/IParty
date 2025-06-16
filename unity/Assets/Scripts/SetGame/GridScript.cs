@@ -1,15 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
-public class GridScript : MonoBehaviour
-{
+public class GridScript : MonoBehaviour {
     public GameObject cardPrefab;
     private List<CardData> allCards = new List<CardData>();
     private List<CardData> dealtCards = new List<CardData>();
+    private List<CardData> selectedSet = new List<CardData>();
 
-    void Start()
-    {
+    private int score = 0;
+
+    void Start() {
         CreateCards();
         Shuffle();
         DealCards();
@@ -17,42 +19,32 @@ public class GridScript : MonoBehaviour
     }
 
     // Checks if cards c1, c2 and c3 form a valid set.
-    // i.e. for all 4 attributes, it's all the same, or all different.
-    bool isSet(CardData c1, CardData c2, CardData c3)
-    {
-        return
-        (
-            (
-                ((c1.number == c2.number) && (c2.number == c3.number)) ||
-                ((c1.number != c2.number) && (c2.number != c3.number) && (c1.number != c3.number))
-            ) && (
-                ((c1.filling == c2.filling) && (c2.filling == c3.filling)) ||
-                ((c1.filling != c2.filling) && (c2.filling != c3.filling) && (c1.filling != c3.filling))
-            ) && (
-                ((c1.shape == c2.shape) && (c2.shape == c3.shape)) ||
-                ((c1.shape != c2.shape) && (c2.shape != c3.shape) && (c1.shape != c3.shape))
-            ) && (
-                ((c1.color == c2.color) && (c2.color == c3.color)) ||
-                ((c1.color != c2.color) && (c2.color != c3.color) && (c1.color != c3.color))
-            )
-        );
+    // i.e. for each of the 4 attributes, it's either all the same, or all different.
+    bool isSet(CardData c1, CardData c2, CardData c3) {
+        bool nmbr = (((c1.number == c2.number) && (c2.number == c3.number)) ||
+        ((c1.number != c2.number) && (c2.number != c3.number) && (c1.number != c3.number)));
+
+        bool fill = (((c1.filling == c2.filling) && (c2.filling == c3.filling)) ||
+        ((c1.filling != c2.filling) && (c2.filling != c3.filling) && (c1.filling != c3.filling)));
+
+        bool shpe = (((c1.shape == c2.shape) && (c2.shape == c3.shape)) ||
+        ((c1.shape != c2.shape) && (c2.shape != c3.shape) && (c1.shape != c3.shape)));
+
+        bool clr = (((c1.color == c2.color) && (c2.color == c3.color)) ||
+        ((c1.color != c2.color) && (c2.color != c3.color) && (c1.color != c3.color)));
+
+        return ((nmbr && fill) && (shpe && clr));
+
     }
 
     // Checks if the DealtCards list contains a valid set.
-    bool hasSet()
-    {
-        for (int i = 0; i < 12; i++)
-        {
-            for (int j = 0; j < 12; j++)
-            {
-                if (i != j)
-                {
-                    for (int k = 0; k < 12; k++)
-                    {
-                        if (i != k && j != k)
-                        {
-                            if (isSet(dealtCards[i], dealtCards[j], dealtCards[k]))
-                            {
+    bool hasSet() {
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+                if (i != j) {
+                    for (int k = 0; k < 12; k++) {
+                        if (i != k && j != k) {
+                            if (isSet(dealtCards[i], dealtCards[j], dealtCards[k])) {
                                 return true;
                             }
                         }
@@ -65,17 +57,12 @@ public class GridScript : MonoBehaviour
     }
 
     // Creates all 81 cards for the game.
-    void CreateCards()
-    {
+    void CreateCards() {
         allCards.Clear();
-        for (int n = 0; n < 3; n++)
-        {
-            for (int f = 0; f < 3; f++)
-            {
-                for (int s = 0; s < 3; s++)
-                {
-                    for (int c = 0; c < 3; c++)
-                    {
+        for (int n = 0; n < 3; n++) {
+            for (int f = 0; f < 3; f++) {
+                for (int s = 0; s < 3; s++) {
+                    for (int c = 0; c < 3; c++) {
                         allCards.Add(new CardData(n, f, s, c));
                     }
                 }
@@ -84,10 +71,8 @@ public class GridScript : MonoBehaviour
     }
 
     // Shuffles the cards in the allCards list.
-    void Shuffle()
-    {
-        for (int i = 0; i < allCards.Count; i++)
-        {
+    void Shuffle() {
+        for (int i = 0; i < allCards.Count; i++) {
             CardData temp = allCards[i];
             int randIndex = Random.Range(i, allCards.Count);
             allCards[i] = allCards[randIndex];
@@ -98,11 +83,9 @@ public class GridScript : MonoBehaviour
     // Moves 12 cards from the allCards to the DealtCards list.
     // Makes sure the dealt card contain a valid set,
     // if there are still cards available.
-    void DealCards()
-    {
+    void DealCards() {
         for (int i = 0; dealtCards.Count < 12; i++) {
-            if (allCards.Count <= 0)
-            {
+            if (allCards.Count <= 0) {
                 break;
             }
 
@@ -110,8 +93,7 @@ public class GridScript : MonoBehaviour
             allCards.RemoveAt(0);
         }
 
-        while (allCards.Count > 0 && !hasSet())
-        {
+        while (allCards.Count > 0 && !hasSet()) {
             int i = Random.Range(0, allCards.Count);
             int j = Random.Range(0, dealtCards.Count);
             CardData temp = allCards[i];
@@ -121,21 +103,45 @@ public class GridScript : MonoBehaviour
     }
 
     // Initializes the 12 cards in the DealtCards list.
-    void CreateCardGrid()
-    {
-        for (int i = 0; i < 12; i++)
-        {
+    void CreateCardGrid() {
+        for (int i = 0; i < 12; i++) {
             GameObject cardGO = Instantiate(cardPrefab, transform);
             SetCard setCard = cardGO.GetComponent<SetCard>();
             CardData data = dealtCards[i];
-            setCard.Initialize(data.number, data.filling, data.shape, data.color);
+            setCard.Initialize(data);
+            setCard.SetGridScript(this);
         }
+    }
+
+    public void CardSelected(CardData selectedCard) {
+        if (selectedSet.Contains(selectedCard)) {
+            selectedSet.Remove(selectedCard);
+        } else {
+            selectedSet.Add(selectedCard);
+            if (selectedSet.Count == 3) {
+                if (isSet(selectedSet[0], selectedSet[1], selectedSet[2])) {
+                    score++;
+                    dealtCards.Remove(selectedSet[0]);
+                    dealtCards.Remove(selectedSet[1]);
+                    dealtCards.Remove(selectedSet[2]);
+                    Debug.Log("Valid set! Score: " + score);
+                } else {
+                    Debug.Log("Invalid set.");
+                }
+                selectedSet.Clear();
+            }
+        }
+
+        for (int i = 0; i < this.transform.childCount; i++) {
+            Destroy(this.transform.GetChild(i).gameObject);
+        }
+
+        DealCards();
+        CreateCardGrid();
     }
 }
 
-[System.Serializable]
-public struct CardData
-{
+public struct CardData {
     public int number;
     public int filling;
     public int shape;

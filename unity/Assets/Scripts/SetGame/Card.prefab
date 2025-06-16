@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4771508075744206081}
   - component: {fileID: 5016077100038632668}
   - component: {fileID: -9042441512069270925}
-  - component: {fileID: -5852794723160292278}
+  - component: {fileID: 8715865472304281539}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -90,7 +90,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd526606100147ac9e9009125b4bf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardButton: {fileID: -5852794723160292278}
+  button: {fileID: 8715865472304281539}
+  img: {fileID: 4771508075744206081}
   symbolPrefab: {fileID: 8929846993333106030, guid: e83e0c66dd5c844f1aabec606d93a52c, type: 3}
   symbolParent: {fileID: 2881861657951118243}
   shapeSprites:
@@ -121,7 +122,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a16ee0dcf2933446f8ebf63d84b391ac, type: 3}
   - {fileID: 21300000, guid: ef557c87d57a54220a6250101d227e09, type: 3}
   - {fileID: 21300000, guid: e0c55c87007a844c2b2e180397669e3f, type: 3}
---- !u!114 &-5852794723160292278
+--- !u!114 &8715865472304281539
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,7 +141,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
