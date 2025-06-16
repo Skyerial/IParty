@@ -23,6 +23,12 @@ public class ChangeScene : MonoBehaviour
             case 3:
                 level = "Game_Board";
                 break;
+            case 4:
+                level = "HotPotato";
+                break;
+            case 5:
+                level = "Winscreen";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);
