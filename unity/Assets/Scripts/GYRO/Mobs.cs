@@ -42,7 +42,7 @@ public class MobManager : MonoBehaviour
             {
                 yield return StartCoroutine(mole.PopCycle());
             }
-            else if (currentActiveMob is Bomb bomb)
+            else if (currentActiveMob is BombGyro bomb)
             {
                 yield return StartCoroutine(bomb.PopCycle());
             }

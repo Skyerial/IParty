@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Bomb : MonoBehaviour
+public class BombGyro : MonoBehaviour
 {
     [Tooltip("How far the bomb dips when hiding")]
     public float popDownDistance = 2f;
@@ -38,7 +38,7 @@ public class Bomb : MonoBehaviour
     public void OnHit()
     {
         Debug.Log("Bomb hit!");
-        GameManager.Instance.RemoveMoleHit();
+        GameManagerGyro.Instance.RemoveMoleHit();
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManagerGyro : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManagerGyro Instance;
 
     [Header("Score Tracking")]
     public int moleHits = 0;

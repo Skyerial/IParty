@@ -103,7 +103,7 @@ public class WeaponController : MonoBehaviour
         else if (other.CompareTag("Bomb"))
         {
             hasHit = true;
-            var Bomb = other.GetComponent<Bomb>();
+            var Bomb = other.GetComponent<BombGyro>();
             Bomb?.OnHit();
             StartCoroutine(BombEffect());
         }
