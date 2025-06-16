@@ -6,7 +6,7 @@ using System.Collections;
 public class PlayerMash : MonoBehaviour
 {
     public Animator animator;
-
+    [SerializeField] private AudioSource squatSFX;
     private int mashCounter = 0;
     private float baseSpeed = 1f;
     private float speedIncrement = 0.25f;
