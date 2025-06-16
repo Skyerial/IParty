@@ -5,7 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour
 {
     private static int currentPlayers = 0;
-    private static PlayerManager instance;
+    private static PlayerManager instance; 
+    public static List<PlayerStats> tempRanking = new();
     public class PlayerStats
     {
         public int playerID;
@@ -41,7 +42,22 @@ public class PlayerManager : MonoBehaviour
         };
 
         currentPlayers++;
+        tempRanking.Add(playerStats[device]);
     }
+
+    public void tempRankAdd(InputDevice device)
+    {
+        if (!tempRanking.Contains(playerStats[device]))
+        {
+            tempRanking.Add(playerStats[device]);
+        }
+    }
+
+    public void tempRankClear()
+    {
+        tempRanking.Clear();
+    }
+
 
     public static void RemovePlayer(InputDevice device)
     {
@@ -52,6 +68,7 @@ public class PlayerManager : MonoBehaviour
     public static void AddPosition(InputDevice device, int position)
     {
         playerStats[device].position += position;
+
     }
 
     public static Material findColor(InputDevice device)

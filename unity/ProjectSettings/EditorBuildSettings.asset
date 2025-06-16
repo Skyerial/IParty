@@ -29,6 +29,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game_Board.unity
     guid: 2557e9283cbf69e4fb3be664068e3037
+  - enabled: 1
+    path: Assets/Scenes/HotPotato.unity
+    guid: 41da57fe7b27fcc4c9cb32366f56c75b
+  - enabled: 1
+    path: Assets/Scenes/WinScreen.unity
+    guid: fff0e1f83f9cbab41b8bb915dd871f07
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
