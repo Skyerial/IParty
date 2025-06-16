@@ -18,8 +18,7 @@ public class JoinAllTurf : MonoBehaviour
                 PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 if (playerInput != null)
                 {
-                    colorTank(playerInput);
-                    GameManager.RegisterPlayerGame(playerInput);
+                    Color col = colorPlayer(playerInput);
                 }
                 else
                 {
@@ -29,21 +28,21 @@ public class JoinAllTurf : MonoBehaviour
         }
     }
 
-    void colorTank(PlayerInput playerInput)
+    Color colorPlayer(PlayerInput playerInput)
     {
-        Renderer[] renderers = playerInput.GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
+        SkinnedMeshRenderer[] renderers = playerInput.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer renderer in renderers)
         {
-            // Check each material in the renderer
-            foreach (Material mat in renderer.sharedMaterials)
+            Debug.Log(renderer.name);
+            if (renderer.name == "Body.008")
             {
-                if (mat == targetMaterial)
-                {
-                    InputDevice device = playerInput.devices[0];
-                    renderer.material = PlayerManager.findColor(device);
-                }
+                InputDevice device = playerInput.devices[0];
+                Material mat = PlayerManager.findColor(device);
+                renderer.material = mat;
+                return mat.color;
             }
         }
+
+        return Color.pink;
     }
 }

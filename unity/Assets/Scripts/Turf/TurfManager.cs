@@ -23,21 +23,24 @@ public class TurfManager : MonoBehaviour
 
     private readonly List<PlayerEntry> entries = new List<PlayerEntry>();
 
-    private void Awake()
+    private void Start()
     {
         allTiles = Object.FindObjectsByType<PaintableSurface>(
             FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         totalTiles = allTiles.Length;
 
         var players = GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log(players);
         var count = Mathf.Min(players.Length, 4);
+        Debug.Log(players.Length); 
 
         for (var i = 0; i < count; i++)
         {
             var col = TurfUtilities.GetPlayerColor(players[i].transform);
+            Debug.Log(col);
 
             var uiObj = Instantiate(playerUIPrefab, uiParent);
-            var rect  = uiObj.GetComponent<RectTransform>();
+            var rect = uiObj.GetComponent<RectTransform>();
 
             SetAnchor(rect, i);
 
@@ -46,9 +49,9 @@ public class TurfManager : MonoBehaviour
             if (i == 2 || i == 3) offset.y = -offset.y;
             rect.anchoredPosition = offset;
 
-            var swatch      = uiObj.transform.Find("Swatch").GetComponent<Image>();
+            var swatch = uiObj.transform.Find("Swatch").GetComponent<Image>();
             var percentText = uiObj.transform.Find("PercentText").GetComponent<TMP_Text>();
-            swatch.color     = col;
+            swatch.color = col;
             percentText.text = "0.0%";
 
             entries.Add(new PlayerEntry { color = col, swatch = swatch, percentText = percentText });

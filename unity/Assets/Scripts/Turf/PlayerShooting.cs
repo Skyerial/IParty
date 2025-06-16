@@ -36,8 +36,11 @@ public class PlayerShooting : MonoBehaviour
     private float currentAmmo;
     private Color playerColor;
 
-    private void Awake()
+    private void Start()
     {
+        currentAmmo = maxAmmo;
+        UpdateAmmoUI();
+        
         playerInput = GetComponent<PlayerInput>();
         shootAction = playerInput.actions.FindAction("Attack");
 
@@ -51,11 +54,11 @@ public class PlayerShooting : MonoBehaviour
     private void OnEnable()  => shootAction.Enable();
     private void OnDisable() => shootAction.Disable();
 
-    private void Start()
-    {
-        currentAmmo = maxAmmo;
-        UpdateAmmoUI();
-    }
+    // private void Start()
+    // {
+    //     currentAmmo = maxAmmo;
+    //     UpdateAmmoUI();
+    // }
 
     private void Update()
     {

@@ -30,7 +30,7 @@ public class PlayerMovementTurf : MonoBehaviour
     private bool jumpPressed;
     private Color playerColor;
 
-    private void Awake()
+    private void Start()
     {
         rb       = GetComponent<Rigidbody>();
         capsule  = GetComponent<CapsuleCollider>();
@@ -61,7 +61,7 @@ public class PlayerMovementTurf : MonoBehaviour
     }
 
     private void Update()
-    {
+    {   
         animator.SetBool("IsRunning", moveInput.sqrMagnitude > 0.001f);
         animator.SetBool("IsGrounded", IsGrounded());
     }

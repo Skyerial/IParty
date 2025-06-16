@@ -25,9 +25,13 @@ public class PlayerMovement : MonoBehaviour
     private bool isJumping = false;  // Flag to check if the object is jumping
     private float r_xy;
     private float sum_xz;
+    private InputAction moveAction;
+    private bool movePressed = false;
 
 
-    private void Start() {
+    private void Start()
+    {
+        moveAction.performed += ctx => movePressed = true;
         step_spawner = FindAnyObjectByType<script>();
         radius = step_spawner.radius;
         step_distance = step_spawner.step_distance;

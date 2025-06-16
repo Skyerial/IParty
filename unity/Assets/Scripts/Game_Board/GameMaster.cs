@@ -58,6 +58,7 @@ public class GameMaster : MonoBehaviour
     {
         Debug.Log(playerInput.gameObject.name);
         var device = playerInput.devices[0];
-        players[PlayerManager.playerStats[device].playerID] = playerInput.gameObject;
+        int index = PlayerManager.playerStats[device].playerID;
+        players.Insert(index, playerInput.gameObject);
     }
 }
