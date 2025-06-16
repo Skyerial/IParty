@@ -17,6 +17,8 @@ public class TMGameManager : MonoBehaviour
 
     public int finishCount = 0;
 
+    public Dictionary<UnityEngine.InputSystem.InputDevice, int> playerControllers;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -55,13 +57,13 @@ public class TMGameManager : MonoBehaviour
         int i = 0;
         foreach (var mobilePlayer in PlayerManager.playerStats)
         {
+            playerControllers[mobilePlayer.Key] = i;
             players[i].textSpawner.words = wordsPerPlayer;
             players[i].textSpawner.SpawnWords();
             players[i].raceController.InitializeRace(wordsPerPlayer);
             players[i].Initialize();
             players[i].inputField.interactable = true;
             players[i].inputField.text = "";
-
 
             TextMeshProUGUI name = players[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             name.text = mobilePlayer.Value.name;
@@ -74,6 +76,12 @@ public class TMGameManager : MonoBehaviour
             players[i].gameObject.GetComponent<Renderer>().enabled = false;
             i++;
         }
+    }
+
+    public void HandleMobileInput(VirtualController player, string input)
+    {
+        Debug.Log(PlayerManager.playerStats[player].name);
+        players[playerControllers[player]].HandleInput(input);
     }
 
     public void OnPlayerFinished(PlayerTypingController player)

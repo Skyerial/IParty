@@ -3,6 +3,7 @@ import { ButtonComponent } from "../controllers/components/buttonComponent.js";
 import { ButtonsComponent } from "../controllers/components/buttonsComponent.js";
 import { DpadComponent } from "../controllers/components/dpadComponent.js";
 import { JoystickComponent } from "../controllers/components/joystickComponent.js";
+import { TextComponent } from "../controllers/components/textComponent.js";
 import { ViewRenderer } from "./viewRenderer.js";
 
 export class LayoutManager extends ViewRenderer {
@@ -38,6 +39,11 @@ export class LayoutManager extends ViewRenderer {
         socketManager.changeMovementType("analog");
         await this.addComponent(JoystickComponent);
         this.hasMovementComponent = true;
+    }
+
+    async addText() {
+        socketManager.changeMovementType("text");
+        await this.addComponent(TextComponent)
     }
 
     async addButtons() {

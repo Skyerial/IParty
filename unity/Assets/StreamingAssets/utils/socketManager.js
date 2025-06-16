@@ -1,5 +1,6 @@
 import { DpadController } from "../controllers/dpadController.js";
 import { JoystickController } from "../controllers/joystickController.js";
+import { TextController } from "../controllers/textController.js";
 
 export class SocketManager {
     constructor(relayHost = '178.128.247.108', movementType = 'analog') {
@@ -27,6 +28,7 @@ export class SocketManager {
             C: false,
             D: false,
             button: false,
+            T: "",
         };
 
         if (this.activeMovementType === 'analog') {
@@ -61,6 +63,9 @@ export class SocketManager {
             js.init()
         } else if (controller == "joystick-preset") {
             let js = new JoystickController(root)
+            js.init()
+        } else if (controller == "text-preset") {
+            let js = new TextController(root)
             js.init()
         }
     }
@@ -110,8 +115,16 @@ export class SocketManager {
         }
     }
 
+    updateText(char) {
+        // console.log(char)
+        this.state.T = char
+        if (this.isConnected()) {
+            this.sendFiltered();
+        }
+    }
+
     getFilteredState() {
-        const base = (({ type, A, B, C, D, button }) => ({ type, A, B, C, D, button }))(this.state);
+        const base = (({ type, A, B, C, D, button, T }) => ({ type, A, B, C, D, button, T }))(this.state);
         const movement = this.pick(this.state, this.getMovementKeys());
         return { ...base, ...movement };
     }

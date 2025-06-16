@@ -22,6 +22,7 @@ public class ChangeScene : MonoBehaviour
                 break;
             case 3:
                 level = "TypingMinigame";
+                SendTextBox();
                 break;
         }
         Debug.Log(level);
@@ -33,10 +34,15 @@ public class ChangeScene : MonoBehaviour
         Debug.Log("Test data send.");
         ServerManager.SendtoAllSockets("dpad-preset");
     }
-    
+
     public void SendJoystick()
     {
         Debug.Log("Test data send.");
-        ServerManager.SendtoAllSockets("joystick-preset"); 
+        ServerManager.SendtoAllSockets("joystick-preset");
+    }
+
+    public void SendTextBox()
+    {
+        ServerManager.SendtoAllSockets("text-preset");
     }
 }

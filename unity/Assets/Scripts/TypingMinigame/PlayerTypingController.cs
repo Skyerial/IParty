@@ -45,7 +45,7 @@ public class PlayerTypingController : MonoBehaviour
         UpdateCursorPosition(0);
     }
 
-    private void HandleInput(string input)
+    public void HandleInput(string input)
     {
         int visualIndex = inputCounter - cleanupCounter;
         if (visualIndex < 0 || visualIndex >= spawner.transform.childCount)
