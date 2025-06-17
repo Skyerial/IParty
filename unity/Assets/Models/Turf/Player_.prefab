@@ -778,14 +778,14 @@ MonoBehaviour:
   projectileSpeed: 20
   fireRate: 0.05
   maxSpreadAngle: 5
+  projectileLifeTime: 3
   paintLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  projectileLifeTime: 3
-  maxAmmo: 100
-  ammoRegenRate: 15
-  ammoBarFill: {fileID: 4425303499918052300}
+  turfCheckDistance: 1
   muzzleFlash: {fileID: 0}
   shootSound: {fileID: 0}
-  turfCheckDistance: 1
+  maxAmmo: 100
+  ammoRegenRate: 15
   turfRegenPenalty: 0.5
+  ammoBarFill: {fileID: 4425303499918052300}
