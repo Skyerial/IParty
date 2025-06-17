@@ -31,12 +31,13 @@ public class PlayerSpawn : MonoBehaviour
             if (i == 4) i = 0;
 
             GameObject SpawnOBJ = GameObject.Find("Spawn");
-            foreach (Transform child in SpawnOBJ.transform)
-            {
-                Debug.Log("Child name: " + child.name);
-            }
+            // foreach (Transform child in SpawnOBJ.transform)
+            // {
+            //     Debug.Log("Child name: " + child.name);
+            // }
             Transform[] Spawn = SpawnOBJ.GetComponentsInChildren<Transform>();
             playerInput.transform.position = Spawn[i].transform.position;
+            Debug.Log(Spawn[i].name);
             i++;
         }
         else

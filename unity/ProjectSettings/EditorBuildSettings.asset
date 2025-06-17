@@ -15,11 +15,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 29482f07485c035faa0436c4789ad48b
   - enabled: 1
+    path: Assets/Scenes/Game_Board.unity
+    guid: 2557e9283cbf69e4fb3be664068e3037
+  - enabled: 1
+    path: Assets/Scenes/WinScreen.unity
+    guid: fff0e1f83f9cbab41b8bb915dd871f07
+  - enabled: 1
     path: Assets/Scenes/MobileSandbox.unity
     guid: 6cd82f28518635c4498c186539e5fb0a
   - enabled: 1
     path: Assets/Scenes/Spleef.unity
-    guid: 49b627804f092ea41ab536a4447b90d5
+    guid: e7b4672e9dcdb8edc997ada7d0daf70e
   - enabled: 1
     path: Assets/Scenes/Turf.unity
     guid: dbed39707cd4cd8d887bca4f88e8cab2
@@ -27,14 +33,8 @@ EditorBuildSettings:
     path: Assets/Scenes/TankGame.unity
     guid: f794345d1e324d04697a9b762c96a671
   - enabled: 1
-    path: Assets/Scenes/Game_Board.unity
-    guid: 2557e9283cbf69e4fb3be664068e3037
-  - enabled: 1
     path: Assets/Scenes/HotPotato.unity
     guid: 41da57fe7b27fcc4c9cb32366f56c75b
-  - enabled: 1
-    path: Assets/Scenes/WinScreen.unity
-    guid: fff0e1f83f9cbab41b8bb915dd871f07
   - enabled: 1
     path: Assets/Scenes/GYRO.unity
     guid: c01a1077fc01eb41aad27dddb7866b39
