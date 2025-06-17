@@ -17,7 +17,7 @@ public class TMGameManager : MonoBehaviour
 
     public int finishCount = 0;
 
-    public Dictionary<UnityEngine.InputSystem.InputDevice, int> playerControllers;
+    public Dictionary<string, PlayerTypingController> playerControllers;
 
     private void Awake()
     {
@@ -38,32 +38,34 @@ public class TMGameManager : MonoBehaviour
         TM_MusicController.Instance.FadeInBGM(2f); // fade in over 2 seconds
 
         AttachMobilePlayer();
-
-        // foreach (var player in players)
-        // {
-        //     player.textSpawner.words = wordsPerPlayer;
-        //     player.textSpawner.SpawnWords();
-
-        //     player.raceController.InitializeRace(wordsPerPlayer);
-        //     player.Initialize();
-
-        //     player.inputField.interactable = true;
-        //     player.inputField.text = "";
-        // }
     }
 
     private void AttachMobilePlayer()
     {
         int i = 0;
+
+        playerControllers = new Dictionary<string, PlayerTypingController>();
+
         foreach (var mobilePlayer in PlayerManager.playerStats)
         {
-            playerControllers[mobilePlayer.Key] = i;
-            players[i].textSpawner.words = wordsPerPlayer;
-            players[i].textSpawner.SpawnWords();
-            players[i].raceController.InitializeRace(wordsPerPlayer);
-            players[i].Initialize();
-            players[i].inputField.interactable = true;
-            players[i].inputField.text = "";
+            if (i >= players.Count) break;
+
+            var controller = mobilePlayer.Key as VirtualController;
+            if (controller == null)
+            {
+                Debug.LogWarning("Controller is not a VirtualController. Skipping.");
+                continue;
+            }
+            var typingController = players[i];
+
+            playerControllers[controller.remoteId] = typingController;
+
+            typingController.textSpawner.words = wordsPerPlayer;
+            typingController.textSpawner.SpawnWords();
+            typingController.raceController.InitializeRace(wordsPerPlayer);
+            typingController.Initialize();
+            typingController.inputField.interactable = true;
+            typingController.inputField.text = "";
 
             TextMeshProUGUI name = players[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             name.text = mobilePlayer.Value.name;
@@ -71,17 +73,23 @@ public class TMGameManager : MonoBehaviour
             i++;
         }
 
-        while (i < 4)
+        while (i < players.Count)
         {
-            players[i].gameObject.GetComponent<Renderer>().enabled = false;
+            players[i].gameObject.SetActive(false);
             i++;
         }
     }
 
     public void HandleMobileInput(VirtualController player, string input)
     {
-        Debug.Log(PlayerManager.playerStats[player].name);
-        players[playerControllers[player]].HandleInput(input);
+        if (playerControllers.TryGetValue(player.remoteId, out var controller))
+        {
+            controller.HandleInput(input);
+        }
+        else
+        {
+            Debug.LogWarning($"Input from unknown player: {player.remoteId}");
+        }
     }
 
     public void OnPlayerFinished(PlayerTypingController player)
@@ -92,7 +100,8 @@ public class TMGameManager : MonoBehaviour
 
         TM_MusicController.Instance.PlayFinishSFX();
 
-        if (finishCount == 4)
+        int activePlayerCount = playerControllers.Count;
+        if (finishCount == activePlayerCount)
         {
             Debug.Log("Game over!");
             StartCoroutine(HandleEndGameSequence());
