@@ -1,0 +1,5 @@
+This folder contains all descriptions of different games. Each game has a 
+description in their according file name.
+- File names are as follows for game description: <game scene name>.txt 
+- File names are as follows for control description: <game controls>.txt
+- Note that all text written in the file will be rendered just before a game starts

@@ -2,7 +2,7 @@ import { DpadController } from "../controllers/dpadController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 
 export class SocketManager {
-    constructor(relayHost = '178.128.247.108', movementType = 'analog') {
+    constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
         this.socket = null;
         this.relayHost = relayHost;
         this.interval = 10;
@@ -13,6 +13,7 @@ export class SocketManager {
         this.onMessage = null;
         this.onClose = null;
 
+        this.lastSentMessage = null;
         this.changeMovementType(movementType);
     }
 
@@ -38,19 +39,36 @@ export class SocketManager {
 
     connect(code) {
         if (this.socket) return;
-        const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
-        const url = isLocal
+        const isRemote = location.hostname === this.relayHost
+        // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
+        const url = !isRemote
             ? `ws://${location.hostname}:8181`
-            : `ws://${this.relayHost}:5000/host/${code}/ws`;
+            : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
+        console.log(url)
         this.socket = new WebSocket(url);
-        this.socket.onopen = () => { console.log('🟢 Connected'); if (this.onOpen) this.onOpen(); };
-        this.socket.onmessage = (e) => { 
+        this.socket.onopen = () => { console.log('🟢 Connected'); };
+        this.socket.onmessage = async (e) => { 
             console.log(e.data);
-            const data = JSON.parse(e.data);
+            let rawData;
+
+            if (e.data instanceof Blob) {
+                rawData = await e.data.text();
+            }
+            else {
+                rawData = e.data;  // Already a string
+            }
+            const data = JSON.parse(rawData);
             this.handleCommand(data);
             // if (this.onMessage) this.onMessage(data); 
         };
-        this.socket.onclose = () => { console.log('🔴 Disconnected'); this.socket = null; if (this.onClose) this.onClose(); };
+        this.socket.onclose = (e) => { 
+            console.log('🔴 Disconnected'); 
+            console.log(e.code);
+            console.log(e.reason);
+            console.log(e.wasClean); 
+            this.socket = null; 
+            // if (this.onClose) this.onClose(); 
+        };
     }
 
     loadController(controller) {
@@ -92,6 +110,13 @@ export class SocketManager {
 
     updateAnalog(x, y) {
         if (this.activeMovementType !== 'analog') return;
+
+        const threshold = 0.01;
+        const xChanged = Math.abs(x - this.state.x) > threshold;
+        const yChanged = Math.abs(y - this.state.y) > threshold;
+
+        if (!xChanged && !yChanged && (x !== 0 || y !== 0)) return;
+
         this.state.x = x;
         this.state.y = y;
         this.updateActivity();
@@ -121,8 +146,11 @@ export class SocketManager {
 
     sendFiltered() {
         if (!this.isConnected()) return;
-        console.log(JSON.stringify(this.getFilteredState()));
-        this.socket.send(JSON.stringify(this.getFilteredState()));
+        const message = JSON.stringify(this.getFilteredState());
+        if (message === this.lastSentMessage) return; // Don't send duplicates
+        this.lastSentMessage = message;
+        console.log(message);
+        this.socket.send(message);
     }
 
     startLoop() {
@@ -166,7 +194,7 @@ export class SocketManager {
     }
 
     send(data) {
-        if (this.socket.readyState === WebSocket.OPEN) {
+        if (this.isConnected()) {
             console.log("sending:", JSON.stringify(data));
             this.socket.send(JSON.stringify(data));
         }

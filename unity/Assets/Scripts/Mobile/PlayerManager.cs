@@ -4,9 +4,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
-    private static PlayerManager instance;
+    private static int currentPlayers = 0;
+    private static PlayerManager instance; 
+    public static List<PlayerStats> tempRanking = new();
     public class PlayerStats
     {
+        public int playerID;
         public int position;
         public string color;
         public bool winner;
@@ -32,20 +35,40 @@ public class PlayerManager : MonoBehaviour
     {
         playerStats[device] = new PlayerStats
         {
+            playerID = currentPlayers,
             position = 0,
             color = color,
             name = name
         };
+
+        currentPlayers++;
+        tempRanking.Add(playerStats[device]);
     }
+
+    public void tempRankAdd(InputDevice device)
+    {
+        if (!tempRanking.Contains(playerStats[device]))
+        {
+            tempRanking.Add(playerStats[device]);
+        }
+    }
+
+    public void tempRankClear()
+    {
+        tempRanking.Clear();
+    }
+
 
     public static void RemovePlayer(InputDevice device)
     {
         playerStats.Remove(device);
+        currentPlayers--;
     }
 
     public static void AddPosition(InputDevice device, int position)
     {
         playerStats[device].position += position;
+
     }
 
     public static Material findColor(InputDevice device)

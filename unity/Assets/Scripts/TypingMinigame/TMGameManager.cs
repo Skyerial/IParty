@@ -1,11 +1,14 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class TMGameManager : MonoBehaviour
 {
     public static TMGameManager Instance { get; private set; }
 
-    public List<PlayerTypingController> players;
+    public int wordsPerPlayer = 10;
+
+    public List<PlayerTypingController> players; // list of row1, ro2, etc
 
     private bool gameStarted = false;
 
@@ -27,8 +30,16 @@ public class TMGameManager : MonoBehaviour
         gameStarted = true;
         Debug.Log("Game started!");
 
+        TM_MusicController.Instance.FadeInBGM(2f); // fade in over 2 seconds
+
         foreach (var player in players)
         {
+            player.textSpawner.words = wordsPerPlayer;
+            player.textSpawner.SpawnWords();
+
+            player.raceController.InitializeRace(wordsPerPlayer);
+            player.Initialize();
+
             player.inputField.interactable = true;
             player.inputField.text = "";
         }
@@ -36,28 +47,27 @@ public class TMGameManager : MonoBehaviour
 
     public void OnPlayerFinished(PlayerTypingController player)
     {
-        // Debug.Log($"{player.name} has completed all words!");
         finishCount++;
         Debug.Log($"{player.name} finished in position {finishCount}");
-
-        // Optional: disable input
         player.inputField.interactable = false;
 
-        // Optional: check if everyone is done
-        if (AllPlayersFinished())
+        TM_MusicController.Instance.PlayFinishSFX();
+
+        if (finishCount == 4)
         {
             Debug.Log("Game over!");
-            // Add win screen or restart logic
+            StartCoroutine(HandleEndGameSequence());
         }
+    }
+    
+    private IEnumerator HandleEndGameSequence()
+    {
+        TM_MusicController.Instance.FadeOutBGM(1f);
+        yield return new WaitForSeconds(1f); // Wait for fade out to finish
+        
+        TM_MusicController.Instance.PlayEndGameSFX();
+
+        // TODO: Add win screen or restart logic
     }
 
-    private bool AllPlayersFinished()
-    {
-        foreach (var player in players)
-        {
-            if (player.spawner.transform.childCount > 0)
-                return false;
-        }
-        return true;
-    }
 }

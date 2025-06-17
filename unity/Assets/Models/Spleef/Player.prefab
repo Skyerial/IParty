@@ -426,11 +426,12 @@ MonoBehaviour:
   rotationSpeed: 360
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   groundCheckOffset: 0.05
   dashSpeed: 10
   dashDuration: 0.2
   upwardDashFactor: 0.1
+  dashTiltAngle: -30
   maxStamina: 100
   staminaDrainRate: 25
   staminaRegenRate: 30

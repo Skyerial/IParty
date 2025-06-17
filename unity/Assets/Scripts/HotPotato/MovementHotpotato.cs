@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 public class MovementHotpotato : MonoBehaviour
 {
     PlayerInput playerInput;
-    Animator animator;
     InputAction throwAction;
     public BombManager bombManager;
     public float throwCooldown = 0.8f;
@@ -15,7 +14,6 @@ public class MovementHotpotato : MonoBehaviour
     {
         playerInput = GetComponent<PlayerInput>();
         throwAction = playerInput.actions.FindAction("Throw");
-        animator = GetComponent<Animator>();
         throwAction.Enable();
     }
 
@@ -34,12 +32,8 @@ public class MovementHotpotato : MonoBehaviour
     {
         if (bombManager == null || bombManager.GetCurrentBomb() == null)
         {
-            animator.SetBool("IsThrown", false);
             return false;
         }
-
-        animator.SetBool("IsThrown", true);
-
         return bombManager.GetCurrentBomb().transform.parent == transform;
     }
 

@@ -43,7 +43,7 @@ public class ServerManager : MonoBehaviour
     // Thread-safe command queue
     private ConcurrentQueue<(string payloadJson, string senderId)> commandQueue = new ConcurrentQueue<(string, string)>();
 
-    // Map of remoteId (IP or tunnel‐clientId) → VirtualController
+    // Map of unique connectionId (IP:Port or clientId:connectionId) → VirtualController
     public static Dictionary<string, VirtualController> allControllers = new Dictionary<string, VirtualController>();
     public static Dictionary<VirtualController, IWebSocketConnection> allSockets = new Dictionary<VirtualController, IWebSocketConnection>();
 
@@ -152,12 +152,14 @@ public class ServerManager : MonoBehaviour
         {
             socket.OnOpen = () =>
             {
-                Debug.Log($"[Local][WS] Client connected: {socket.ConnectionInfo.ClientIpAddress}");
+                // Create unique connection ID using IP and port
+                string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
+                Debug.Log($"[Local][WS] Client connected: {connectionId}");
                 MainThreadDispatcher.Enqueue(() =>
                 {
                     var device = InputSystem.AddDevice<VirtualController>();
-                    device.remoteId = socket.ConnectionInfo.ClientIpAddress;
-                    allControllers[socket.ConnectionInfo.ClientIpAddress] = device;
+                    device.remoteId = connectionId;
+                    allControllers[connectionId] = device;
                     allSockets[device] = socket;
 
                     // TESTING CHARACTER CREATION
@@ -167,26 +169,28 @@ public class ServerManager : MonoBehaviour
 
             socket.OnClose = () =>
             {
-                Debug.Log($"[Local][WS] Disconnected: {socket.ConnectionInfo.ClientIpAddress}");
+                string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
+                Debug.Log($"[Local][WS] Disconnected: {connectionId}");
                 MainThreadDispatcher.Enqueue(() =>
                 {
-                    if (allControllers.TryGetValue(socket.ConnectionInfo.ClientIpAddress, out var dev))
+                    if (allControllers.TryGetValue(connectionId, out var dev))
                     {
                         foreach (var p in PlayerInput.all)
                         {
                             if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
                         }
-                        PlayerManager.RemovePlayer(allControllers[socket.ConnectionInfo.ClientIpAddress]);
-                        allSockets.Remove(allControllers[socket.ConnectionInfo.ClientIpAddress]);
-                        allControllers.Remove(socket.ConnectionInfo.ClientIpAddress);
+                        PlayerManager.RemovePlayer(allControllers[connectionId]);
+                        allSockets.Remove(allControllers[connectionId]);
+                        allControllers.Remove(connectionId);
                     }
                 });
             };
 
             socket.OnMessage = msg =>
             {
-                Debug.Log($"[Local][WS] Msg from {socket.ConnectionInfo.ClientIpAddress}");
-                commandQueue.Enqueue((msg, socket.ConnectionInfo.ClientIpAddress));
+                string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
+                Debug.Log($"[Local][WS] Msg from {connectionId}");
+                commandQueue.Enqueue((msg, connectionId));
             };
         });
 
@@ -199,12 +203,13 @@ public class ServerManager : MonoBehaviour
     {
         StartCoroutine(RemoteDispatchLoop());
 
-        string relayBase = "ws://178.128.247.108:5000";
+        string relayBase = "wss://iparty.duckdns.org:5001";
         string httpTunnelUrl = $"{relayBase}/unity/{hostId}/http";
         string wsTunnelUrl   = $"{relayBase}/unity/{hostId}/ws";
 
         // Generate QR for remote URLs
-        QRCodeGenerator.GenerateQRCode($"http://178.128.247.108:5000/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
+        QRCodeGenerator.GenerateQRCode($"https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
+        Debug.Log($"[Remote] HTTP Link = https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}");
         Debug.Log($"[Remote] HTTP Tunnel = {httpTunnelUrl}");
         Debug.Log($"[Remote] WS Tunnel   = {wsTunnelUrl}");
 
@@ -268,15 +273,10 @@ public class ServerManager : MonoBehaviour
                 // Reserve the slot immediately
                 if (!allControllers.ContainsKey(wrapper.clientId))
                 {
-                    Debug.Log($"[Remote][WS] First payload from {wrapper.clientId}, scheduling spawn");
-                    // Insert a null placeholder so further messages won't re-spawn
-                    allControllers[wrapper.clientId] = null;
-                    MainThreadDispatcher.Enqueue(() => {
-                        // Now do the real spawn, replacing the null
-                        SpawnController(wrapper.clientId);
-                    });
-                    return;
-
+                    Debug.Log($"[Remote][WS] First payload from {wrapper.clientId}, creating controller");
+                    var device = InputSystem.AddDevice<VirtualController>();
+                    device.remoteId = wrapper.clientId;
+                    allControllers[wrapper.clientId] = device;
                 }
 
                 // Decode & debug log
@@ -334,10 +334,36 @@ public class ServerManager : MonoBehaviour
             controller = controller
         };
 
-        foreach (var sock in allSockets.Values.ToArray())
+        string json = JsonUtility.ToJson(messageObject);
+
+        if (instance.useRemote)
         {
-            string json = JsonUtility.ToJson(messageObject);
-            sock.Send(json);
+            // Remote mode: send via wsTunnel to each remote client
+            if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
+            {
+                string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+
+                foreach (var clientId in allControllers.Keys)
+                {
+                    var wrapper = new WSTunnelRequest
+                    {
+                        clientId = clientId,
+                        payloadBase64 = base64Payload,
+                        @event = null
+                    };
+
+                    string wrapperJson = JsonUtility.ToJson(wrapper);
+                    instance.wsTunnel.SendText(wrapperJson);
+                }
+            }
+        }
+        else
+        {
+            // Local mode: send directly via IWebSocketConnection
+            foreach (var sock in allSockets.Values.ToArray())
+            {
+                sock.Send(json);
+            }
         }
     }
     void HandleCommandOnMainThread(string json, string sender)

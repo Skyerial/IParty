@@ -21,7 +21,16 @@ public class ChangeScene : MonoBehaviour
                 level = "TankGame";
                 break;
             case 3:
-                level = "SkyGlutes";
+                level = "Game_Board";
+                break;
+            case 4:
+                level = "HotPotato";
+                break;
+            case 5:
+                level = "Winscreen";
+                break;
+            case 6:
+                level = "GYRO";
                 break;
         }
         Debug.Log(level);

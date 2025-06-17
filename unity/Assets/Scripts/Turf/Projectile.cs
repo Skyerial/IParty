@@ -1,3 +1,4 @@
+// Projectile.cs
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -21,44 +22,31 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time >= nextPaintTime)
-        {
-            CheckForPaintableSurfaces();
-            nextPaintTime = Time.time + paintCheckInterval;
-        }
+        if (Time.time < nextPaintTime) return;
+        nextPaintTime = Time.time + paintCheckInterval;
+        CheckForPaintableSurface();
     }
 
-    private void CheckForPaintableSurfaces()
+    private void CheckForPaintableSurface()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(
-            transform.position,
-            Vector3.down,
-            out hit,
-            maxPaintDistance,
-            paintLayerMask))
-        {
-            PaintableSurface paintable = hit.collider.GetComponent<PaintableSurface>();
-            if (paintable != null)
-            {
-                paintable.PaintEntireSurface(paintColor);
-            }
-        }
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, maxPaintDistance, paintLayerMask))
+            TryPaint(hit.collider);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Only react if this collider is on the paintable layer
-        int otherMask = 1 << other.gameObject.layer;
-        if ((paintLayerMask.value & otherMask) != 0)
+        int mask = 1 << other.gameObject.layer;
+        if ((paintLayerMask.value & mask) != 0)
         {
-            var paintable = other.GetComponent<PaintableSurface>();
-            if (paintable != null)
-            {
-                paintable.PaintEntireSurface(paintColor);
-                // now destroy, but only for paint hits
-                Destroy(gameObject);
-            }
+            TryPaint(other);
+            Destroy(gameObject);
         }
+    }
+
+    private void TryPaint(Collider col)
+    {
+        var paintable = col.GetComponent<PaintableSurface>();
+        if (paintable == null) return;
+        paintable.PaintEntireSurface(paintColor);
     }
 }

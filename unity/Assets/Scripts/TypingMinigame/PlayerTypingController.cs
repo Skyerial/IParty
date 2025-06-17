@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using NUnit.Framework.Interfaces;
 
 public class PlayerTypingController : MonoBehaviour
@@ -10,24 +11,35 @@ public class PlayerTypingController : MonoBehaviour
     public GameObject spawner;
     public TextMeshProUGUI wordsLeftText;
     public PlayerRaceController raceController;
-    private TextSpawner textSpawner;
+    public TextSpawner textSpawner;
     private string currentTargetWord = null;
     private string cursor = $"<color=yellow>|</color>";
     private int inputCounter = 0;
     private int cleanupCounter = 0;
     private int wordsLeft = 0;
 
-    private void Start()
-    {
-        StartCoroutine(Prepare());
-    }
 
-    private IEnumerator Prepare()
-    {
-        yield return new WaitUntil(() => spawner.transform.childCount >= 10);
+    // private void Start()
+    // {
+    //     StartCoroutine(Prepare());
+    // }
 
+    // private IEnumerator Prepare()
+    // {
+    //     yield return new WaitUntil(() => spawner.transform.childCount >= 10);
+
+    //     textSpawner = spawner.GetComponent<TextSpawner>();
+    //     wordsLeft = textSpawner.spawnedWords.Count;
+    //     inputField.onValueChanged.AddListener(HandleInput);
+    //     UpdateWordsLeftText();
+    //     UpdateCursorPosition(0);
+    // }
+
+    public void Initialize()
+    {
         textSpawner = spawner.GetComponent<TextSpawner>();
         wordsLeft = textSpawner.spawnedWords.Count;
+        inputField.onValueChanged.RemoveAllListeners(); // Prevent duplicate listeners
         inputField.onValueChanged.AddListener(HandleInput);
         UpdateWordsLeftText();
         UpdateCursorPosition(0);
@@ -39,13 +51,10 @@ public class PlayerTypingController : MonoBehaviour
         if (visualIndex < 0 || visualIndex >= spawner.transform.childCount)
             return;
 
-        //if (spawner.transform.childCount == 0) return;
-
         Transform wordObj = spawner.transform.GetChild(visualIndex);
         TextMeshProUGUI targetText = wordObj.GetComponent<TextMeshProUGUI>();
 
         if (currentTargetWord == null)
-            // currentTargetWord = targetText.text.Substring(cursor.Length);
             currentTargetWord = textSpawner.spawnedWords[inputCounter];
 
 
@@ -56,23 +65,31 @@ public class PlayerTypingController : MonoBehaviour
 
         if (inputLower == originalLower)
         {
-            inputField.text = "";
-            raceController?.OnWordTyped();
-            StartCoroutine(AnimateAndDestroy(wordObj.gameObject));
+            InputWordCorrect(wordObj);
+        }
+    }
 
-            inputCounter++;
-            currentTargetWord = null;
+    private void InputWordCorrect(Transform wordObj)
+    {
+        TM_MusicController.Instance.PlayCorrectWordSFX();
 
-            wordsLeft--;
-            UpdateWordsLeftText();
+        inputField.text = "";
+        raceController?.OnWordTyped();
+        StartCoroutine(AnimateAndDestroy(wordObj.gameObject));
 
-            UpdateCursorPosition(inputCounter - cleanupCounter);
+        inputCounter++;
+        currentTargetWord = null;
 
-            if (wordsLeft == 0)
-            {
-                Debug.Log($"{gameObject.name} finished!");
-                TMGameManager.Instance?.OnPlayerFinished(this);
-            }
+        wordsLeft--;
+        UpdateWordsLeftText();
+
+        UpdateCursorPosition(inputCounter - cleanupCounter);
+
+        if (wordsLeft == 0)
+        {
+            raceController?.WinningAnim();
+            Debug.Log($"{gameObject.name} finished!");
+            TMGameManager.Instance?.OnPlayerFinished(this);
         }
     }
 
@@ -106,12 +123,7 @@ public class PlayerTypingController : MonoBehaviour
 
     private IEnumerator AnimateAndDestroy(GameObject word)
     {
-        // UpdateCursorPosition(1);
         ResetWordToPlainText();
-
-        // // jank: but needed to type around animation, we need next word faster than the animation
-        // currentTargetWord = null;
-        // counter += 1;
 
         Animator animator = word.GetComponent<Animator>();
 
@@ -122,10 +134,7 @@ public class PlayerTypingController : MonoBehaviour
         }
 
         Destroy(word);
-        // counter -= 1;
         cleanupCounter++;
-        
-        // yield return null; // wait one frame for hierarchy update
         UpdateWordsLeftText();
 
         if (spawner.transform.childCount == 0)

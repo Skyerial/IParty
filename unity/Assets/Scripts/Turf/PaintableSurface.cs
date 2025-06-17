@@ -1,3 +1,4 @@
+// PaintableSurface.cs
 using UnityEngine;
 
 public class PaintableSurface : MonoBehaviour

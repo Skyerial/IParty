@@ -691,7 +691,7 @@ MonoBehaviour:
   rotationSpeed: 360
   groundLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   groundCheckOffset: 0.1
   dashSpeed: 10
   dashDuration: 0.2
