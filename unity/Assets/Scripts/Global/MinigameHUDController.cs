@@ -43,7 +43,6 @@ public class MinigameHUDController : MonoBehaviour
         }
         else
         {
-            // Direct skip countdown if not used
             countDownFrame.SetActive(false);
             timerFrame.SetActive(true);
             gameplayObjects.SetActive(true);
@@ -85,7 +84,6 @@ public class MinigameHUDController : MonoBehaviour
         }
         else
         {
-            // Skip timer, show gameplay directly and signal "finished"
             timerFrame.SetActive(false);
             OnGameTimerFinished?.Invoke();
         }
