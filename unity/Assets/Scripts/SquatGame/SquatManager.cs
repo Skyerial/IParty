@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class SquatManager : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class SquatManager : MonoBehaviour
 
     [SerializeField] private float floatStartDelay = 2f;
     [SerializeField] private MinigameHUDController hudController;
-
+    [SerializeField] private GameObject nameboardPrefab;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform spawnParent; // Parent object containing spawn points
 
@@ -31,45 +32,7 @@ public class SquatManager : MonoBehaviour
         }
 
         // ✅ SPAWN PLAYERS
-        if (ServerManager.allControllers != null)
-        {
-            var devices = ServerManager.allControllers.Values.ToArray();
-
-            Transform[] spawnPoints = spawnParent.GetComponentsInChildren<Transform>()
-                .Where(t => t != spawnParent) // exclude the parent itself
-                .ToArray();
-
-            for (int i = 0; i < devices.Length; i++)
-            {
-                InputDevice device = devices[i];
-
-                Debug.Log("Spawning player for device: " + device.displayName);
-
-                PlayerInputManager.instance.playerPrefab = playerPrefab;
-
-                PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
-
-                if (playerInput != null)
-                {
-                    GameObject player = playerInput.gameObject;
-                    playerList.Add(player);
-
-                    // ✅ Move player to assigned spawn point
-                    if (i < spawnPoints.Length)
-                    {
-                        player.transform.position = spawnPoints[i].position;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Not enough spawn points for player {i + 1}");
-                    }
-                }
-                else
-                {
-                    Debug.LogError("Failed to join player.");
-                }
-            }
-        }
+        SpawnPlayers();
 
         hudController.OnCountdownFinished += HandleCountdownFinished;
         hudController.OnGameTimerFinished += HandleGameTimerFinished;
@@ -181,6 +144,98 @@ public class SquatManager : MonoBehaviour
         for (int i = 0; i < rankingList.Count; i++)
         {
             Debug.Log($"{i + 1} place: {rankingList[i].name}");
+        }
+    }
+
+    void SpawnPlayers()
+    {
+        if (ServerManager.allControllers == null)
+        {
+            Debug.LogWarning("No controllers found.");
+            return;
+        }
+
+        var devices = ServerManager.allControllers.Values.ToArray();
+        Transform[] spawnPoints = GetSpawnPoints();
+
+        PlayerInputManager.instance.playerPrefab = playerPrefab;
+
+        for (int i = 0; i < devices.Length; i++)
+        {
+            InputDevice device = devices[i];
+            GameObject player = SpawnPlayerForDevice(device, i, spawnPoints);
+            if (player != null)
+            {
+                SetupPlayerAppearance(player, device);
+                playerList.Add(player);
+            }
+        }
+    }
+
+    Transform[] GetSpawnPoints()
+    {
+        return spawnParent.GetComponentsInChildren<Transform>()
+                        .Where(t => t != spawnParent)
+                        .ToArray();
+    }
+
+    GameObject SpawnPlayerForDevice(InputDevice device, int index, Transform[] spawnPoints)
+    {
+        Debug.Log("Spawning player for device: " + device.displayName);
+
+        PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
+        if (playerInput == null)
+        {
+            Debug.LogError("Failed to join player.");
+            return null;
+        }
+
+        GameObject player = playerInput.gameObject;
+
+        if (index < spawnPoints.Length)
+        {
+            player.transform.position = spawnPoints[index].position;
+        }
+        else
+        {
+            Debug.LogWarning($"Not enough spawn points for player {index + 1}");
+        }
+
+        return player;
+    }
+
+    void SetupPlayerAppearance(GameObject player, InputDevice device)
+    {
+        Transform bodyTransform = player.transform.Find("Body");
+        if (bodyTransform != null)
+        {
+            Renderer renderer = bodyTransform.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Material mat = PlayerManager.findColor(device);
+                renderer.material = mat;
+            }
+            else
+            {
+                Debug.LogWarning("Renderer not found on 'Body' object.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Could not find 'Body' transform on player.");
+        }
+
+        if (nameboardPrefab != null)
+        {
+            GameObject nameboard = Instantiate(nameboardPrefab, player.transform);
+
+            nameboard.transform.localPosition = new Vector3(0, 2.0f, 0);
+
+            TextMeshProUGUI text = nameboard.GetComponentInChildren<TextMeshProUGUI>();
+            if (text != null)
+            {
+                text.text = PlayerManager.playerStats[device].name;
+            }
         }
     }
 }
