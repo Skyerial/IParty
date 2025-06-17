@@ -9,6 +9,6 @@ export class OneButton {
         const layout = new LayoutManager(this.container, false);
         await layout.init();
 
-        await layout.addButtons();
+        await layout.addButton();
     }
 }
