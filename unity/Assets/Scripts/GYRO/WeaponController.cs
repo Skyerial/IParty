@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Collider), typeof(Rigidbody), typeof(PlayerInput))]
+[RequireComponent(typeof(Collider), typeof(Rigidbody))]
 public class WeaponController : MonoBehaviour
 {
     [Header("Slam Settings")]
@@ -32,8 +32,8 @@ public class WeaponController : MonoBehaviour
 
     void Awake()
     {
-        playerInput = GetComponent<PlayerInput>();
-        slamAction = playerInput.actions.FindAction("Jump");
+        // playerInput = GetComponent<PlayerInput>();
+        // slamAction = playerInput.actions.FindAction("Jump");
 
         var rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
@@ -43,12 +43,18 @@ public class WeaponController : MonoBehaviour
                          | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
     }
 
-    void OnEnable() => slamAction.Enable();
-    void OnDisable() => slamAction.Disable();
+    // void OnEnable() => slamAction.Enable();
+    // void OnDisable() => slamAction.Disable();
 
-    void Update()
+    // void Update()
+    // {
+    //     if (slamAction.triggered && !isSlamming)
+    //         StartCoroutine(SlamRoutine());
+    // }
+
+    public void Slam()
     {
-        if (slamAction.triggered && !isSlamming)
+        if (!isSlamming)
             StartCoroutine(SlamRoutine());
     }
 

@@ -7305,6 +7305,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player - Tank
       objectReference: {fileID: 0}
+    - target: {fileID: 5537730310437413220, guid: afba17b18a2ffc6498c23d5b226dee8d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

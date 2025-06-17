@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 3407545383903223530}
   - component: {fileID: 7128561850904488668}
   - component: {fileID: 7883235826121185279}
+  - component: {fileID: 6767270488004138372}
+  - component: {fileID: 8727100181820614279}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -117,6 +119,48 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &6767270488004138372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609451131938463693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0fc2a3b1ec039d3b7d2f15d93e0cb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8727100181820614279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609451131938463693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 298355645401745249}
 --- !u!1 &7279149328295777661
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,11 +207,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mobEntries:
   - mobScript: {fileID: 3801665007423020733}
-    spawnWeight: 1
+    spawnWeight: 0.2
   - mobScript: {fileID: 1510254363928920372}
-    spawnWeight: 0
+    spawnWeight: 0.6
   - mobScript: {fileID: 2296329743933549218}
-    spawnWeight: 0
+    spawnWeight: 0.2
   minSpawnDelay: 1
   maxSpawnDelay: 5
 --- !u!1 &7485551155171396832
@@ -386,8 +430,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150, y: 0}
-  m_SizeDelta: {x: 2000, y: 1000}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1000, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7639784911107871332
 CanvasRenderer:
@@ -778,7 +822,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerFrefab
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2537123134295160321, guid: 7d9290d732db20157badb10da368a81c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -980,6 +1025,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -6458315966954471253, guid: c4490438686d0134a921019f66c77452, type: 3}
     - target: {fileID: 5177234992734552177, guid: 0b99f4b0d2ee7b1cfa032e4772da7ea0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: eea4812e8e67b6d9db09643ff7b537f4, type: 2}
+    - target: {fileID: 5245961302368581242, guid: 0b99f4b0d2ee7b1cfa032e4772da7ea0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: eea4812e8e67b6d9db09643ff7b537f4, type: 2}
