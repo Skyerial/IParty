@@ -24678,15 +24678,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a3f2f677326d1756b4d4571ab676bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 1930325867}
-  - {fileID: 229403370}
-  - {fileID: 2051705688}
-  - {fileID: 857529904}
+  playerList: []
   rankingList: []
   floatStartDelay: 2
   hudController: {fileID: 1803583111}
