@@ -1,10 +1,16 @@
-import { socketManager } from "../../main.js";
-import { ViewRenderer } from "../../utils/viewRenderer.js";
+// JoystickComponent.js
+import { ViewRenderer } from '../../utils/viewRenderer.js';
+import { socketManager } from '../../main.js';
 
-export class JoystickComponent extends ViewRenderer{
+export class JoystickComponent extends ViewRenderer {
   constructor(container, vertical = false) {
-    super("./views/components/joystickComponentView.html", container, "analogInput");
-    this.vertical  = vertical;
+    super(
+      "./views/components/joystickComponentView.html",
+      container,
+      "analogInput"
+    );
+    this.vertical = vertical;
+    this._pointerId = null;
     this.origin = { x: 0, y: 0 };
   }
 
@@ -12,17 +18,19 @@ export class JoystickComponent extends ViewRenderer{
     const joystick = this.container.querySelector('#joystick');
     const stick    = this.container.querySelector('.stick');
 
-    joystick.addEventListener('touchstart', e => {
-      const t = e.touches[0];
-      this.origin.x = t.clientX;
-      this.origin.y = t.clientY;
+    joystick.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'touch') return;
+      this._pointerId = e.pointerId;
+      this.origin.x = e.clientX;
+      this.origin.y = e.clientY;
+      joystick.setPointerCapture(this._pointerId);
     });
 
-    joystick.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const t  = e.touches[0];
-      const dx = t.clientX - this.origin.x;
-      const dy = t.clientY - this.origin.y;
+    joystick.addEventListener('pointermove', e => {
+      if (e.pointerId !== this._pointerId) return;
+
+      const dx = e.clientX - this.origin.x;
+      const dy = e.clientY - this.origin.y;
       const cx = Math.max(-75, Math.min(75, dx));
       const cy = Math.max(-75, Math.min(75, dy));
 
@@ -31,17 +39,27 @@ export class JoystickComponent extends ViewRenderer{
 
       let x = Math.max(-1, Math.min(1, cx / 75));
       let y = Math.max(-1, Math.min(1, -cy / 75));
-
-      // rotate axes for horizontal dpad if needed
       if (!this.vertical) [x, y] = [-y, x];
 
       socketManager.updateAnalog(x, y);
-    }, { passive: false });
-
-    joystick.addEventListener('touchend', () => {
-      stick.style.left = '75px';
-      stick.style.top  = '75px';
-      socketManager.updateAnalog(0, 0);
     });
+
+    joystick.addEventListener('pointerup',     e => this.reset(e));
+    joystick.addEventListener('pointercancel', e => this.reset(e));
+  }
+
+  reset(e) {
+    if (e.pointerId !== this._pointerId) return;
+
+    const joystick = this.container.querySelector('#joystick');
+    const stick    = this.container.querySelector('.stick');
+
+    joystick.releasePointerCapture(this._pointerId);
+    this._pointerId = null;
+
+    stick.style.left = '75px';
+    stick.style.top  = '75px';
+
+    socketManager.updateAnalog(0, 0);
   }
 }

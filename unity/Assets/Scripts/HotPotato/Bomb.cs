@@ -11,6 +11,8 @@ public class Bomb : MonoBehaviour
     public GameObject explosion;
     public bool isBeingThrown = false;
     AudioSource audioSource;
+    private bool hasPlayedThrowSound = false;
+
     void Start()
     {
         countdownTime = Random.Range(2f, 8f);
@@ -27,9 +29,13 @@ public class Bomb : MonoBehaviour
         if (!isBeingThrown)
         {
             elapsedTime += Time.deltaTime;
-        } else
+            hasPlayedThrowSound = false;
+        }
+        else
         {
             audioSource.Play();
+            hasPlayedThrowSound = true;
+
         }
 
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);
@@ -66,7 +72,6 @@ public class Bomb : MonoBehaviour
         }
 
         Destroy(gameObject);
-
 
     }
 }

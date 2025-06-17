@@ -25,13 +25,23 @@ public class PlayerMovement : MonoBehaviour
     private bool isJumping = false;  // Flag to check if the object is jumping
     private float r_xy;
     private float sum_xz;
+    private GameMaster gameMaster;
+    private PlayerInput playerInput;
     private InputAction moveAction;
-    private bool movePressed = false;
-
 
     private void Start()
     {
-        moveAction.performed += ctx => movePressed = true;
+        // Mapping the input
+        playerInput = GetComponent<PlayerInput>();
+        moveAction = playerInput.actions.FindAction("Jump");
+        moveAction.performed += ctx => HandleInput();
+
+        // Finding the GameMaster
+        gameMaster = FindAnyObjectByType<GameMaster>();
+
+        // Assigning the correct Player ID
+        player_id = PlayerManager.playerStats[playerInput.devices[0]].playerID;
+
         step_spawner = FindAnyObjectByType<script>();
         radius = step_spawner.radius;
         step_distance = step_spawner.step_distance;
@@ -40,21 +50,40 @@ public class PlayerMovement : MonoBehaviour
         new_pos = transform.position;
     }
 
-    private void take_step() {
+    private void HandleInput()
+    {
+        Debug.Log("Button pressed.");
+        if (player_id == gameMaster.current_player && !gameMaster.numberShown)
+        {
+            gameMaster.press_random = 1;
+        } 
+    }
+
+    private void take_step()
+    {
 
         float b = -radius / (8 * 3.14f);
         float a = radius;
 
         float r = a + b * theta;
-        if (player_id == 1) {
+        if (player_id == 1)
+        {
             r_xy = r - 0.1f;
-        } else if (player_id == 2) {
+        }
+        else if (player_id == 2)
+        {
             r_xy = r - 0.03f;
-        } else if (player_id == 3) {
+        }
+        else if (player_id == 3)
+        {
             r_xy = r + 0.03f;
-        } else if (player_id == 4) {
+        }
+        else if (player_id == 4)
+        {
             r_xy = r + 0.1f;
-        } else {
+        }
+        else
+        {
             r_xy = r;
         }
         float x = TargetPos.x + r_xy * Mathf.Cos(theta);
@@ -65,8 +94,8 @@ public class PlayerMovement : MonoBehaviour
             y,
             z
         );
-        
-        theta = theta + step_distance / (Mathf.Sqrt(b*b + r*r));
+
+        theta = theta + step_distance / (Mathf.Sqrt(b * b + r * r));
         increment = increment - 1;
         current_pos = current_pos + 1;
 

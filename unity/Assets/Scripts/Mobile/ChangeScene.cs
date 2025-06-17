@@ -29,6 +29,9 @@ public class ChangeScene : MonoBehaviour
             case 5:
                 level = "Winscreen";
                 break;
+            case 6:
+                level = "GYRO";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);

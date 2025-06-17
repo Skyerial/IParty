@@ -9,6 +9,10 @@
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .view-container {
