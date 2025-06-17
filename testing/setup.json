@@ -1,0 +1,18 @@
+{
+    "websocket": "ws://192.168.2.8:8181",
+    "duration": 100,
+    "verbose": true,
+
+    "player1": {
+        "behaviour": "random"
+    },
+    "player2": {
+        "behaviour": "circle"
+    },
+    "player3": {
+        "behaviour": "figure_eight"
+    },
+    "player4": {
+        "behaviour": "button_mash"
+    }
+}

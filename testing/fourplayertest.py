@@ -1,3 +1,9 @@
+"""
+notes:
+  make sure to check if setup.json has the correct websocket URL
+  assumes the default joystick is used, ask me if you'd like something else
+"""
+
 import asyncio
 import websockets
 import json
@@ -30,9 +36,9 @@ class MobileClientSimulator:
         self.button_state = {"A": False, "B": False, "C": False, "D": False}
 
     async def connect(self):
-        """Connect to the proxy server (which forwards to Unity)"""
+        """Connect to the server (which forwards to Unity)"""
         try:
-            print(f"[Client {self.client_id}] Connecting to proxy at {self.server_url}")
+            print(f"[Client {self.client_id}] Connecting to server at {self.server_url}")
             self.websocket = await websockets.connect(self.server_url)
             self.running = True
             print(f"[Client {self.client_id}] Connected successfully!")
@@ -78,7 +84,7 @@ class MobileClientSimulator:
             await self.websocket.send(message)
             # Log input occasionally
             if self.verbose and random.random() < 0.01:
-                print(f"[Client {self.client_id}] 🎮 Input: x={x:.2f}, y={y:.2f}, buttons={any(self.button_state.values())}")
+                print(f"[Client {self.client_id}] Input: x={x:.2f}, y={y:.2f}, buttons={any(self.button_state.values())}")
 
         except Exception as e:
             print(f"[Client {self.client_id}] Failed to send input: {e}")
@@ -110,7 +116,6 @@ class MobileClientSimulator:
         ]
 
         behaviour = setup.get(self.player_config['name'], {}).get('behaviour', '')
-
         pattern_name, pattern_func = "random", self._random_movement
         for i, j in patterns:
             if i == behaviour:
@@ -188,25 +193,23 @@ class MobileClientSimulator:
         self.running = False
         if self.websocket:
             await self.websocket.close()
-            print(f"[Client {self.client_id}] 🚪 Disconnected")
+            print(f"[Client {self.client_id}] Disconnected")
 
 class FourClientTester:
-    def __init__(self, proxy_url: str = "ws://localhost:8182"):
-        self.proxy_url = proxy_url
+    def __init__(self, socket_url: str):
         self.clients: List[MobileClientSimulator] = []
+        self.socket_url = socket_url
 
     async def create_clients(self, num_clients: int = 4):
         """Create and connect multiple client simulators"""
         print(f"🚀 Creating {num_clients} client simulators...")
-        print(f"📡 Connecting to proxy: {self.proxy_url}")
-        print("   (Proxy will forward to Unity server)")
         print("=" * 50)
 
         # Create clients
         for i in range(num_clients):
             client = MobileClientSimulator(
                 client_id=str(i + 1),
-                server_url=self.proxy_url
+                server_url=self.socket_url
             )
             self.clients.append(client)
 
@@ -309,23 +312,21 @@ class FourClientTester:
 
 async def main():
     """Main test function"""
-    print("🎯 Unity Server 4-Client Mobile Simulator (Proxy Version)")
+    print("🎯 Unity Server 4-Client Mobile Simulator")
     print("=" * 55)
 
-    # Configuration - now connects to proxy instead of Unity directly
-    proxy_url = setup.get("websocket", 'ws://localhost:8182')
-
-    # Get test duration from user
+    websocket = setup.get("websocket", 'ws://localhost:8182')
     duration = setup.get('duration', 60)
 
     print(f"⚙️ Configuration:")
-    print(f"   Proxy: {proxy_url}")
+    print(f"   websocket: {websocket}")
     print(f"   Duration: {duration} seconds")
     print(f"   Clients: 4")
-    print(f"   Note: Make sure the proxy is running first!")
+
+    print("=" * 55)
 
     # Create and run tester
-    tester = FourClientTester(proxy_url)
+    tester = FourClientTester(websocket)
     await tester.run_full_test(duration)
 
     print("\n🎉 Test completed!")

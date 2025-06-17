@@ -5,8 +5,12 @@ import uuid
 from typing import Dict, Set
 import logging
 
+
+
 # webserver = "http://196.168.2.8:8080"
 websocket = "ws://192.168.2.8:8181"
+
+setup = open('SETUP', '')
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
