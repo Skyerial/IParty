@@ -1,6 +1,8 @@
 """
 notes:
-  make sure to check if setup.json has the correct websocket URL
+  Move setup.example.json to setup.json before running this script
+  make sure setup.json has the correct websocket URL
+
   assumes the default joystick is used, ask me if you'd like something else
 """
 

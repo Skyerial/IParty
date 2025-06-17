@@ -1,5 +1,5 @@
 {
-    "websocket": "ws://192.168.2.8:8181",
+    "websocket": "ws://192.1s68.2.8:8181",
     "duration": 100,
     "verbose": true,
 
