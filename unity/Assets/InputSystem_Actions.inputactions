@@ -1030,6 +1030,90 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Player2",
+            "id": "c01b6091-dc63-408b-b360-69f2058a2b8d",
+            "actions": [
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "e4a8bd16-0d9d-4a36-a109-c35c1dc2633b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7d11516e-50d4-48fa-a536-365811ceeb1e",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Player3",
+            "id": "8782ea8f-bf52-447c-bee7-a9cae9ffc15f",
+            "actions": [
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "8289a764-e67a-4b41-9fca-4b9fd1aff7e0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c1e46909-f05a-468a-88f2-3174ede34b65",
+                    "path": "<Keyboard>/u",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Player4",
+            "id": "094b23a4-255a-4a66-9e1a-a008e1d243a1",
+            "actions": [
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "0cbb521e-32e9-4b4a-8132-ac3c69d382ee",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4c80114f-6349-485f-9f1d-7d5fd43e19fd",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
