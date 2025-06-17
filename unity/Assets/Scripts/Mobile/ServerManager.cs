@@ -205,6 +205,7 @@ public class ServerManager : MonoBehaviour
 
         // Generate QR for remote URLs
         QRCodeGenerator.GenerateQRCode($"https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
+        Debug.Log($"[Remote] HTTP Link = https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}");
         Debug.Log($"[Remote] HTTP Tunnel = {httpTunnelUrl}");
         Debug.Log($"[Remote] WS Tunnel   = {wsTunnelUrl}");
 
