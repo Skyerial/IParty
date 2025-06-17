@@ -15,6 +15,8 @@ public class PlayerMash : MonoBehaviour
 
     private PlayerInput playerInput;
     private InputAction mashAction;
+    public bool IsFloatDone { get; private set; } = false;
+
 
     void Awake()
     {
@@ -80,6 +82,7 @@ public class PlayerMash : MonoBehaviour
 
     private IEnumerator DoFinalSquatAndFloat(float height)
     {
+        IsFloatDone = false;
         animator.speed = 1f;
         animator.Play("Squat");
         yield return new WaitForSeconds(0.7f);
@@ -102,5 +105,8 @@ public class PlayerMash : MonoBehaviour
         }
 
         transform.position = endPos;
+        IsFloatDone = true; // <- added
+        Debug.Log($"{gameObject.name} finished floating");
     }
+
 }

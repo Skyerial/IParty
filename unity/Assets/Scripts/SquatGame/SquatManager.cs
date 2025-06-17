@@ -10,12 +10,14 @@ public class SquatManager : MonoBehaviour
 
     public List<GameObject> playerList = new List<GameObject>();
     public List<GameObject> rankingList = new List<GameObject>();
+    [SerializeField] private SwitchScene switchScene;
+
 
     [SerializeField] private float floatStartDelay = 2f;
     [SerializeField] private MinigameHUDController hudController;
 
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform spawnParent; // Parent object containing spawn points
+    [SerializeField] private Transform spawnParent;
 
     private bool gameEnded = false;
     private GameObject highestPlayer = null;
@@ -30,13 +32,12 @@ public class SquatManager : MonoBehaviour
             return;
         }
 
-        // ✅ SPAWN PLAYERS
         if (ServerManager.allControllers != null)
         {
             var devices = ServerManager.allControllers.Values.ToArray();
 
             Transform[] spawnPoints = spawnParent.GetComponentsInChildren<Transform>()
-                .Where(t => t != spawnParent) // exclude the parent itself
+                .Where(t => t != spawnParent)
                 .ToArray();
 
             for (int i = 0; i < devices.Length; i++)
@@ -54,7 +55,6 @@ public class SquatManager : MonoBehaviour
                     GameObject player = playerInput.gameObject;
                     playerList.Add(player);
 
-                    // ✅ Move player to assigned spawn point
                     if (i < spawnPoints.Length)
                     {
                         player.transform.position = spawnPoints[i].position;
@@ -131,6 +131,21 @@ public class SquatManager : MonoBehaviour
             highestPlayer = rankingList[0];
 
         StartCoroutine(DelayedFloatAnimation(floatStartDelay));
+
+        for (int i = 0; i < rankingList.Count; i++)
+        {
+            GameObject player = rankingList[i];
+            PlayerInput input = player.GetComponent<PlayerInput>();
+
+            if (input != null && PlayerManager.playerStats.ContainsKey(input.devices[0]))
+            {
+                var stats = PlayerManager.playerStats[input.devices[0]];
+                stats.position = i + 1;
+                stats.winner = (i == 0);
+                Debug.Log($"Updated PlayerManager: {stats.name} - Position {stats.position} - Winner: {stats.winner}");
+            }
+        }
+
     }
 
     public void UpdateHighestPlayer()
@@ -161,7 +176,23 @@ public class SquatManager : MonoBehaviour
 
     private IEnumerator DelayedFloatAnimation(float delay)
     {
+        Debug.Log("⚠ Coroutine started");
+
         yield return new WaitForSeconds(delay);
+
+        if (highestPlayer != null)
+        {
+            CameraFollow cam = Camera.main.GetComponent<CameraFollow>();
+            if (cam != null)
+            {
+                cam.SetTarget(highestPlayer.transform);
+                Debug.Log($"Camera now following {highestPlayer.name}");
+            }
+            else
+            {
+                Debug.LogWarning("No CameraFollow component found");
+            }
+        }
 
         foreach (GameObject player in playerList)
         {
@@ -173,14 +204,24 @@ public class SquatManager : MonoBehaviour
             }
         }
 
-        if (highestPlayer != null)
-        {
-            Camera.main.GetComponent<CameraFollow>()?.SetTarget(highestPlayer.transform);
-        }
+        yield return new WaitUntil(() =>
+            playerList.All(p => p.GetComponent<PlayerMash>()?.IsFloatDone == true)
+        );
 
-        for (int i = 0; i < rankingList.Count; i++)
+        Debug.Log("✅ All players finished floating");
+
+        yield return new WaitForSeconds(1.5f);
+
+        if (switchScene != null)
         {
-            Debug.Log($"{i + 1} place: {rankingList[i].name}");
+            switchScene.LoadNewScene("WinScreen");
+        }
+        else
+        {
+            Debug.LogWarning("switchScene reference is null");
         }
     }
+
+
+
 }
