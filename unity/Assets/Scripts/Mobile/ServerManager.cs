@@ -199,12 +199,12 @@ public class ServerManager : MonoBehaviour
     {
         StartCoroutine(RemoteDispatchLoop());
 
-        string relayBase = "ws://178.128.247.108:5000";
+        string relayBase = "wss://iparty.duckdns.org:5001";
         string httpTunnelUrl = $"{relayBase}/unity/{hostId}/http";
         string wsTunnelUrl   = $"{relayBase}/unity/{hostId}/ws";
 
         // Generate QR for remote URLs
-        QRCodeGenerator.GenerateQRCode($"http://178.128.247.108:5000/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
+        QRCodeGenerator.GenerateQRCode($"https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
         Debug.Log($"[Remote] HTTP Tunnel = {httpTunnelUrl}");
         Debug.Log($"[Remote] WS Tunnel   = {wsTunnelUrl}");
 

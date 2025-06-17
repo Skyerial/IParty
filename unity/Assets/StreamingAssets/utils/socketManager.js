@@ -2,7 +2,7 @@ import { DpadController } from "../controllers/dpadController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 
 export class SocketManager {
-    constructor(relayHost = '178.128.247.108', movementType = 'analog') {
+    constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
         this.socket = null;
         this.relayHost = relayHost;
         this.interval = 10;
@@ -43,7 +43,7 @@ export class SocketManager {
         // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
         const url = !isRemote
             ? `ws://${location.hostname}:8181`
-            : `ws://${this.relayHost}:5000/host/${code}/ws`;
+            : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
         console.log(url)
         this.socket = new WebSocket(url);
         this.socket.onopen = () => { console.log('🟢 Connected'); };
@@ -194,7 +194,7 @@ export class SocketManager {
     }
 
     send(data) {
-        if (this.socket.readyState === WebSocket.OPEN) {
+        if (this.isConnected()) {
             console.log("sending:", JSON.stringify(data));
             this.socket.send(JSON.stringify(data));
         }
