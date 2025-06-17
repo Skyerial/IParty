@@ -92,7 +92,7 @@ public class PlayerSpawn : MonoBehaviour
             playerInput.transform.SetParent(emptySlot, false);
             float offsetY = -emptySlot.GetComponent<RectTransform>().rect.height * 0.15f;
             playerInput.transform.localPosition = new Vector3(0f, offsetY, 0f);
-            playerInput.transform.localRotation = Quaternion.identity;
+            playerInput.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
             playerInput.transform.localScale = Vector3.one * 150f;
             playerInput.DeactivateInput();
         }
