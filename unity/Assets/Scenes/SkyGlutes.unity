@@ -24678,8 +24678,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a3f2f677326d1756b4d4571ab676bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerList: []
-  rankingList: []
   switchScene: {fileID: 1461011802}
   floatStartDelay: 2
   hudController: {fileID: 1803583111}
@@ -75071,7 +75069,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: totalGameTime
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 1006546258916938853, guid: 697294d3bf0a6f32399b2695a5a33462, type: 3}
       propertyPath: gameplayObjects

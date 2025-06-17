@@ -88,7 +88,7 @@ public class SquatManager : MonoBehaviour
         StartFloatAnimations();
 
         yield return new WaitUntil(() => playerList.All(p => p.GetComponent<PlayerMash>()?.IsFloatDone == true));
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
         switchScene?.LoadNewScene("WinScreen");
     }
