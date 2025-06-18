@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,6 +15,7 @@ public class PlayerManager : MonoBehaviour
         public string color;
         public bool winner;
         public string name;
+        public byte[] face;
     }
 
     public static Dictionary<InputDevice, PlayerStats> playerStats = new();
@@ -31,14 +33,15 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public static void RegisterPlayer(InputDevice device, string color, string name)
+    public static void RegisterPlayer(InputDevice device, string color, string name, byte[] face)
     {
         playerStats[device] = new PlayerStats
         {
             playerID = currentPlayers,
             position = 0,
             color = color,
-            name = name
+            name = name,
+            face = face
         };
 
         currentPlayers++;

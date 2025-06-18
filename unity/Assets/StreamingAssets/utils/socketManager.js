@@ -42,7 +42,7 @@ export class SocketManager {
         const isRemote = location.hostname === this.relayHost
         // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
         const url = !isRemote
-            ? `ws://${location.hostname}:8181`
+            ? `wss://${location.hostname}:8181`
             : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
         console.log(url)
         this.socket = new WebSocket(url);

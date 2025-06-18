@@ -89,6 +89,17 @@ public class PlayerSpawn : MonoBehaviour
             SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
             renderer.material = PlayerManager.findColor(playerInput.devices[0]);
 
+            // TESTING FACES
+            Transform face = playerInput.transform.Find("Face");
+            SkinnedMeshRenderer renderer_face = face.GetComponent<SkinnedMeshRenderer>();
+            Texture2D faceTexture = new Texture2D(2, 2);
+            faceTexture.LoadImage(PlayerManager.playerStats[playerInput.devices[0]].face);
+            if (faceTexture == null)
+                Debug.LogError("Texture not loaded!");
+            else
+                Debug.Log("Texture loaded successfully.");
+            renderer_face.material = new Material(renderer_face.material);
+            renderer_face.material.mainTexture = faceTexture;
 
             playerInput.transform.SetParent(emptySlot, false);
             float offsetY = -emptySlot.GetComponent<RectTransform>().rect.height * 0.15f;

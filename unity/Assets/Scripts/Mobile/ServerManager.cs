@@ -17,6 +17,12 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.InputSystem.Controls;
 
+// Newly added:
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
+using Mono.Cecil;
+
 public class ServerManager : MonoBehaviour
 {
     private static ServerManager instance;
@@ -38,7 +44,6 @@ public class ServerManager : MonoBehaviour
 
     [Header("UI & Utilities")]
     public RawImage targetRenderer;
-    public QRCodeGenerator QRCodeGenerator;
 
     // Thread-safe command queue
     private ConcurrentQueue<(string payloadJson, string senderId)> commandQueue = new ConcurrentQueue<(string, string)>();
@@ -46,6 +51,10 @@ public class ServerManager : MonoBehaviour
     // Map of unique connectionId (IP:Port or clientId:connectionId) → VirtualController
     public static Dictionary<string, VirtualController> allControllers = new Dictionary<string, VirtualController>();
     public static Dictionary<VirtualController, IWebSocketConnection> allSockets = new Dictionary<VirtualController, IWebSocketConnection>();
+
+    // NEWLY ADDED:
+    private Thread httpsThread;
+    private TcpListener tcpListener;
 
 
     void Awake()
@@ -70,8 +79,11 @@ public class ServerManager : MonoBehaviour
             StartRemoteServers();
         else
         {
-            StartHttpServer();
-            StartWebSocketServer();
+            // HTTP
+            // StartHttpServer();
+
+            StartHttpsServer();
+            StartWebSocketServer(); // Uses WSS now
         }
     }
 
@@ -90,6 +102,74 @@ public class ServerManager : MonoBehaviour
     }
 
     // ===================== Local Servers =====================
+    void StartHttpsServer()
+    {
+        var ip = ChooseIP() ?? "0.0.0.0";
+        TcpListener tcpListener = new TcpListener(IPAddress.Parse(ip), 8080);
+        tcpListener.Start();
+        Debug.Log($"[Local][HTTPS] Trying to run on https://{ip}:8080");
+        httpsThread = new Thread(() =>
+        {
+            while (true)
+            {
+                try
+                {
+                    var client = tcpListener.AcceptTcpClient();
+                    HandleClient(client);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError("[Local][HTTPS] " + ex.Message);
+                }
+            }
+        })
+        { IsBackground = true };
+        httpsThread.Start();
+
+        Debug.Log("[Local][HTTPS] Server started.");
+    }
+
+    void HandleClient(TcpClient client)
+    {
+        using var stream = client.GetStream();
+        using var ssl = new SslStream(stream, false);
+        string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
+        Debug.Log("Looking for cert at:" + certPath);
+
+        var cert = new X509Certificate2(certPath, "unity");
+        ssl.AuthenticateAsServer(cert, false, SslProtocols.Tls12, false);
+
+        using var reader = new StreamReader(ssl);
+        using var writer = new StreamWriter(ssl) { AutoFlush = true };
+
+        var requestLine = reader.ReadLine();
+        if (string.IsNullOrEmpty(requestLine)) return;
+
+        var tokens = requestLine.Split(' ');
+        if (tokens.Length < 2) return;
+
+        var path = tokens[1] == "/" ? "/index.html" : tokens[1];
+        var filePath = Path.Combine(Application.streamingAssetsPath, path.TrimStart('/'));
+
+        Debug.Log("Looking for index at:" + filePath);
+
+        if (File.Exists(filePath))
+        {
+            var content = File.ReadAllBytes(filePath);
+            var contentType = GetContentType(filePath);
+            writer.WriteLine("HTTP/1.1 200 OK");
+            writer.WriteLine($"Content-Length: {content.Length}");
+            writer.WriteLine($"Content-Type: {contentType}");
+            writer.WriteLine();
+            ssl.Write(content, 0, content.Length);
+        }
+        else
+        {
+            writer.WriteLine("HTTP/1.1 404 Not Found");
+            writer.WriteLine("Content-Length: 0");
+            writer.WriteLine();
+        }
+    }
 
     void StartHttpServer()
     {
@@ -138,7 +218,7 @@ public class ServerManager : MonoBehaviour
         }) { IsBackground = true };
         httpThread.Start();
 
-        Debug.Log("[Local] HTTP server started.");
+        Debug.Log("[Local][HTTP] Server started.");
     }
 
     void StartWebSocketServer()
@@ -146,8 +226,11 @@ public class ServerManager : MonoBehaviour
         FleckLog.Level = LogLevel.Debug;
         string ip = ChooseIP() ?? "0.0.0.0";
         Debug.Log(ip);
-        string wsPrefix = $"ws://{ip}:8181";
+        string wsPrefix = $"wss://{ip}:8181";
         wsServer = new WebSocketServer(wsPrefix);
+        string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
+        wsServer.Certificate = new X509Certificate2(certPath, "unity");
+        wsServer.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
         wsServer.Start(socket =>
         {
             socket.OnOpen = () =>
@@ -205,7 +288,7 @@ public class ServerManager : MonoBehaviour
 
         string relayBase = "wss://iparty.duckdns.org:5001";
         string httpTunnelUrl = $"{relayBase}/unity/{hostId}/http";
-        string wsTunnelUrl   = $"{relayBase}/unity/{hostId}/ws";
+        string wsTunnelUrl = $"{relayBase}/unity/{hostId}/ws";
 
         // Generate QR for remote URLs
         QRCodeGenerator.GenerateQRCode($"https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
@@ -226,7 +309,7 @@ public class ServerManager : MonoBehaviour
                 string filePath = Path.Combine(Application.streamingAssetsPath, relPath);
 
                 byte[] bodyBytes;
-                int status=200;
+                int status = 200;
                 string ct = GetContentType(filePath);
 
                 if (!File.Exists(filePath))
@@ -238,7 +321,7 @@ public class ServerManager : MonoBehaviour
                 else
                 {
                     try { bodyBytes = File.ReadAllBytes(filePath); }
-                    catch { status=500; bodyBytes = Encoding.UTF8.GetBytes("500 - Error"); ct="text/plain"; }
+                    catch { status = 500; bodyBytes = Encoding.UTF8.GetBytes("500 - Error"); ct = "text/plain"; }
                 }
 
                 string base64 = Convert.ToBase64String(bodyBytes);
@@ -318,11 +401,11 @@ public class ServerManager : MonoBehaviour
         return Path.GetExtension(path).ToLowerInvariant() switch
         {
             ".html" => "text/html",
-            ".js"   => "application/javascript",
-            ".css"  => "text/css",
-            ".png"  => "image/png",
-            ".jpg"  => "image/jpeg",
-            _        => "application/octet-stream",
+            ".js" => "application/javascript",
+            ".css" => "text/css",
+            ".png" => "image/png",
+            ".jpg" => "image/jpeg",
+            _ => "application/octet-stream",
         };
     }
 
@@ -383,6 +466,7 @@ public class ServerManager : MonoBehaviour
                         {
                             leftStick = new Vector2(cmd.x, cmd.y),
                             buttons =
+<<<<<<< Updated upstream
                                 (ushort)(
                                     (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
                                     (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
@@ -390,6 +474,14 @@ public class ServerManager : MonoBehaviour
                                     (cmd.C ? (1 << (int)GamepadButton.West)  : 0) |
                                     (cmd.button ? (1 << (int)GamepadButton.LeftShoulder) : 0)
                                 )
+=======
+                            (ushort)(
+                                (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
+                                (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
+                                (cmd.B ? (1 << (int)GamepadButton.East) : 0) |
+                                (cmd.C ? (1 << (int)GamepadButton.West) : 0)
+                            )
+>>>>>>> Stashed changes
                         };
                         break;
                     case "dpad":
@@ -401,7 +493,8 @@ public class ServerManager : MonoBehaviour
             else
             {
                 var cmd = JsonUtility.FromJson<PlayerConfig>(json);
-                PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name);
+                byte[] face = Convert.FromBase64String(cmd.data);
+                PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
                 PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller);
             }
         }
@@ -410,6 +503,17 @@ public class ServerManager : MonoBehaviour
             Debug.LogWarning("Invalid command JSON: " + e.Message);
         }
     }
+
+    // void parseImage(string image, string name)
+    // {
+    //     Debug.Log("Parsing image...");
+    //     // var cmd = JsonUtility.FromJson<ImageJSON>(image);
+    //     byte[] imageBytes = Convert.FromBase64String(image);
+    //     Debug.Log(imageBytes);
+    //     string path = Path.Combine(Application.dataPath, "Resources", "Images", "Faces", name + ".png");
+    //     File.WriteAllBytes(path, imageBytes);
+    //     Debug.Log("Saving file at " + path);
+    // }
 
     void SpawnController(string clientId)
     {
@@ -442,8 +546,10 @@ public class ServerManager : MonoBehaviour
         }
         else
         {
-            httpListener?.Stop();
-            httpThread?.Abort();
+            // httpListener?.Stop();
+            // httpThread?.Abort();
+            tcpListener?.Stop();
+            httpsThread?.Abort();
             wsServer?.Dispose();
         }
     }
@@ -462,10 +568,10 @@ public class ServerManager : MonoBehaviour
     }
 
     [Serializable]
-    public class PlayerConfig { public string name;  public string color; }
+    public class PlayerConfig { public string name; public string color; public string data; }
 
     [Serializable]
-    public class MessagePlayers { public string type;  public string controller; }
+    public class MessagePlayers { public string type; public string controller; }
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
