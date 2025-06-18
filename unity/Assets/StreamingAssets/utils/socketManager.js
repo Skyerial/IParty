@@ -90,8 +90,7 @@ export class SocketManager {
           if (data.type == "controller") {
                 this.loadController(data.controller)
             }
-            console.log(data.type);
-            console.log(data.controller);
+            console.log(JSON.stringify(data));
     }
 
     disconnect() {

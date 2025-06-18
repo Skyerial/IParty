@@ -43,12 +43,12 @@ public class ChangeScene : MonoBehaviour
     public void SendDpad()
     {
         Debug.Log("Test data send.");
-        ServerManager.SendtoAllSockets("dpad-preset");
+        ServerManager.SendtoAllSocketsController("dpad-preset");
     }
     
     public void SendJoystick()
     {
         Debug.Log("Test data send.");
-        ServerManager.SendtoAllSockets("joystick-preset"); 
+        ServerManager.SendtoAllSocketsController("joystick-preset"); 
     }
 }

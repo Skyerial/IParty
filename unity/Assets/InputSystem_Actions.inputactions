@@ -524,7 +524,7 @@
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "ThrowTo1",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -535,7 +535,7 @@
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Mash",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -546,7 +546,7 @@
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "ThrowTo2",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -557,7 +557,7 @@
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "ThrowTo3",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -568,7 +568,7 @@
                     "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "ThrowTo4",
                     "isComposite": false,
                     "isPartOfComposite": false

@@ -326,35 +326,36 @@ public class ServerManager : MonoBehaviour
         };
     }
 
-    public static void SendtoAllSockets(string controller)
+    public static void SendtoAllSocketsController(string controller)
     {
         var messageObject = new MessagePlayers
         {
             type = "controller",
-            controller = controller
+            controller = controller,
+            playerstats = PlayerManager.playerStats.Select(kvp => new PlayerConfig { name = kvp.Value.name, color = kvp.Value.color }).ToList()
         };
 
         string json = JsonUtility.ToJson(messageObject);
 
+        SendSockets(json);
+    }
+    
+    public static void SendSockets(string json)
+    {
         if (instance.useRemote)
         {
-            // Remote mode: send via wsTunnel to each remote client
+            // Remote mode: send via wsTunnel
             if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
             {
                 string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
-
-                foreach (var clientId in allControllers.Keys)
+                var wrapper = new WSTunnelRequest
                 {
-                    var wrapper = new WSTunnelRequest
-                    {
-                        clientId = clientId,
-                        payloadBase64 = base64Payload,
-                        @event = null
-                    };
-
-                    string wrapperJson = JsonUtility.ToJson(wrapper);
-                    instance.wsTunnel.SendText(wrapperJson);
-                }
+                    clientId = "all",
+                    payloadBase64 = base64Payload,
+                    @event = null
+                };
+                string wrapperJson = JsonUtility.ToJson(wrapper);
+                instance.wsTunnel.SendText(wrapperJson);
             }
         }
         else
@@ -465,7 +466,7 @@ public class ServerManager : MonoBehaviour
     public class PlayerConfig { public string name;  public string color; }
 
     [Serializable]
-    public class MessagePlayers { public string type;  public string controller; }
+    public class MessagePlayers { public string type;  public string controller;  public List<PlayerConfig> playerstats; }
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
