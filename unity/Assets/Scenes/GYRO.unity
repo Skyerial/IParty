@@ -663,6 +663,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8575290882035483199, guid: ca6b60d1fde302fdfb79f39807d0bb63, type: 3}
+      propertyPath: mobEntries.Array.data[0].spawnWeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8575290882035483199, guid: ca6b60d1fde302fdfb79f39807d0bb63, type: 3}
+      propertyPath: mobEntries.Array.data[1].spawnWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8575290882035483199, guid: ca6b60d1fde302fdfb79f39807d0bb63, type: 3}
+      propertyPath: mobEntries.Array.data[2].spawnWeight
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
