@@ -58,7 +58,7 @@ export class LayoutManager extends ViewRenderer {
         await this.addComponent(GyroComponent);
     }
 
-    async addComponent(ComponentClass) {
+    async addComponent(ComponentClass, param = null) {
         const root = document.createElement("div");
 
         let component;
