@@ -6,7 +6,7 @@ using TMPro;
 
 public class GridScript : MonoBehaviour {
     public GameObject cardPrefab;
-    public TMP_Text scoreText;
+    public Text scoreText;
     private List<CardData> allCards = new List<CardData>();
     private List<CardData> dealtCards = new List<CardData>();
     private List<CardData> selectedSet = new List<CardData>();
@@ -107,7 +107,7 @@ public class GridScript : MonoBehaviour {
 
     // Initializes the 12 cards in the DealtCards list.
     void CreateCardGrid() {
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < dealtCards.Count; i++) {
             GameObject cardGO = Instantiate(cardPrefab, transform);
             SetCard setCard = cardGO.GetComponent<SetCard>();
             CardData data = dealtCards[i];
