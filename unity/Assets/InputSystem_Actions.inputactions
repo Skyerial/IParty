@@ -81,7 +81,7 @@
                     "name": "Sprint",
                     "type": "Button",
                     "id": "641cd816-40e6-41b4-8c3d-04687c349290",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -108,6 +108,15 @@
                     "name": "ThrowTo3",
                     "type": "Button",
                     "id": "d2975262-a72d-4901-bcfc-0930b85c034c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowTo4",
+                    "type": "Button",
+                    "id": "00b94590-4e20-4cc9-8041-41be1b48d146",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -512,7 +521,7 @@
                 {
                     "name": "",
                     "id": "be9aea1a-653c-4cea-87f9-7f20af490266",
-                    "path": "<Keyboard>/t",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -534,7 +543,7 @@
                 {
                     "name": "",
                     "id": "afb66434-4bb4-4713-ab16-e0540835929d",
-                    "path": "<Keyboard>/y",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -545,11 +554,22 @@
                 {
                     "name": "",
                     "id": "6ba8bb92-1754-4524-b8b6-2dbdb193b623",
-                    "path": "<Keyboard>/u",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "ThrowTo3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "72e76034-d7e8-4072-8c63-049406466461",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ThrowTo4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -50,9 +50,18 @@ public class SquatManager : MonoBehaviour
         inputEnabled = false;
         RankPlayers();
         UpdatePlayerStats();
-        PrintPlayerScores();
+
+        PlayerManager.instance.tempRankClear();
+        foreach (var player in rankingList)
+        {
+            var input = player.GetComponent<PlayerInput>();
+            if (input != null)
+                PlayerManager.instance.tempRankAdd(input.devices[0]);
+        }
+
         StartCoroutine(FloatAndLoadWin());
     }
+
 
     void ResetPlayers()
     {
