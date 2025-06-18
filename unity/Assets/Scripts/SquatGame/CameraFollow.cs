@@ -4,13 +4,14 @@ public class CameraFollow : MonoBehaviour
 {
     private Transform target;
 
-    [Header("Volgpositie (Y-as)")]
+    [Header("Y Follow Settings")]
     [SerializeField] private float yScreenOffset = 0f;
     [SerializeField] private float minY = -1f;
     [SerializeField] private float maxY = 9999f;
 
-    [Header("Volgsnelheid")]
+    [Header("Follow Speed")]
     [SerializeField] private float followSpeed = 100f;
+
     public void SetTarget(Transform newTarget)
     {
         if (newTarget == null)
@@ -28,7 +29,6 @@ public class CameraFollow : MonoBehaviour
         if (target == null) return;
 
         Vector3 current = transform.position;
-
         float targetY = Mathf.Clamp(target.position.y + yScreenOffset, minY, maxY);
         Vector3 desired = new Vector3(current.x, targetY, current.z);
 
