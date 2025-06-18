@@ -450,6 +450,7 @@ public class ServerManager : MonoBehaviour
             }
         }
     }
+
     void HandleCommandOnMainThread(string json, string sender)
     {
         try
@@ -563,7 +564,7 @@ public class ServerManager : MonoBehaviour
     public class PlayerConfig { public string name; public string color; public string data; }
 
     [Serializable]
-    public class MessagePlayers { public string type;  public string controller;  public List<PlayerConfig> playerstats; }
+    public class MessagePlayers { public string type;  public string controller;/* public List<PlayerConfig> playerstats; */ }
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
