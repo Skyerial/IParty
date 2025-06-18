@@ -14,14 +14,14 @@ public class TurfPlayerShooter : MonoBehaviour
     public float      projectileLifeTime = 5f;
     public LayerMask  paintLayerMask;
     public float      turfCheckDistance  = 1f;
-    public ParticleSystem muzzleFlash;   // assign in Inspector
+    public ParticleSystem muzzleFlash;
     public AudioClip       shootSound;
 
     [Header("Ammo UI")]
     public int   maxAmmo         = 10;
     public float ammoRegenRate   = 1f;
     public float turfRegenPenalty = 0.5f;
-    public Image ammoBarFill;           // assign in Inspector
+    public Image ammoBarFill;
 
     private PlayerInput  pi;
     private InputAction  attackAction;
@@ -33,7 +33,6 @@ public class TurfPlayerShooter : MonoBehaviour
 
     void Awake()
     {
-        // set up input callbacks
         pi = GetComponent<PlayerInput>();
         attackAction = pi.actions["Attack"];
         attackAction.performed += _ => isFiring = true;
@@ -52,7 +51,7 @@ public class TurfPlayerShooter : MonoBehaviour
 
     void Start()
     {
-        // init ammo & UI
+        // init ammo and UI
         currentAmmo = maxAmmo;
         UpdateAmmoUI();
 
@@ -61,9 +60,9 @@ public class TurfPlayerShooter : MonoBehaviour
         playerColor = PlayerManager.findColor(dev).color;
 
         // prepare audio source
-        audioSrc = GetComponent<AudioSource>() 
-                   ?? (shootSound != null 
-                       ? gameObject.AddComponent<AudioSource>() 
+        audioSrc = GetComponent<AudioSource>()
+                   ?? (shootSound != null
+                       ? gameObject.AddComponent<AudioSource>()
                        : null);
     }
 

@@ -66,7 +66,7 @@ public class TurfPlayerMover : MonoBehaviour
         // look up this player’s color and paint-layer mask
         var dev = GetComponent<PlayerInput>().devices[0];
         playerColor = PlayerManager.findColor(dev).color;
-        paintMask   = LayerMask.GetMask("Paint"); // adjust to your paint layer name
+        paintMask   = LayerMask.GetMask("Paint");
     }
 
     void Update()
@@ -94,7 +94,6 @@ public class TurfPlayerMover : MonoBehaviour
         Vector3 horizontal = (dir.sqrMagnitude > 1f ? dir.normalized : dir)
                              * moveSpeed * speedMul;
 
-        // **only apply horizontal & jump when grounded** (original behavior)
         if (IsGrounded())
         {
             rb.linearVelocity = new Vector3(
@@ -122,9 +121,9 @@ public class TurfPlayerMover : MonoBehaviour
         float radius = cap.radius + groundCheckOffset;
 
         return Physics.CheckSphere(
-            origin, 
-            radius, 
-            groundLayerMask, 
+            origin,
+            radius,
+            groundLayerMask,
             QueryTriggerInteraction.Ignore
         );
     }
