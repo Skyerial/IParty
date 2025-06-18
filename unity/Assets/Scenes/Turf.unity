@@ -699,6 +699,7 @@ GameObject:
   m_Component:
   - component: {fileID: 450743374}
   - component: {fileID: 450743375}
+  - component: {fileID: 450743376}
   m_Layer: 0
   m_Name: TurfManager
   m_TagString: Untagged
@@ -739,13 +740,26 @@ MonoBehaviour:
   countdownCanvas: {fileID: 131663174}
   countdownText: {fileID: 158986772}
   countdownStart: 3
-  matchDuration: 10
-  nextSceneName: 
+  matchDuration: 5
+  nextSceneName: WinScreen
   matchTimerCanvas: {fileID: 1030505477}
   matchTimerText: {fileID: 1075431506}
   finishCanvas: {fileID: 287564149}
   finishText: {fileID: 913695729}
   finishDisplayTime: 3
+--- !u!114 &450743376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 450743372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d1c14cdda2b7dfd9012c42d5bd6e98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fader: {fileID: 5301017381564912727, guid: d9dbabc3149e39c4aa4e3336e75f7575, type: 3}
 --- !u!1 &821842731
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,8 +1346,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
