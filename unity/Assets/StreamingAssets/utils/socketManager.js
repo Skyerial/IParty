@@ -48,7 +48,7 @@ export class SocketManager {
         console.log(url)
         this.socket = new WebSocket(url);
         this.socket.onopen = () => { console.log('🟢 Connected'); };
-        this.socket.onmessage = async (e) => { 
+        this.socket.onmessage = async (e) => {
             console.log(e.data);
             let rawData;
 
@@ -60,15 +60,15 @@ export class SocketManager {
             }
             const data = JSON.parse(rawData);
             this.handleCommand(data);
-            // if (this.onMessage) this.onMessage(data); 
+            // if (this.onMessage) this.onMessage(data);
         };
-        this.socket.onclose = (e) => { 
-            console.log('🔴 Disconnected'); 
+        this.socket.onclose = (e) => {
+            console.log('🔴 Disconnected');
             console.log(e.code);
             console.log(e.reason);
-            console.log(e.wasClean); 
-            this.socket = null; 
-            // if (this.onClose) this.onClose(); 
+            console.log(e.wasClean);
+            this.socket = null;
+            // if (this.onClose) this.onClose();
         };
     }
 
@@ -124,7 +124,7 @@ export class SocketManager {
 
     updateDpad(direction, value) {
         if (this.activeMovementType !== 'dpad') return;
-    
+
         this.state[direction] = value;
         if (this.isConnected()) {
             this.sendFiltered();
