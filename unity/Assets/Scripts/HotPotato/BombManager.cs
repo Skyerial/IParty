@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
+using UnityEditorInternal;
 
 public class BombManager : MonoBehaviour
 {
@@ -16,11 +17,10 @@ public class BombManager : MonoBehaviour
     void Start()
     {
         JoinAllPlayers();
-
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
         foreach (GameObject obj in allObjects)
         {
-            if (obj.name.Contains("Player") && players.Count < 4)
+            if (obj.GetComponent<PlayerInput>() != null && players.Count < 4)
             {
                 players.Add(obj);
             }
@@ -47,6 +47,9 @@ public class BombManager : MonoBehaviour
                     GameManager.RegisterPlayerGame(playerInput);
                     MovementHotpotato mover = playerInput.GetComponent<MovementHotpotato>();
                     mover.bombManager = this;
+                    // string colorName = PlayerManager.playerStats[device].color;
+                    // string playerName = PlayerManager.playerStats[device].name;
+                    // sendToSockets(playerName, colorName);
                 }
                 else
                 {
@@ -55,6 +58,12 @@ public class BombManager : MonoBehaviour
             }
         }
     }
+
+    // void sendToSockets(string name, string color)
+    // {
+    //     string json = name + "," + color;
+    //     ServerManager.SendSockets(json);
+    // }
 
     void colorPlayer(PlayerInput playerInput)
     {
@@ -97,7 +106,7 @@ public class BombManager : MonoBehaviour
         switchScene.LoadNewScene("Winscreen");
     }
 
-    
+
     void SpawnBombOnRandomPlayer()
     {
         int index = Random.Range(0, players.Count);
@@ -108,9 +117,10 @@ public class BombManager : MonoBehaviour
         currentBomb.transform.localPosition = new Vector3(0, 2f, 0f);
         currentBomb.transform.localRotation = Quaternion.identity;
     }
-    
+
     public GameObject GetCurrentBomb()
     {
         return currentBomb;
     }
+    
 }

@@ -8,10 +8,43 @@ public class MovementHotpotato : MonoBehaviour
     public float throwCooldown = 0.8f;
     private float cooldownTimer = 0f;
     private bool canThrow = true;
+    private PlayerInput playerInput;
+    private InputAction throwTo1Action;
+    private InputAction throwTo2Action;
+    private InputAction throwTo3Action;
+    private InputAction throwTo4Action;
 
-    private void Awake()
+    void Start()
     {
         cooldownTimer = throwCooldown;
+        playerInput = GetComponent<PlayerInput>();
+
+        if (playerInput != null)
+        {
+            throwTo1Action = playerInput.actions["ThrowTo1"];
+            throwTo2Action = playerInput.actions["ThrowTo2"];
+            throwTo3Action = playerInput.actions["ThrowTo3"];
+            throwTo4Action = playerInput.actions["ThrowTo4"];
+
+            throwTo1Action.performed += OnThrowTo1Performed;
+            throwTo2Action.performed += OnThrowTo2Performed;
+            throwTo3Action.performed += OnThrowTo3Performed;
+            throwTo4Action.performed += OnThrowTo4Performed;
+
+            throwTo1Action.Enable();
+            throwTo2Action.Enable();
+            throwTo3Action.Enable();
+            throwTo4Action.Enable();
+        }
+    }
+
+
+    private void OnDestroy()
+    {
+        throwTo1Action.performed -= OnThrowTo1Performed;
+        throwTo2Action.performed -= OnThrowTo2Performed;
+        throwTo3Action.performed -= OnThrowTo3Performed;
+        throwTo4Action.performed -= OnThrowTo4Performed;
     }
 
     private void Update()
@@ -63,28 +96,28 @@ public class MovementHotpotato : MonoBehaviour
         cooldownTimer = 0f;
     }
 
-    public void OnThrowTo1(InputAction.CallbackContext context)
+    private void OnThrowTo1Performed(InputAction.CallbackContext context)
     {
-        if (context.performed)
-            TryThrowToIndex(0);
+        Debug.Log("Throw to 1 performed");
+        TryThrowToIndex(0);
     }
 
-    public void OnThrowTo2(InputAction.CallbackContext context)
+    private void OnThrowTo2Performed(InputAction.CallbackContext context)
     {
-        if (context.performed)
-            TryThrowToIndex(1);
+        Debug.Log("Throw to 2 performed");
+        TryThrowToIndex(1);
     }
 
-    public void OnThrowTo3(InputAction.CallbackContext context)
+    private void OnThrowTo3Performed(InputAction.CallbackContext context)
     {
-        if (context.performed)
-            TryThrowToIndex(2);
+        Debug.Log("Throw to 3 performed");
+        TryThrowToIndex(2);
     }
 
-    public void OnThrowTo4(InputAction.CallbackContext context)
+    private void OnThrowTo4Performed(InputAction.CallbackContext context)
     {
-        if (context.performed)
-            TryThrowToIndex(3);
+        Debug.Log("Throw to 4 performed");
+        TryThrowToIndex(3);
     }
 }
 

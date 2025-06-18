@@ -8,7 +8,7 @@ using TMPro;
 public class SquatManager : MonoBehaviour
 {
     public static bool inputEnabled = false;
-
+    [SerializeField] private ChangeScene changeScene;
     [SerializeField] private SwitchScene switchScene;
     [SerializeField] private float floatStartDelay = 2f;
     [SerializeField] private MinigameHUDController hudController;
@@ -25,6 +25,9 @@ public class SquatManager : MonoBehaviour
     void Start()
     {
         inputEnabled = false;
+
+        Debug.Log("Sending one-button controller preset to all players.");
+        changeScene?.SendSingleButton();
 
         if (hudController == null)
         {
@@ -50,9 +53,18 @@ public class SquatManager : MonoBehaviour
         inputEnabled = false;
         RankPlayers();
         UpdatePlayerStats();
-        PrintPlayerScores();
+
+        PlayerManager.instance.tempRankClear();
+        foreach (var player in rankingList)
+        {
+            var input = player.GetComponent<PlayerInput>();
+            if (input != null)
+                PlayerManager.instance.tempRankAdd(input.devices[0]);
+        }
+
         StartCoroutine(FloatAndLoadWin());
     }
+
 
     void ResetPlayers()
     {

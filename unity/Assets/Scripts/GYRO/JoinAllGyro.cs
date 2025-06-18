@@ -23,6 +23,7 @@ public class JoinAllGyro : MonoBehaviour
 
                 if (playerInput != null)
                 {
+                    GameManagerGyro.Instance.RegisterPlayer(playerInput);
                     Camera cam = playerInput.GetComponentInChildren<Camera>();
                     if (cam != null)
                     {
@@ -39,6 +40,7 @@ public class JoinAllGyro : MonoBehaviour
                 //     Debug.LogError("PlayerInput == NULL");
                 // }
             }
+            GameManagerGyro.Instance.StartGame();
         }
     }
 

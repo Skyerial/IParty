@@ -5,6 +5,7 @@ import { DpadComponent } from "../controllers/components/dpadComponent.js";
 import { JoystickComponent } from "../controllers/components/joystickComponent.js";
 import { ViewRenderer } from "./viewRenderer.js";
 import { ListComponent } from "../controllers/components/listComponent.js";
+import { GyroComponent } from "../controllers/components/gyroComponent.js";
 
 export class LayoutManager extends ViewRenderer {
     constructor(container, vertical = false) {
@@ -53,7 +54,11 @@ export class LayoutManager extends ViewRenderer {
         await this.addComponent(ListComponent, items);
     }
 
-    async addComponent(ComponentClass, param = null) {
+    async addGyro() {
+        await this.addComponent(GyroComponent);
+    }
+
+    async addComponent(ComponentClass) {
         const root = document.createElement("div");
 
         let component;

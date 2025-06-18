@@ -4,7 +4,6 @@ import { Login } from "./login/login.js";
 import { ConnectPage } from "./pages/connectPage.js";
 import { SocketManager } from "./utils/socketManager.js";
 import { NavBar } from "./pages/navBar.js";
-import { OneButton } from "./controllers/oneButton.js";
 
 export let socketManager = new SocketManager('iparty.duckdns.org');
 

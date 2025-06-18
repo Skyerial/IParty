@@ -1,5 +1,7 @@
 import { DpadController } from "../controllers/dpadController.js";
+import { GyroController } from "../controllers/gyroController.js";
 import { JoystickController } from "../controllers/joystickController.js";
+import { OneButton } from "../controllers/oneButton.js";
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
@@ -42,12 +44,12 @@ export class SocketManager {
         const isRemote = location.hostname === this.relayHost
         // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
         const url = !isRemote
-            ? `ws://${location.hostname}:8181`
+            ? `wss://${location.hostname}:8181`
             : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
         console.log(url)
         this.socket = new WebSocket(url);
         this.socket.onopen = () => { console.log('🟢 Connected'); };
-        this.socket.onmessage = async (e) => { 
+        this.socket.onmessage = async (e) => {
             console.log(e.data);
             let rawData;
 
@@ -59,15 +61,15 @@ export class SocketManager {
             }
             const data = JSON.parse(rawData);
             this.handleCommand(data);
-            // if (this.onMessage) this.onMessage(data); 
+            // if (this.onMessage) this.onMessage(data);
         };
-        this.socket.onclose = (e) => { 
-            console.log('🔴 Disconnected'); 
+        this.socket.onclose = (e) => {
+            console.log('🔴 Disconnected');
             console.log(e.code);
             console.log(e.reason);
-            console.log(e.wasClean); 
-            this.socket = null; 
-            // if (this.onClose) this.onClose(); 
+            console.log(e.wasClean);
+            this.socket = null;
+            // if (this.onClose) this.onClose();
         };
     }
 
@@ -75,7 +77,7 @@ export class SocketManager {
         let root = document.querySelector(".view-container");
 
         if (controller == "dpad-preset") {
-            let js = new DpadController(root)
+            let js = new GyroController(root)
             js.init()
         } else if (controller == "joystick-preset") {
             let js = new JoystickController(root)
@@ -90,8 +92,7 @@ export class SocketManager {
           if (data.type == "controller") {
                 this.loadController(data.controller)
             }
-            console.log(data.type);
-            console.log(data.controller);
+            console.log(JSON.stringify(data));
     }
 
     disconnect() {
@@ -124,7 +125,7 @@ export class SocketManager {
 
     updateDpad(direction, value) {
         if (this.activeMovementType !== 'dpad') return;
-    
+
         this.state[direction] = value;
         if (this.isConnected()) {
             this.sendFiltered();

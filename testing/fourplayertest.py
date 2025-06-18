@@ -13,7 +13,7 @@ import random
 import math
 from typing import List, Dict
 
-setup = json.loads(open('setup.example.json', 'r').read())
+setup = json.loads(open('setup.json', 'r').read())
 print(setup)
 
 class MobileClientSimulator:
@@ -75,10 +75,11 @@ class MobileClientSimulator:
             "type": "analog",
             "x": x,
             "y": y,
-            "A": self.button_state["A"],
-            "B": self.button_state["B"],
-            "C": self.button_state["C"],
-            "D": self.button_state["D"]
+            "A": self.button_state.get("A", False),
+            "B": self.button_state.get("B", False),
+            "C": self.button_state.get("C", False),
+            "D": self.button_state.get("D", False),
+            "button": self.button_state.get("button", False)
         }
 
         try:
@@ -86,7 +87,7 @@ class MobileClientSimulator:
             await self.websocket.send(message)
             # Log input occasionally
             if self.verbose and random.random() < 0.01:
-                print(f"[Client {self.client_id}] Input: x={x:.2f}, y={y:.2f}, buttons={any(self.button_state.values())}")
+                print(f"[Client {self.client_id}] Input: x={x:.2f}, y={y:.2f}, buttons={self.button_state}")
 
         except Exception as e:
             print(f"[Client {self.client_id}] Failed to send input: {e}")
@@ -165,7 +166,8 @@ class MobileClientSimulator:
                 "A": random.random() < 0.15,
                 "B": random.random() < 0.10,
                 "C": random.random() < 0.08,
-                "D": random.random() < 0.05
+                "D": random.random() < 0.05,
+                "button": random.random() < 0.1
             }
 
             await self.send_analog_input(x, y, buttons)
@@ -181,7 +183,8 @@ class MobileClientSimulator:
                 "A": random.random() < 0.8,
                 "B": random.random() < 0.6,
                 "C": random.random() < 0.4,
-                "D": random.random() < 0.3
+                "D": random.random() < 0.3,
+                "button": random.random() < 0.5
             }
 
             x = random.uniform(-0.3, 0.3)

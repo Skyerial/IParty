@@ -68,22 +68,6 @@ public class TurfPlayerShooter : MonoBehaviour
 
     void Update()
     {
-        // ammo regeneration
-        bool onOwn = TurfUtils.IsOnOwnTurf(
-            transform, playerColor, paintLayerMask, turfCheckDistance
-        );
-        float regenMul = onOwn ? 1f : turfRegenPenalty;
-
-        if (currentAmmo < maxAmmo)
-        {
-            currentAmmo = Mathf.Min(
-                maxAmmo,
-                currentAmmo + ammoRegenRate * regenMul * Time.deltaTime
-            );
-            UpdateAmmoUI();
-        }
-
-        // firing logic, with auto-stop when ammo depletes
         if (isFiring && Time.time >= nextFireTime)
         {
             if (currentAmmo >= 1f)
@@ -97,6 +81,19 @@ public class TurfPlayerShooter : MonoBehaviour
             {
                 isFiring = false;
             }
+        }
+        else if (!isFiring && currentAmmo < maxAmmo)
+        {
+            bool onOwn = TurfUtils.IsOnOwnTurf(
+                transform, playerColor, paintLayerMask, turfCheckDistance
+            );
+            float regenMul = onOwn ? 1f : turfRegenPenalty;
+
+            currentAmmo = Mathf.Min(
+                maxAmmo,
+                currentAmmo + ammoRegenRate * regenMul * Time.deltaTime
+            );
+            UpdateAmmoUI();
         }
     }
 
