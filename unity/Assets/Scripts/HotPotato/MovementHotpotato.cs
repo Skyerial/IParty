@@ -4,65 +4,50 @@ using System.Collections.Generic;
 
 public class MovementHotpotato : MonoBehaviour
 {
-    PlayerInput playerInput;
-    InputAction throw1Action;
-    InputAction throw2Action;
-    InputAction throw3Action;
     public BombManager bombManager;
     public float throwCooldown = 0.8f;
     private float cooldownTimer = 0f;
+    private bool canThrow = true;
 
-    void Start()
+    private void Awake()
     {
-        playerInput = GetComponent<PlayerInput>();
-        throw1Action = playerInput.actions["ThrowTo1"];
-        throw2Action = playerInput.actions["ThrowTo2"];
-        throw3Action = playerInput.actions["ThrowTo3"];
-
-        throw1Action.Enable();
-        throw2Action.Enable();
-        throw3Action.Enable();
+        cooldownTimer = throwCooldown;
     }
 
-
-    void Update()
+    private void Update()
     {
-        cooldownTimer += Time.deltaTime;
-        if (!IsHoldingBomb() || cooldownTimer < throwCooldown) return;
-
-        var others = GetOtherPlayers();
-        if (others.Count < 3) return;
-
-        if (throw1Action.triggered)
+        if (!canThrow)
         {
-            ThrowBomb(others[0]);
-        }
-        else if (throw2Action.triggered)
-        {
-            ThrowBomb(others[1]);
-        }
-        else if (throw3Action.triggered)
-        {
-            ThrowBomb(others[2]);
+            cooldownTimer += Time.deltaTime;
+            if (cooldownTimer >= throwCooldown)
+            {
+                canThrow = true;
+                cooldownTimer = 0f;
+            }
         }
     }
 
-    List<GameObject> GetOtherPlayers()
+    private bool IsHoldingBomb()
+    {
+        return bombManager != null &&
+               bombManager.GetCurrentBomb() != null &&
+               bombManager.GetCurrentBomb().transform.parent == transform;
+    }
+
+    private List<GameObject> GetOtherPlayers()
     {
         return bombManager.players.FindAll(p => p != null && p != gameObject);
     }
 
-    bool IsHoldingBomb()
+    private void TryThrowToIndex(int index)
     {
-        if (bombManager == null || bombManager.GetCurrentBomb() == null)
-        {
-            return false;
-        }
-        return bombManager.GetCurrentBomb().transform.parent == transform;
-    }
+        if (!IsHoldingBomb() || !canThrow) return;
 
-    void ThrowBomb(GameObject target)
-    {
+        var others = GetOtherPlayers();
+        if (index >= others.Count) return;
+
+        GameObject target = others[index];
+
         GameObject bomb = bombManager.GetCurrentBomb();
         Bomb bombScript = bomb.GetComponent<Bomb>();
         bombScript.isBeingThrown = true;
@@ -73,8 +58,33 @@ public class MovementHotpotato : MonoBehaviour
         throwScript.ThrowToTarget(target.transform, bombScript);
 
         Debug.Log($"{gameObject.name} threw the bomb to {target.name}");
+
+        canThrow = false;
         cooldownTimer = 0f;
     }
 
+    public void OnThrowTo1(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            TryThrowToIndex(0);
+    }
 
+    public void OnThrowTo2(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            TryThrowToIndex(1);
+    }
+
+    public void OnThrowTo3(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            TryThrowToIndex(2);
+    }
+
+    public void OnThrowTo4(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            TryThrowToIndex(3);
+    }
 }
+

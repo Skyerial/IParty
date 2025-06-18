@@ -32,6 +32,9 @@ public class ChangeScene : MonoBehaviour
             case 6:
                 level = "GYRO";
                 break;
+            case 7:
+                level = "SkyGlutes";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);

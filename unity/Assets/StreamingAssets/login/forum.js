@@ -1,6 +1,8 @@
 import { socketManager } from "../main.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { color_change } from "./background_render.js";
+import { OneButton } from "../controllers/oneButton.js";
+import { HotPotatoController } from "../controllers/hotPotatoController.js";
 
 function main() {
     let root = document.querySelector(".view-container");
