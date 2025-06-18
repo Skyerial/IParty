@@ -410,36 +410,35 @@ public class ServerManager : MonoBehaviour
         };
     }
 
-    public static void SendtoAllSocketsController(string controller)
+    public static void SendtoAllSockets(string controller)
     {
         var messageObject = new MessagePlayers
         {
             type = "controller",
-            controller = controller,
-            playerstats = PlayerManager.playerStats.Select(kvp => new PlayerConfig { name = kvp.Value.name, color = kvp.Value.color }).ToList()
+            controller = controller
         };
 
         string json = JsonUtility.ToJson(messageObject);
 
-        SendSockets(json);
-    }
-    
-    public static void SendSockets(string json)
-    {
         if (instance.useRemote)
         {
-            // Remote mode: send via wsTunnel
+            // Remote mode: send via wsTunnel to each remote client
             if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
             {
                 string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
-                var wrapper = new WSTunnelRequest
+
+                foreach (var clientId in allControllers.Keys)
                 {
-                    clientId = "all",
-                    payloadBase64 = base64Payload,
-                    @event = null
-                };
-                string wrapperJson = JsonUtility.ToJson(wrapper);
-                instance.wsTunnel.SendText(wrapperJson);
+                    var wrapper = new WSTunnelRequest
+                    {
+                        clientId = clientId,
+                        payloadBase64 = base64Payload,
+                        @event = null
+                    };
+
+                    string wrapperJson = JsonUtility.ToJson(wrapper);
+                    instance.wsTunnel.SendText(wrapperJson);
+                }
             }
         }
         else

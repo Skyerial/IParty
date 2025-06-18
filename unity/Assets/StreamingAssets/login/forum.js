@@ -78,7 +78,7 @@ function main() {
 
     // NEW CHARACTER CREATION
     socketManager.send(playerData)
-    const js = new HotPotatoController(root);
+    const js = new JoystickController(root);
     js.init();
     });
 }
