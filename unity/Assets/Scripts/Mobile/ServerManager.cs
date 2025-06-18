@@ -108,6 +108,7 @@ public class ServerManager : MonoBehaviour
         TcpListener tcpListener = new TcpListener(IPAddress.Parse(ip), 8080);
         tcpListener.Start();
         Debug.Log($"[Local][HTTPS] Trying to run on https://{ip}:8080");
+        QRCodeGenerator.GenerateQRCode("https://" + ip + ":8080", targetRenderer);
         httpsThread = new Thread(() =>
         {
             while (true)
@@ -466,7 +467,6 @@ public class ServerManager : MonoBehaviour
                         {
                             leftStick = new Vector2(cmd.x, cmd.y),
                             buttons =
-<<<<<<< Updated upstream
                                 (ushort)(
                                     (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
                                     (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
@@ -474,14 +474,6 @@ public class ServerManager : MonoBehaviour
                                     (cmd.C ? (1 << (int)GamepadButton.West)  : 0) |
                                     (cmd.button ? (1 << (int)GamepadButton.LeftShoulder) : 0)
                                 )
-=======
-                            (ushort)(
-                                (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
-                                (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
-                                (cmd.B ? (1 << (int)GamepadButton.East) : 0) |
-                                (cmd.C ? (1 << (int)GamepadButton.West) : 0)
-                            )
->>>>>>> Stashed changes
                         };
                         break;
                     case "dpad":
