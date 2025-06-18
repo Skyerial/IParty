@@ -24,6 +24,21 @@ public class ChangeScene : MonoBehaviour
                 level = "TypingMinigame";
                 SendTextBox();
                 break;
+            case 4:
+                level = "Game_Board";
+                break;
+            case 5:
+                level = "HotPotato";
+                break;
+            case 6:
+                level = "Winscreen";
+                break;
+            case 7:
+                level = "GYRO";
+                break;
+            case 8:
+                level = "SkyGlutes";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);
@@ -45,4 +60,11 @@ public class ChangeScene : MonoBehaviour
     {
         ServerManager.SendtoAllSockets("text-preset");
     }
+
+    public void SendSingleButton()
+    {
+        Debug.Log("Test data send. SINGLE BUTTON");
+        ServerManager.SendtoAllSockets("one-button");
+    }
+    
 }

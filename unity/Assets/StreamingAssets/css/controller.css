@@ -19,6 +19,10 @@
     align-items: center;
 }
 
+.controller-slot-list {
+  width: 100%;
+}
+
 .orientation-vertical {
     transform: rotate(-90deg);
     transform-origin: center center;
@@ -35,6 +39,7 @@
     background-color: #333;
     border-radius: 50%;
     position: relative;
+    touch-action: none;
 }
 
 .joystick-container .stick {
@@ -45,7 +50,7 @@
     position: absolute;
     left: 75px;
     top: 75px;
-    transition: left 0.05s, top 0.05s;
+    transition: none;
 }
 
 .button-cluster {
@@ -121,7 +126,6 @@
   justify-content: center;
   align-items: center;
   box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-  user-select: none;
 }
 
 .dpad-left {
@@ -149,18 +153,88 @@
 }
 
 .big-button {
+  position: relative;
+  overflow: hidden;
   width: 200px;
   height: 200px;
-  background-color: #1f1f1f;
-  border: none;
+  border: 2px solid #333;
   border-radius: 50%;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-  user-select: none;
-  touch-action: none; 
+  background: radial-gradient(
+    circle at 30% 30%,
+    #2a2a2a,
+    #0f0f0f 80%
+  );
+  box-shadow:
+    inset 0 8px 20px rgba(0, 0, 0, 0.8),
+    0 6px 12px rgba(0, 0, 0, 0.7),
+    0 0 6px rgba(255, 255, 255, 0.03);
+
 }
+
+.big-button:active {
+  transform: scale(0.94);
+  border-color: #222;
+  box-shadow:
+    inset 0 4px 12px rgba(0, 0, 0, 0.9),
+    0 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+
+.big-button-ring {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 50%;
+  background: rgb(77, 77, 77);
+}
+
+.player-button-list {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+
+.player-list-button {
+  width: 100%;
+  height: 90px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+
+.player-list-button:active {
+  transform: scale(0.94);
+}
+
+
+.player-list-button.red {
+  background-color: #dc3545;
+}
+
+.player-list-button.green {
+  background-color: #28a745;
+}
+
+.player-list-button.blue {
+  background-color: #007bff;
+}
+
 
 @media (max-height: 500px) {
   .joystick-container,

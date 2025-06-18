@@ -1,16 +1,21 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
-    private static PlayerManager instance;
+    private static int currentPlayers = 0;
+    public static PlayerManager instance; 
+    public static List<PlayerStats> tempRanking = new();
     public class PlayerStats
     {
+        public int playerID;
         public int position;
         public string color;
         public bool winner;
         public string name;
+        public byte[] face;
     }
 
     public static Dictionary<InputDevice, PlayerStats> playerStats = new();
@@ -28,24 +33,45 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public static void RegisterPlayer(InputDevice device, string color, string name)
+    public static void RegisterPlayer(InputDevice device, string color, string name, byte[] face)
     {
         playerStats[device] = new PlayerStats
         {
+            playerID = currentPlayers,
             position = 0,
             color = color,
-            name = name
+            name = name,
+            face = face
         };
+
+        currentPlayers++;
+        // tempRanking.Add(playerStats[device]);
     }
+
+    public void tempRankAdd(InputDevice device)
+    {
+        if (!tempRanking.Contains(playerStats[device]))
+        {
+            tempRanking.Insert(0, playerStats[device]);
+        }
+    }
+
+    public void tempRankClear()
+    {
+        tempRanking.Clear();
+    }
+
 
     public static void RemovePlayer(InputDevice device)
     {
         playerStats.Remove(device);
+        currentPlayers--;
     }
 
     public static void AddPosition(InputDevice device, int position)
     {
         playerStats[device].position += position;
+
     }
 
     public static Material findColor(InputDevice device)

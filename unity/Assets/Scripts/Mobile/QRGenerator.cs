@@ -28,6 +28,7 @@ public class QRCodeGenerator : MonoBehaviour
         // Optional section specifying the canvas in code.
         // GameObject qrObject = GameObject.Find("SampleQR");
         // RawImage targetRenderer = qrObject.GetComponent<RawImage>();
-        targetRenderer.material.mainTexture = qrTexture;
+        // targetRenderer.material.mainTexture = qrTexture;
+        targetRenderer.texture = qrTexture;
     }
 }

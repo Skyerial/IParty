@@ -5,6 +5,8 @@ import { DpadComponent } from "../controllers/components/dpadComponent.js";
 import { JoystickComponent } from "../controllers/components/joystickComponent.js";
 import { TextComponent } from "../controllers/components/textComponent.js";
 import { ViewRenderer } from "./viewRenderer.js";
+import { ListComponent } from "../controllers/components/listComponent.js";
+import { GyroComponent } from "../controllers/components/gyroComponent.js";
 
 export class LayoutManager extends ViewRenderer {
     constructor(container, vertical = false) {
@@ -54,9 +56,28 @@ export class LayoutManager extends ViewRenderer {
         await this.addComponent(ButtonComponent);
     }
 
-    async addComponent(ComponentClass) {
+    async addList(items = []) {
+        await this.addComponent(ListComponent, items);
+    }
+
+    async addGyro() {
+        await this.addComponent(GyroComponent);
+    }
+
+    async addComponent(ComponentClass, param = null) {
         const root = document.createElement("div");
-        const component = new ComponentClass(root, this.vertical);
+
+        let component;
+        if(param) {
+            component = new ComponentClass(root, this.vertical, param);
+        } else {
+            component = new ComponentClass(root, this.vertical);
+        }
+
+        if (component instanceof ListComponent) {
+            root.classList.add("controller-slot-list");
+        }
+
         await component.init();
         this.loadComponentView(component);
     }

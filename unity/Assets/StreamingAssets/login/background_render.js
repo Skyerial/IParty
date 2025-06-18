@@ -86,20 +86,20 @@ function main() {
       }
     });
 
-    const saveButton = document.getElementById('picture-save');
-    saveButton.addEventListener('click', () => {
-      const canvas = document.createElement('canvas');
-      canvas.height = video.videoHeight;
-      canvas.width = video.videoWidth;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    // const saveButton = document.getElementById('picture-save');
+    // saveButton.addEventListener('click', () => {
+    //   const canvas = document.createElement('canvas');
+    //   canvas.height = video.videoHeight;
+    //   canvas.width = video.videoWidth;
+    //   canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      const img = canvas.toDataURL('image/png');
+    //   const img = canvas.toDataURL('image/png');
       
-      const link = document.createElement('a');
-      link.href = img;
-      link.download = 'captured-image.png'; // File name
-      link.click(); // Trigger the download
-    })
+    //   const link = document.createElement('a');
+    //   link.href = img;
+    //   link.download = 'captured-image.png'; // File name
+    //   link.click(); // Trigger the download
+    // })
 
     // Making a texture out of it
     const videoTexture = new THREE.VideoTexture(video);
@@ -111,7 +111,7 @@ function main() {
     let mixer;
     const loader = new FBXLoader();
     loader.load(
-      '/login/player.fbx', // Your FBX file
+      './login/player.fbx', // Your FBX file
       (object) => {
         object.scale.set(0.01, 0.01, 0.01);
         object.traverse((child) => {
@@ -126,7 +126,7 @@ function main() {
         });
 
         const anim = new FBXLoader();
-        anim.load('/login/IdleW.fbx', (anim) => {
+        anim.load('./login/IdleW.fbx', (anim) => {
           mixer = new THREE.AnimationMixer(object);
           const action = mixer.clipAction(anim.animations[0]);
           action.play();

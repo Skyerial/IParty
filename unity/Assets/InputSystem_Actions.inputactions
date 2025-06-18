@@ -45,7 +45,7 @@
                     "name": "Crouch",
                     "type": "Button",
                     "id": "27c5f898-bc57-4ee1-8800-db469aca5fe3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -54,7 +54,7 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "f1ba0d36-48eb-4cd5-b651-1c94a6531f70",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -63,7 +63,7 @@
                     "name": "Previous",
                     "type": "Button",
                     "id": "2776c80d-3c14-4091-8c56-d04ced07a2b0",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -72,7 +72,7 @@
                     "name": "Next",
                     "type": "Button",
                     "id": "b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -81,24 +81,51 @@
                     "name": "Sprint",
                     "type": "Button",
                     "id": "641cd816-40e6-41b4-8c3d-04687c349290",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "GameStart",
-                    "type": "Button",
-                    "id": "1cd3b68c-83c7-4f60-b348-cad6ddf359e5",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Throw",
+                    "name": "ThrowTo1",
                     "type": "Button",
-                    "id": "56b0530f-13db-4101-9d56-a323e9ec352d",
+                    "id": "b0a3f101-de0f-48a0-bdaf-db7e4e80d567",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowTo2",
+                    "type": "Button",
+                    "id": "8dc694ec-d70d-462d-a8bd-48cc984366de",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowTo3",
+                    "type": "Button",
+                    "id": "d2975262-a72d-4901-bcfc-0930b85c034c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowTo4",
+                    "type": "Button",
+                    "id": "00b94590-4e20-4cc9-8041-41be1b48d146",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Mash",
+                    "type": "Button",
+                    "id": "57d15540-971e-44a2-8409-1dc2279990f6",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -493,51 +520,56 @@
                 },
                 {
                     "name": "",
-                    "id": "c6904bb4-90d7-4bd1-ae16-db51b1446d3f",
-                    "path": "<Keyboard>/enter",
+                    "id": "be9aea1a-653c-4cea-87f9-7f20af490266",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "GameStart",
+                    "groups": ";Gamepad",
+                    "action": "ThrowTo1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "f3ae47ee-76dd-444f-a8cb-777bf4827509",
-                    "path": "<Keyboard>/t",
+                    "id": "93f157ef-4cf9-4e32-bc5a-2eac9c16575e",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Throw",
+                    "groups": ";Gamepad",
+                    "action": "Mash",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Player2",
-            "id": "5898688a-fa59-4ad0-8cb7-a109bb394349",
-            "actions": [
-                {
-                    "name": "Throw",
-                    "type": "Button",
-                    "id": "36c6fd09-8265-4746-89e2-dc6a3049bb9f",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
+                },
                 {
                     "name": "",
-                    "id": "96c51b7f-295c-4893-89eb-7eef634e3526",
-                    "path": "<Keyboard>/y",
+                    "id": "afb66434-4bb4-4713-ab16-e0540835929d",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Throw",
+                    "groups": ";Gamepad",
+                    "action": "ThrowTo2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ba8bb92-1754-4524-b8b6-2dbdb193b623",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ThrowTo3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "72e76034-d7e8-4072-8c63-049406466461",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ThrowTo4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -560,7 +592,7 @@
                     "name": "Submit",
                     "type": "Button",
                     "id": "7607c7b6-cd76-4816-beef-bd0341cfe950",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -1060,13 +1092,13 @@
             ]
         },
         {
-            "name": "Player3",
-            "id": "3191259c-9411-472c-8f12-d3102326d9ae",
+            "name": "Player2",
+            "id": "c01b6091-dc63-408b-b360-69f2058a2b8d",
             "actions": [
                 {
                     "name": "Throw",
                     "type": "Button",
-                    "id": "5c49a8d4-73ac-4ec6-80ae-15eea1565694",
+                    "id": "e4a8bd16-0d9d-4a36-a109-c35c1dc2633b",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1076,11 +1108,39 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "5cd42b2d-803a-405e-bb19-3993d259ebe3",
+                    "id": "7d11516e-50d4-48fa-a536-365811ceeb1e",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Player3",
+            "id": "8782ea8f-bf52-447c-bee7-a9cae9ffc15f",
+            "actions": [
+                {
+                    "name": "Throw",
+                    "type": "Button",
+                    "id": "8289a764-e67a-4b41-9fca-4b9fd1aff7e0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c1e46909-f05a-468a-88f2-3174ede34b65",
                     "path": "<Keyboard>/u",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "Throw",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -1089,12 +1149,12 @@
         },
         {
             "name": "Player4",
-            "id": "d18bccdb-e467-4445-89db-1a03dd326176",
+            "id": "094b23a4-255a-4a66-9e1a-a008e1d243a1",
             "actions": [
                 {
                     "name": "Throw",
                     "type": "Button",
-                    "id": "475675a0-297f-4ea1-86b5-fcde0d25005f",
+                    "id": "0cbb521e-32e9-4b4a-8132-ac3c69d382ee",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1104,11 +1164,11 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "6e6310b9-6615-4c1d-90a6-6139f04e6279",
+                    "id": "4c80114f-6349-485f-9f1d-7d5fd43e19fd",
                     "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
+                    "groups": "",
                     "action": "Throw",
                     "isComposite": false,
                     "isPartOfComposite": false

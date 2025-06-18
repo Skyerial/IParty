@@ -34,10 +34,12 @@ public class JoinAllTank : MonoBehaviour
         Renderer[] renderers = playerInput.GetComponentsInChildren<Renderer>();
 
         foreach (Renderer renderer in renderers)
-        {
+        {   
+            Debug.Log(renderer.name);
             // Check each material in the renderer
             foreach (Material mat in renderer.sharedMaterials)
             {
+                Debug.Log(mat.name);
                 if (mat == targetMaterial)
                 {
                     InputDevice device = playerInput.devices[0];

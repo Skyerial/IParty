@@ -7,7 +7,6 @@ public class SwitchScene : MonoBehaviour
     [SerializeField] RectTransform fader;
     private static bool hasLoadedMainMenuBefore = false;
 
-
     private void Start()
     {
         string currentScene = SceneManager.GetActiveScene().name;

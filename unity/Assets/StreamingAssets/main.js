@@ -5,7 +5,7 @@ import { ConnectPage } from "./pages/connectPage.js";
 import { SocketManager } from "./utils/socketManager.js";
 import { NavBar } from "./pages/navBar.js";
 
-export let socketManager = new SocketManager('178.128.247.108');
+export let socketManager = new SocketManager('iparty.duckdns.org');
 
 window.addEventListener("DOMContentLoaded", async () => {
   let root = document.querySelector(".view-container");

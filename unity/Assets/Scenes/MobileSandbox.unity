@@ -721,6 +721,21 @@ MonoBehaviour:
     - m_Text: TypingMingame
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: Game_Board
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: HotPotato
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: WinScreen
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: GYRO
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
+    - m_Text: SkyGlutes
+      m_Image: {fileID: 0}
+      m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3154,6 +3169,10 @@ PrefabInstance:
     - target: {fileID: 7075673326249793857, guid: abbe378b3a16b0149a0f41f7160e1e02, type: 3}
       propertyPath: m_Name
       value: QRCODE
+      objectReference: {fileID: 0}
+    - target: {fileID: 7075673326249793857, guid: abbe378b3a16b0149a0f41f7160e1e02, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

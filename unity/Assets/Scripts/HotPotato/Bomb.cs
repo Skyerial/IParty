@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Bomb : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class Bomb : MonoBehaviour
     public GameObject explosion;
     public bool isBeingThrown = false;
     AudioSource audioSource;
+    private bool hasPlayedThrowSound = false;
+
     void Start()
     {
         countdownTime = Random.Range(2f, 8f);
@@ -27,9 +30,13 @@ public class Bomb : MonoBehaviour
         if (!isBeingThrown)
         {
             elapsedTime += Time.deltaTime;
-        } else
+            hasPlayedThrowSound = false;
+        }
+        else
         {
             audioSource.Play();
+            hasPlayedThrowSound = true;
+
         }
 
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);
@@ -62,11 +69,17 @@ public class Bomb : MonoBehaviour
 
         if (transform.parent != null)
         {
+            var playerInput = transform.parent.GetComponent<PlayerInput>();
+            if (playerInput != null)
+            {
+                var device = playerInput.devices[0]; // assuming 1 device per player
+                PlayerManager.instance.tempRankAdd(device);
+            }
+
             Destroy(transform.parent.gameObject);
         }
 
         Destroy(gameObject);
-
 
     }
 }
