@@ -15,6 +15,8 @@ public class SquatManager : MonoBehaviour
     [SerializeField] private GameObject nameboardPrefab;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform spawnParent;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip floatStartSFX;
 
     private List<GameObject> playerList = new();
     private List<GameObject> rankingList = new();
@@ -48,6 +50,7 @@ public class SquatManager : MonoBehaviour
         inputEnabled = false;
         RankPlayers();
         UpdatePlayerStats();
+        PrintPlayerScores();
         StartCoroutine(FloatAndLoadWin());
     }
 
@@ -84,6 +87,12 @@ public class SquatManager : MonoBehaviour
     IEnumerator FloatAndLoadWin()
     {
         yield return new WaitForSeconds(floatStartDelay);
+
+        if (audioSource != null && floatStartSFX != null)
+        {
+            audioSource.PlayOneShot(floatStartSFX);
+        }
+
         AssignCamera();
         StartFloatAnimations();
 
@@ -101,15 +110,23 @@ public class SquatManager : MonoBehaviour
 
     void StartFloatAnimations()
     {
+        float maxMash = playerList.Max(p => p.GetComponent<PlayerMash>()?.GetMashCounter() ?? 1);
+
         foreach (var player in playerList)
         {
             var mash = player.GetComponent<PlayerMash>();
             if (mash != null)
             {
-                mash.TriggerFloatAnimation(mash.GetMashCounter() * 1f);
+                float mashCount = mash.GetMashCounter();
+                float floatMultiplier = 1f;
+                float scaledHeight = mashCount * floatMultiplier;
+
+
+                mash.TriggerFloatAnimation(scaledHeight);
             }
         }
     }
+
 
     void SpawnPlayers()
     {
@@ -151,5 +168,23 @@ public class SquatManager : MonoBehaviour
         var text = nameboard.GetComponentInChildren<TextMeshProUGUI>();
         if (text != null)
             text.text = PlayerManager.playerStats[device].name;
+    }
+
+    void PrintPlayerScores()
+    {
+        Debug.Log("=== Player Scores ===");
+
+        foreach (var player in rankingList)
+        {
+            var mash = player.GetComponent<PlayerMash>();
+            var input = player.GetComponent<PlayerInput>();
+
+            if (mash != null && input != null && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats))
+            {
+                Debug.Log($"{stats.name}: {mash.GetMashCounter()} presses");
+            }
+        }
+
+        Debug.Log("=====================");
     }
 }
