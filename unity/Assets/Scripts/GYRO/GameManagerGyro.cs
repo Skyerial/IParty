@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 
 public class GameManagerGyro : MonoBehaviour
 {
@@ -25,11 +28,14 @@ public class GameManagerGyro : MonoBehaviour
 
     private Dictionary<PlayerInput, int> moleHits = new();
     private List<PlayerInput> allPlayers = new();
+    private SwitchScene sceneSwitcher;
+
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        sceneSwitcher = GetComponent<SwitchScene>();
     }
 
     public void RegisterPlayer(PlayerInput player)
@@ -39,13 +45,34 @@ public class GameManagerGyro : MonoBehaviour
             allPlayers.Add(player);
             moleHits[player] = 0;
             player.DeactivateInput();
+
+            InputDevice dev = player.devices[0];
+
+            // Baton kleuren
+            var baton = player.GetComponentsInChildren<Renderer>()
+                            .FirstOrDefault(r => r.name == "Cilindro.013");
+            if (baton != null && PlayerManager.playerStats.ContainsKey(dev))
+            {
+                baton.material = PlayerManager.findColor(dev);
+            }
+            else
+            {
+                Debug.LogWarning($"Baton niet gevonden of speler niet geregistreerd: {dev}");
+            }
         }
     }
+
 
     public void AddMoleHit(PlayerInput player)
     {
         if (moleHits.ContainsKey(player))
             moleHits[player]++;
+    }
+
+    public void RemoveMoleHit(PlayerInput player)
+    {
+        if (moleHits.ContainsKey(player) && moleHits[player] > 0)
+            moleHits[player]--;
     }
 
     public int GetMoleHits(PlayerInput player)
@@ -71,9 +98,30 @@ public class GameManagerGyro : MonoBehaviour
             p.DeactivateInput();
 
         finishCanvas?.gameObject.SetActive(true);
-        finishText.text = "Finish!";
+
+        PlayerInput winner = DetermineWinner();
+        if (winner != null)
+        {
+            string winnerName = PlayerManager.playerStats[winner.devices[0]].name;
+            int hits = GetMoleHits(winner);
+            finishText.text = $"Finish!\nWinner: {winnerName} ({hits} hits)";
+        }
+        else
+        {
+            finishText.text = "Finish!\nNo winner.";
+        }
 
         yield return new WaitForSecondsRealtime(finishDisplayTime);
+
+        FinalizeRanking();
+        if (sceneSwitcher != null)
+        {
+            sceneSwitcher.LoadNewScene("WinScreen");
+        }
+        else
+        {
+            SceneManager.LoadScene("WinScreen");
+        }
     }
 
     IEnumerator CountdownRoutine()
@@ -91,6 +139,7 @@ public class GameManagerGyro : MonoBehaviour
 
         countdownText.text = "Start!";
         yield return new WaitForSecondsRealtime(1f);
+        countdownText.text = "";
         countdownCanvas?.gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
@@ -109,4 +158,32 @@ public class GameManagerGyro : MonoBehaviour
         }
         timerCanvas?.gameObject.SetActive(false);
     }
+
+    private PlayerInput DetermineWinner()
+    {
+        if (moleHits.Count == 0) return null;
+
+        return moleHits.OrderByDescending(entry => entry.Value)
+                       .Select(entry => entry.Key)
+                       .FirstOrDefault();
+    }
+
+
+    private void FinalizeRanking()
+    {
+        var pm = Object.FindFirstObjectByType<PlayerManager>();
+        if (pm == null) return;
+
+        pm.tempRankClear();
+
+        var sorted = moleHits
+            .OrderBy(pair => pair.Value)
+            .Select(pair => pair.Key.devices[0]);
+
+        foreach (var dev in sorted)
+        {
+            pm.tempRankAdd(dev);
+        }
+    }
+
 }

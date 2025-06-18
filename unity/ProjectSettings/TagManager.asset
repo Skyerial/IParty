@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - p1Cam
+  - OilBarrel
+  - Bomb
+  - Mole
+  - Hammer
+  - Xplosion
+  - player
   layers:
   - Default
   - TransparentFX
