@@ -54,7 +54,7 @@ public class ChangeScene : MonoBehaviour
 
     public void SendSingleButton()
     {
-        Debug.Log("Test data send.");
+        Debug.Log("Test data send. SINGLE BUTTON");
         ServerManager.SendtoAllSockets("one-button");
     }
     

@@ -1,5 +1,6 @@
 import { DpadController } from "../controllers/dpadController.js";
 import { JoystickController } from "../controllers/joystickController.js";
+import { OneButton } from "../controllers/oneButton.js";
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
