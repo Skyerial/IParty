@@ -44,16 +44,16 @@ public class GameMaster : MonoBehaviour
 
         if (press_random == 1 && !numberShown)
         {
-            StartCoroutine(RollDiceForPlayer()); // Replace random logic with dice roll
+            // StartCoroutine(RollDiceForPlayer()); // Replace random logic with dice roll
 
-            // int randomNumber = Random.Range(1, 6); // change range as needed
-            // //numberText.text = randomNumber.ToString();
-            // //numberShown = true; // Prevent multiple updates
-            // // Debug.Log(players[current_player]);
-            // // Debug.Log(players[current_player].GetComponent<PlayerManager>());
-            // players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
-            // numberText.text = randomNumber.ToString();
-            // press_random = 2;
+            int randomNumber = Random.Range(1, 6); // change range as needed
+            //numberText.text = randomNumber.ToString();
+            //numberShown = true; // Prevent multiple updates
+            // Debug.Log(players[current_player]);
+            // Debug.Log(players[current_player].GetComponent<PlayerManager>());
+            players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
+            numberText.text = randomNumber.ToString();
+            press_random = 2;
         }
         if (press_random == 2 && players[current_player].GetComponent<PlayerMovement>().increment == 0)
         {

@@ -227,7 +227,7 @@ public class ServerManager : MonoBehaviour
         FleckLog.Level = LogLevel.Debug;
         string ip = ChooseIP() ?? "0.0.0.0";
         Debug.Log(ip);
-        string wsPrefix = $"ws://{ip}:8181";
+        string wsPrefix = $"wss://{ip}:8181";
         wsServer = new WebSocketServer(wsPrefix);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
         wsServer.Certificate = new X509Certificate2(certPath, "unity");
