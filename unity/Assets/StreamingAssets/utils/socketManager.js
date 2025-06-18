@@ -1,4 +1,5 @@
 import { DpadController } from "../controllers/dpadController.js";
+import { GyroController } from "../controllers/gyroController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { OneButton } from "../controllers/oneButton.js";
 
@@ -76,7 +77,7 @@ export class SocketManager {
         let root = document.querySelector(".view-container");
 
         if (controller == "dpad-preset") {
-            let js = new DpadController(root)
+            let js = new GyroController(root)
             js.init()
         } else if (controller == "joystick-preset") {
             let js = new JoystickController(root)
