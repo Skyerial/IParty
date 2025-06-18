@@ -19,12 +19,12 @@ export class ConnectPage extends ViewRenderer {
             if (!socketManager.isConnected()) {
                 socketManager.connect(inputfield.value);
             }
-                
+
             // TEST: Init character login
-            const js = new OneButton(this.container)
+            const js = new Login(this.container)
             await js.init()
 
-            // Init joystick 
+            // Init joystick
             // const js = new JoystickController(this.container);
             // await js.init();
         });
