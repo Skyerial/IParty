@@ -340,6 +340,20 @@ public class ServerManager : MonoBehaviour
             sock.Send(json);
         }
     }
+
+    public static void SendtoSocket(VirtualController controller)
+    {
+        var messageObject = new MessagePlayers
+        {
+            type = "clear-text",
+            controller = controller.name
+        };
+
+        var sock = allSockets[controller];
+        string json = JsonUtility.ToJson(messageObject);
+        sock.Send(json);
+    }
+
     void HandleCommandOnMainThread(string json, string sender)
     {
         try

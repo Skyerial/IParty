@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
 using Unity.VisualScripting;
+using UnityEngine.Video;
 
 public class TMGameManager : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class TMGameManager : MonoBehaviour
     public int finishCount = 0;
 
     public Dictionary<string, PlayerTypingController> playerControllers;
+    public Dictionary<PlayerTypingController, VirtualController> playerVirtualControllers;
 
     private void Awake()
     {
@@ -45,6 +47,7 @@ public class TMGameManager : MonoBehaviour
         int i = 0;
 
         playerControllers = new Dictionary<string, PlayerTypingController>();
+        playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
 
         foreach (var mobilePlayer in PlayerManager.playerStats)
         {
@@ -59,6 +62,7 @@ public class TMGameManager : MonoBehaviour
             var typingController = players[i];
 
             playerControllers[controller.remoteId] = typingController;
+            playerVirtualControllers[typingController] = controller;
 
             typingController.textSpawner.words = wordsPerPlayer;
             typingController.textSpawner.SpawnWords();
@@ -90,6 +94,13 @@ public class TMGameManager : MonoBehaviour
         {
             Debug.LogWarning($"Input from unknown player: {player.remoteId}");
         }
+    }
+
+    public void SendClearCommandtoClient(PlayerTypingController player)
+    {
+        Debug.Log("recieved clear command");
+        var controller = playerVirtualControllers[player];
+        ServerManager.SendtoSocket(controller);
     }
 
     public void OnPlayerFinished(PlayerTypingController player)

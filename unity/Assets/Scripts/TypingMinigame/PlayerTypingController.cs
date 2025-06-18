@@ -66,6 +66,7 @@ public class PlayerTypingController : MonoBehaviour
         if (inputLower == originalLower)
         {
             InputWordCorrect(wordObj);
+            TMGameManager.Instance?.SendClearCommandtoClient(this);
         }
     }
 

@@ -71,11 +71,14 @@ export class SocketManager {
     }
 
     handleCommand(data) {
-          if (data.type == "controller") {
-                this.loadController(data.controller)
-            }
-            console.log(data.type);
-            console.log(data.controller);
+        if (data.type == "controller") {
+            this.loadController(data.controller)
+        } else if (data.type == "clear-text") {
+            const text = document.querySelector('#myText');
+            text.value = ''
+        }
+        console.log(data.type);
+        console.log(data.controller);
     }
 
     disconnect() {
