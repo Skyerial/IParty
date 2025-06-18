@@ -19,6 +19,10 @@
     align-items: center;
 }
 
+.controller-slot-list {
+  width: 100%;
+}
+
 .orientation-vertical {
     transform: rotate(-90deg);
     transform-origin: center center;
@@ -182,6 +186,55 @@
   border-radius: 50%;
   background: rgb(77, 77, 77);
 }
+
+.player-button-list {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+
+.player-list-button {
+  width: 100%;
+  height: 90px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+
+.player-list-button:active {
+  transform: scale(0.94);
+}
+
+
+.player-list-button.red {
+  background-color: #dc3545;
+}
+
+.player-list-button.green {
+  background-color: #28a745;
+}
+
+.player-list-button.blue {
+  background-color: #007bff;
+}
+
 
 @media (max-height: 500px) {
   .joystick-container,

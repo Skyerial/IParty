@@ -2,6 +2,9 @@ import { JoystickController } from "../controllers/joystickController.js";
 import { ViewRenderer } from "../utils/viewRenderer.js";
 import { socketManager } from "../main.js";
 import { Login } from "../login/login.js";
+import { ListComponent } from "../controllers/components/listComponent.js";
+import { HotPotatoController } from "../controllers/hotPotatoController.js";
+import { OneButton } from "../controllers/oneButton.js";
 
 
 export class ConnectPage extends ViewRenderer {
@@ -18,7 +21,7 @@ export class ConnectPage extends ViewRenderer {
             }
                 
             // TEST: Init character login
-            const js = new Login(this.container)
+            const js = new OneButton(this.container)
             await js.init()
 
             // Init joystick 
