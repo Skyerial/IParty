@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Bomb : MonoBehaviour
 {
@@ -68,6 +69,13 @@ public class Bomb : MonoBehaviour
 
         if (transform.parent != null)
         {
+            var playerInput = transform.parent.GetComponent<PlayerInput>();
+            if (playerInput != null)
+            {
+                var device = playerInput.devices[0]; // assuming 1 device per player
+                PlayerManager.instance.tempRankAdd(device);
+            }
+
             Destroy(transform.parent.gameObject);
         }
 

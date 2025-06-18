@@ -123,4 +123,13 @@ public class MinigameHUDController : MonoBehaviour
         yield return new WaitForSeconds(delay);
         countDownFrame.SetActive(false);
     }
+
+    public void ShowFinishText()
+    {
+        StopAllCoroutines(); // cancel any ongoing timer
+        timerFrame.SetActive(false);
+        countDownFrame.SetActive(true);
+        countdownText.text = gameSetText;
+        StartCoroutine(HideFinishTextAfterDelay(finishTextDuration));
+    }
 }

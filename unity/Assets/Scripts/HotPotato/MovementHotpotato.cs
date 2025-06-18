@@ -1,31 +1,55 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class MovementHotpotato : MonoBehaviour
 {
     PlayerInput playerInput;
-    InputAction throwAction;
+    InputAction throw1Action;
+    InputAction throw2Action;
+    InputAction throw3Action;
     public BombManager bombManager;
     public float throwCooldown = 0.8f;
     private float cooldownTimer = 0f;
 
-
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
-        throwAction = playerInput.actions.FindAction("Throw");
-        throwAction.Enable();
+        throw1Action = playerInput.actions["ThrowTo1"];
+        throw2Action = playerInput.actions["ThrowTo2"];
+        throw3Action = playerInput.actions["ThrowTo3"];
+
+        throw1Action.Enable();
+        throw2Action.Enable();
+        throw3Action.Enable();
     }
+
 
     void Update()
     {
-
         cooldownTimer += Time.deltaTime;
-        if (IsHoldingBomb() && throwAction.triggered && cooldownTimer >= throwCooldown)
+        if (!IsHoldingBomb() || cooldownTimer < throwCooldown) return;
+
+        var others = GetOtherPlayers();
+        if (others.Count < 3) return;
+
+        if (throw1Action.triggered)
         {
-            ThrowBomb();
-            cooldownTimer = 0f;
+            ThrowBomb(others[0]);
         }
+        else if (throw2Action.triggered)
+        {
+            ThrowBomb(others[1]);
+        }
+        else if (throw3Action.triggered)
+        {
+            ThrowBomb(others[2]);
+        }
+    }
+
+    List<GameObject> GetOtherPlayers()
+    {
+        return bombManager.players.FindAll(p => p != null && p != gameObject);
     }
 
     bool IsHoldingBomb()
@@ -37,12 +61,8 @@ public class MovementHotpotato : MonoBehaviour
         return bombManager.GetCurrentBomb().transform.parent == transform;
     }
 
-    void ThrowBomb()
+    void ThrowBomb(GameObject target)
     {
-        var others = bombManager.players.FindAll(p => p != null && p != gameObject);
-        if (others.Count == 0) return;
-
-        GameObject target = others[Random.Range(0, others.Count)];
         GameObject bomb = bombManager.GetCurrentBomb();
         Bomb bombScript = bomb.GetComponent<Bomb>();
         bombScript.isBeingThrown = true;
@@ -53,6 +73,7 @@ public class MovementHotpotato : MonoBehaviour
         throwScript.ThrowToTarget(target.transform, bombScript);
 
         Debug.Log($"{gameObject.name} threw the bomb to {target.name}");
+        cooldownTimer = 0f;
     }
 
 

@@ -32,7 +32,7 @@ public class MinigameRanking : MonoBehaviour
                 if (nameText != null)
                 {
                     nameText.text = player.name;
-                }
+                } 
             }
         }
     }

@@ -45,7 +45,7 @@
                     "name": "Crouch",
                     "type": "Button",
                     "id": "27c5f898-bc57-4ee1-8800-db469aca5fe3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -87,9 +87,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Throw",
+                    "name": "ThrowTo1",
                     "type": "Button",
                     "id": "b0a3f101-de0f-48a0-bdaf-db7e4e80d567",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowTo2",
+                    "type": "Button",
+                    "id": "8dc694ec-d70d-462d-a8bd-48cc984366de",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ThrowTo3",
+                    "type": "Button",
+                    "id": "d2975262-a72d-4901-bcfc-0930b85c034c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -497,8 +515,8 @@
                     "path": "<Keyboard>/t",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "Throw",
+                    "groups": "",
+                    "action": "ThrowTo1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -510,6 +528,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Mash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "afb66434-4bb4-4713-ab16-e0540835929d",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ThrowTo2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ba8bb92-1754-4524-b8b6-2dbdb193b623",
+                    "path": "<Keyboard>/u",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ThrowTo3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

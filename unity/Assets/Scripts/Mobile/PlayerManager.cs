@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerManager : MonoBehaviour
 {
     private static int currentPlayers = 0;
-    private static PlayerManager instance; 
+    public static PlayerManager instance; 
     public static List<PlayerStats> tempRanking = new();
     public class PlayerStats
     {
@@ -42,14 +42,14 @@ public class PlayerManager : MonoBehaviour
         };
 
         currentPlayers++;
-        tempRanking.Add(playerStats[device]);
+        // tempRanking.Add(playerStats[device]);
     }
 
     public void tempRankAdd(InputDevice device)
     {
         if (!tempRanking.Contains(playerStats[device]))
         {
-            tempRanking.Add(playerStats[device]);
+            tempRanking.Insert(0, playerStats[device]);
         }
     }
 

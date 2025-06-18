@@ -35,6 +35,7 @@ public class PlayerSpawn : MonoBehaviour
 
             int spawnIndex = i % Spawn.Length;
             playerInput.transform.position = Spawn[spawnIndex].position;
+            playerInput.transform.rotation = Spawn[spawnIndex].rotation;
             Debug.Log($"welke spawn object {spawnIndex}");
             Debug.Log(Spawn[spawnIndex].name);
             i++;
