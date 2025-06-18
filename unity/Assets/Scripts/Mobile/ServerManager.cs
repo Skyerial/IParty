@@ -382,13 +382,14 @@ public class ServerManager : MonoBehaviour
                         state = new GamepadState
                         {
                             leftStick = new Vector2(cmd.x, cmd.y),
-                             buttons =
-                            (ushort)(
-                                (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
-                                (cmd.D  ? (1 << (int)GamepadButton.North) : 0) |
-                                (cmd.B  ? (1 << (int)GamepadButton.East)  : 0) |
-                                (cmd.C  ? (1 << (int)GamepadButton.West)  : 0)
-                            )
+                            buttons =
+                                (ushort)(
+                                    (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
+                                    (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
+                                    (cmd.B ? (1 << (int)GamepadButton.East)  : 0) |
+                                    (cmd.C ? (1 << (int)GamepadButton.West)  : 0) |
+                                    (cmd.button ? (1 << (int)GamepadButton.LeftShoulder) : 0)
+                                )
                         };
                         break;
                     case "dpad":
@@ -457,7 +458,7 @@ public class ServerManager : MonoBehaviour
         public bool B;
         public bool C;
         public bool D;
-
+        public bool button;
     }
 
     [Serializable]
