@@ -24660,6 +24660,7 @@ GameObject:
   - component: {fileID: 698022819}
   - component: {fileID: 698022818}
   - component: {fileID: 698022820}
+  - component: {fileID: 698022821}
   m_Layer: 0
   m_Name: SquatManager
   m_TagString: Untagged
@@ -24679,6 +24680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a3f2f677326d1756b4d4571ab676bb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeScene: {fileID: 698022821}
   switchScene: {fileID: 1461011802}
   floatStartDelay: 2
   hudController: {fileID: 1803583111}
@@ -24799,6 +24801,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &698022821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698022817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56152a63a536c714ea5a2b182a0ec839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &699012355
 PrefabInstance:
   m_ObjectHideFlags: 0

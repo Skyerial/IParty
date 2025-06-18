@@ -45,10 +45,17 @@ public class ChangeScene : MonoBehaviour
         Debug.Log("Test data send.");
         ServerManager.SendtoAllSocketsController("dpad-preset");
     }
-    
+
     public void SendJoystick()
     {
         Debug.Log("Test data send.");
         ServerManager.SendtoAllSocketsController("joystick-preset"); 
     }
+
+    public void SendSingleButton()
+    {
+        Debug.Log("Test data send. SINGLE BUTTON");
+        ServerManager.SendtoAllSocketsController("one-button");
+    }
+    
 }

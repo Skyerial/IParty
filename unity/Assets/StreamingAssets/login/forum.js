@@ -53,11 +53,26 @@ function main() {
         alert('Please select a color.');
         return;
     }
+    
+    const video = document.getElementById('webcam');
+    const canvas = document.createElement('canvas');
+    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const img = canvas.toDataURL('image/png');
+    const base64Data = img.replace(/^data:image\/png;base64,/, '');
+    // const imagePayload = JSON.stringify({
+    //     filename: `${playerName}.png`,
+    //     contentType: 'image/png',
+    //     data: base64Data
+    // });
 
     // Build JSON object
     const playerData = {
         name: playerName,
-        color: selectedColor
+        color: selectedColor,
+        data: base64Data
     };
 
 

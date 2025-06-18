@@ -100,17 +100,24 @@ public class WeaponController : MonoBehaviour
     {
         if (!isSlamming || hasHit) return;
 
+        PlayerInput player = GetComponentInParent<PlayerInput>();
+
         if (other.CompareTag("Mole"))
         {
             hasHit = true;
             var mole = other.GetComponent<Mole>();
             mole?.OnHit();
+            if (player != null)
+                GameManagerGyro.Instance.AddMoleHit(player);
         }
         else if (other.CompareTag("Bomb"))
         {
             hasHit = true;
             var Bomb = other.GetComponent<BombGyro>();
             Bomb?.OnHit();
+
+            if (player != null)
+                GameManagerGyro.Instance.RemoveMoleHit(player);
             StartCoroutine(BombEffect());
         }
         else if (other.CompareTag("OilBarrel"))

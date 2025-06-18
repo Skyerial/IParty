@@ -1,5 +1,6 @@
 import { DpadController } from "../controllers/dpadController.js";
 import { JoystickController } from "../controllers/joystickController.js";
+import { OneButton } from "../controllers/oneButton.js";
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
@@ -42,7 +43,7 @@ export class SocketManager {
         const isRemote = location.hostname === this.relayHost
         // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
         const url = !isRemote
-            ? `ws://${location.hostname}:8181`
+            ? `wss://${location.hostname}:8181`
             : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
         console.log(url)
         this.socket = new WebSocket(url);
