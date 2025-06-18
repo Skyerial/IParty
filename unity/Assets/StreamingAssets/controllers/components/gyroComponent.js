@@ -1,35 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Motion Detection with Gyro</title>
-    <style>
-        #jumpIndicator {
-            display: none;
-            font-size: 3rem;
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-        #gyroData {
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <button id="enableButton" onclick="enableMotionDetection()">Enable Motion Detection</button>
-    <div id="jumpIndicator">JUMP</div>
-    <div id="gyroData">Gyro data will appear here...</div>
+import { ViewRenderer } from '../../utils/viewRenderer.js';
+import { socketManager } from '../../main.js';
 
-    <script>
+export class GyroComponent extends ViewRenderer {
+    constructor(container) {
+        super("./views/components/gyroComponentView.html", container);
+    }
+
+    bindEvents() {
         const motionThreshold = 15; // example threshold
         let isFlickDetected = false;
-        let dataChannel = null; // Assume this is assigned elsewhere
-        const jumpIndicator = document.getElementById("jumpIndicator");
-        const gyroDataDisplay = document.getElementById("gyroData");
+        const enableButton = this.container.querySelector("#enableButton");
+        const jumpIndicator = this.container.querySelector("#jumpIndicator");
+        const gyroDataDisplay = this.container.querySelector("#gyroData");
 
         function handleMotionEvent(e) {
             const acceleration = e.acceleration;
@@ -38,11 +20,11 @@
             // Update gyro data display
             if (rotation) {
                 gyroDataDisplay.innerHTML = `
-                    <strong>Gyroscope:</strong><br>
-                    Alpha (Z): ${rotation.alpha?.toFixed(2) || "0"} °/s<br>
-                    Beta (X): ${rotation.beta?.toFixed(2) || "0"} °/s<br>
-                    Gamma (Y): ${rotation.gamma?.toFixed(2) || "0"} °/s
-                `;
+                <strong>Gyroscope:</strong><br>
+                Alpha (Z): ${rotation.alpha?.toFixed(2) || "0"} °/s<br>
+                Beta (X): ${rotation.beta?.toFixed(2) || "0"} °/s<br>
+                Gamma (Y): ${rotation.gamma?.toFixed(2) || "0"} °/s
+            `;
             }
 
             // Check motion threshold
@@ -54,9 +36,8 @@
                 if (!isFlickDetected) {
                     isFlickDetected = true;
                     jumpIndicator.style.display = "block";
-                    if (dataChannel) {
-                        dataChannel.send("jump");
-                    }
+                    socketManager.updateButton("A", true);
+                    socketManager.updateButton("A", false);
                 }
             } else {
                 isFlickDetected = false;
@@ -64,7 +45,7 @@
             }
         }
 
-        function enableMotionDetection() {
+        enableButton.addEventListener('click', () => {
             if (typeof DeviceMotionEvent.requestPermission === "function") {
                 DeviceMotionEvent.requestPermission().then((permissionState) => {
                     if (permissionState === "granted") {
@@ -76,11 +57,10 @@
                 hideEnableButton();
                 window.addEventListener("devicemotion", handleMotionEvent, true);
             }
-        }
+        })
 
         function hideEnableButton() {
             document.getElementById("enableButton").style.display = "none";
         }
-    </script>
-</body>
-</html>
+    }
+}

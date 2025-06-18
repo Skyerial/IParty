@@ -62,11 +62,6 @@ function main() {
 
     const img = canvas.toDataURL('image/png');
     const base64Data = img.replace(/^data:image\/png;base64,/, '');
-    // const imagePayload = JSON.stringify({
-    //     filename: `${playerName}.png`,
-    //     contentType: 'image/png',
-    //     data: base64Data
-    // });
 
     // Build JSON object
     const playerData = {
