@@ -46,9 +46,12 @@ public class TurfGameManager : MonoBehaviour
     readonly List<PlayerInput>  gamePlayers = new();
     TurfPaintableSurface[]      allTiles    = null;
     int                         totalTiles  = 0;
+    private SwitchScene sceneSwitcher;
 
     void Awake()
     {
+        sceneSwitcher = GetComponent<SwitchScene>();
+
         if (Instance == null)
         {
             Instance = this;
@@ -198,8 +201,10 @@ public class TurfGameManager : MonoBehaviour
         FinalizeRanking();
         yield return new WaitForSecondsRealtime(finishDisplayTime);
 
-        if (!string.IsNullOrEmpty(nextSceneName))
-            SceneManager.LoadScene(nextSceneName);
+        if (sceneSwitcher != null && !string.IsNullOrEmpty(nextSceneName))
+            sceneSwitcher.LoadNewScene(nextSceneName);
+        else
+            SceneManager.LoadScene("Turf");
     }
 
     void UpdateMatchTimerText(float remaining)
