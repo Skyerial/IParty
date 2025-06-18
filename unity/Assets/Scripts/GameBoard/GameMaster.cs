@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using TMPro;
@@ -11,10 +12,13 @@ public class GameMaster : MonoBehaviour
     public int current_player = -1;
     public int change_player = 0;
     static public List<GameObject> players = new List<GameObject>();
+    static public List<GameObject> Dice = new List<GameObject>();
     public TextMeshProUGUI numberText;
     public int press_random = 0;
 
     public bool numberShown = false;
+    private bool waitingForDice = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -40,14 +44,16 @@ public class GameMaster : MonoBehaviour
 
         if (press_random == 1 && !numberShown)
         {
-            int randomNumber = Random.Range(1, 6); // change range as needed
-            //numberText.text = randomNumber.ToString();
-            //numberShown = true; // Prevent multiple updates
-            // Debug.Log(players[current_player]);
-            // Debug.Log(players[current_player].GetComponent<PlayerManager>());
-            players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
-            numberText.text = randomNumber.ToString();
-            press_random = 2;
+            StartCoroutine(RollDiceForPlayer()); // Replace random logic with dice roll
+
+            // int randomNumber = Random.Range(1, 6); // change range as needed
+            // //numberText.text = randomNumber.ToString();
+            // //numberShown = true; // Prevent multiple updates
+            // // Debug.Log(players[current_player]);
+            // // Debug.Log(players[current_player].GetComponent<PlayerManager>());
+            // players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
+            // numberText.text = randomNumber.ToString();
+            // press_random = 2;
         }
         if (press_random == 2 && players[current_player].GetComponent<PlayerMovement>().increment == 0)
         {
@@ -61,6 +67,44 @@ public class GameMaster : MonoBehaviour
             }
         }
     }
+
+    private IEnumerator RollDiceForPlayer(int diceIndex = 0)
+    {
+        waitingForDice = true;
+
+        // Position dice above current player
+        if (Dice.Count > 0)
+        {
+            GameObject dice = Dice[diceIndex]; // Use specified dice
+            Vector3 playerPos = players[current_player].transform.position;
+            dice.transform.position = playerPos + Vector3.up * dice.GetComponent<DiceThrow>().heightAbovePlayer;
+
+            // Throw the dice
+            dice.GetComponent<DiceThrow>().ThrowDice();
+
+            // Wait for dice to settle
+            while (!dice.GetComponent<DiceThrow>().DiceSettled())
+            {
+                yield return new WaitForSeconds(0.1f); // Check every 0.1 seconds
+            }
+
+            // Get the result and apply it
+            int diceResult = dice.GetComponent<DiceThrow>().SideUp();
+            players[current_player].GetComponent<PlayerMovement>().increment = diceResult;
+            numberText.text = diceResult.ToString();
+        }
+        else
+        {
+            // Fallback to random if no dice available
+            int randomNumber = Random.Range(1, 7);
+            players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
+            numberText.text = randomNumber.ToString();
+        }
+
+        press_random = 2;
+        waitingForDice = false;
+    }
+
 
     public static void RegisterPlayer(PlayerInput playerInput)
     {
