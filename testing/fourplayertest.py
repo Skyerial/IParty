@@ -13,7 +13,7 @@ import random
 import math
 from typing import List, Dict
 
-setup = json.loads(open('setup.json', 'r').read())
+setup = json.loads(open('setup.example.json', 'r').read())
 print(setup)
 
 class MobileClientSimulator:

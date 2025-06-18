@@ -5,16 +5,19 @@ using System.Collections;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerMash : MonoBehaviour
 {
-    public Animator animator;
+    [SerializeField] private Animator animator;
     [SerializeField] private AudioSource squatSFX;
+
+    private PlayerInput playerInput;
+    private InputAction mashAction;
+
     private int mashCounter = 0;
     private float baseSpeed = 1f;
     private float speedIncrement = 0.25f;
     private int pressesPerSpeedUp = 5;
     private bool isSquatting = false;
 
-    private PlayerInput playerInput;
-    private InputAction mashAction;
+    public bool IsFloatDone { get; private set; } = false;
 
     void Awake()
     {
@@ -41,14 +44,9 @@ public class PlayerMash : MonoBehaviour
 
     private void OnMashPerformed(InputAction.CallbackContext context)
     {
-        if (!SquatManager.inputEnabled)
-        {
-            Debug.Log("No input allowed");
-            return;
-        }
+        if (!SquatManager.inputEnabled) return;
 
         mashCounter++;
-
         animator.speed = baseSpeed + (mashCounter / pressesPerSpeedUp) * speedIncrement;
 
         if (!isSquatting)
@@ -56,8 +54,6 @@ public class PlayerMash : MonoBehaviour
             animator.Play("Squat");
             isSquatting = true;
         }
-
-        Debug.Log($"Mash count: {mashCounter}, Animator Speed: {animator.speed}");
     }
 
     public void StartNewRound()
@@ -68,10 +64,7 @@ public class PlayerMash : MonoBehaviour
         isSquatting = false;
     }
 
-    public int GetMashCounter()
-    {
-        return mashCounter;
-    }
+    public int GetMashCounter() => mashCounter;
 
     public void TriggerFloatAnimation(float height)
     {
@@ -80,6 +73,7 @@ public class PlayerMash : MonoBehaviour
 
     private IEnumerator DoFinalSquatAndFloat(float height)
     {
+        IsFloatDone = false;
         animator.speed = 1f;
         animator.Play("Squat");
         yield return new WaitForSeconds(0.7f);
@@ -88,9 +82,9 @@ public class PlayerMash : MonoBehaviour
 
         float groundY = 19.4f;
         float targetY = groundY + height;
-
-        float elapsed = 0f;
         float duration = 2f;
+        float elapsed = 0f;
+
         Vector3 startPos = transform.position;
         Vector3 endPos = new Vector3(startPos.x, targetY, startPos.z);
 
@@ -102,5 +96,6 @@ public class PlayerMash : MonoBehaviour
         }
 
         transform.position = endPos;
+        IsFloatDone = true;
     }
 }
