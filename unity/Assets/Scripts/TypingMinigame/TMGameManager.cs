@@ -5,6 +5,9 @@ using TMPro;
 using UnityEditor.Experimental.GraphView;
 using Unity.VisualScripting;
 using UnityEngine.Video;
+using UnityEngine.InputSystem;
+using UnityEditor.Build.Player;
+using System.Linq;
 
 public class TMGameManager : MonoBehaviour
 {
@@ -19,7 +22,10 @@ public class TMGameManager : MonoBehaviour
     public int finishCount = 0;
 
     public Dictionary<string, PlayerTypingController> playerControllers;
+
     public Dictionary<PlayerTypingController, VirtualController> playerVirtualControllers;
+
+    public List<PlayerInput> playerInputs;
 
     private void Awake()
     {
@@ -37,17 +43,57 @@ public class TMGameManager : MonoBehaviour
         gameStarted = true;
         Debug.Log("Game started!");
 
+        // playerControllers = new Dictionary<string, PlayerTypingController>();
+        // playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
+        // playerInputs = new List<PlayerInput>();
+
         TM_MusicController.Instance.FadeInBGM(2f); // fade in over 2 seconds
 
-        AttachMobilePlayer();
+        // AttachMobilePlayer();
+    }
+
+    public void RegisterPlayer(PlayerInput pi, VirtualController controller)
+    {
+        if (playerControllers == null)
+            playerControllers = new Dictionary<string, PlayerTypingController>();
+        if (playerVirtualControllers == null)
+            playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
+        if (playerInputs == null)
+            playerInputs = new List<PlayerInput>();
+
+        Debug.Log($"registering player {controller}");
+        playerInputs.Add(pi);
+        if (controller == null)
+        {
+            Debug.LogWarning("Controller is not a VirtualController. Skipping.");
+            return;
+        }
+        var playerIndex = playerInputs.FindIndex(p => p == pi);
+        var typingController = players[playerIndex];
+
+        Debug.Log($"debug check {playerControllers} - {controller.remoteId} - {typingController}");
+        playerControllers[controller.remoteId] = typingController;
+        Debug.Log("debug check 1");
+        playerVirtualControllers[typingController] = controller;
+        Debug.Log("debug check 2");
+
+        typingController.textSpawner.words = wordsPerPlayer;
+        typingController.textSpawner.SpawnWords();
+        typingController.raceController.InitializeRace(wordsPerPlayer);
+        typingController.Initialize();
+        typingController.inputField.interactable = true;
+        typingController.inputField.text = "";
+
+        // somehow find the race controller from the player input, since that is used to instantiate the prefab
+        // typingController.raceController = pi
+
+        TextMeshProUGUI name = players[playerIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        name.text = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == playerIndex).name;
     }
 
     private void AttachMobilePlayer()
     {
         int i = 0;
-
-        playerControllers = new Dictionary<string, PlayerTypingController>();
-        playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
 
         foreach (var mobilePlayer in PlayerManager.playerStats)
         {
