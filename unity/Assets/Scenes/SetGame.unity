@@ -187,15 +187,15 @@ MonoBehaviour:
   m_Padding:
     m_Left: 104
     m_Right: 104
-    m_Top: 32
-    m_Bottom: 2
+    m_Top: 50
+    m_Bottom: 0
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 200, y: 100}
   m_Spacing: {x: 20, y: 20}
   m_Constraint: 1
-  m_ConstraintCount: 4
+  m_ConstraintCount: 3
 --- !u!114 &46109974
 MonoBehaviour:
   m_ObjectHideFlags: 0
