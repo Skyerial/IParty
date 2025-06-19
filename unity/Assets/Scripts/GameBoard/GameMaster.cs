@@ -73,25 +73,29 @@ public class GameMaster : MonoBehaviour
         waitingForDice = true;
 
         // Position dice above current player
+        int total_amount = 0;
         if (Dice.Count > 0)
         {
-            GameObject dice = Dice[diceIndex]; // Use specified dice
-            Vector3 playerPos = players[current_player].transform.position;
-            dice.transform.position = playerPos + Vector3.up * dice.GetComponent<DiceThrow>().heightAbovePlayer;
+            for (int i = 0; i < diceIndex, i++) {
+                GameObject dice = Dice[i]; // Use specified dice
+                Vector3 playerPos = players[current_player].transform.position;
+                dice.transform.position = playerPos + Vector3.up * dice.GetComponent<DiceThrow>().heightAbovePlayer;
 
-            // Throw the dice
-            dice.GetComponent<DiceThrow>().ThrowDice();
+                // Throw the dice
+                dice.GetComponent<DiceThrow>().ThrowDice();
 
-            // Wait for dice to settle
-            while (!dice.GetComponent<DiceThrow>().DiceSettled())
-            {
-                yield return new WaitForSeconds(0.1f); // Check every 0.1 seconds
+                // Wait for dice to settle
+                while (!dice.GetComponent<DiceThrow>().DiceSettled())
+                {
+                    yield return new WaitForSeconds(0.1f); // Check every 0.1 seconds
+                }
+
+                // Get the result and apply it
+                int diceResult = dice.GetComponent<DiceThrow>().SideUp();
+                players[current_player].GetComponent<PlayerMovement>().increment = diceResult;
+                numberText.text = diceResult.ToString();
             }
-
-            // Get the result and apply it
-            int diceResult = dice.GetComponent<DiceThrow>().SideUp();
-            players[current_player].GetComponent<PlayerMovement>().increment = diceResult;
-            numberText.text = diceResult.ToString();
+            total_amount = total_amount + diceResult;
         }
         else
         {
