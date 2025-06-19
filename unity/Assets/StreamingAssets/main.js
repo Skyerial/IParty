@@ -30,11 +30,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     await cp.init();
   }
 });
-
-export function setCurrentController(controller) {
-    currentController = controller;
-}
-
-export function getCurrentController() {
-    return currentController;
-}
