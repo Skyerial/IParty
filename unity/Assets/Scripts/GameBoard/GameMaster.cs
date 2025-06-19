@@ -74,9 +74,10 @@ public class GameMaster : MonoBehaviour
 
         // Position dice above current player
         int total_amount = 0;
+        int diceResult = 0;
         if (Dice.Count > 0)
         {
-            for (int i = 0; i < diceIndex, i++) {
+            for (int i = 0; i < diceIndex; i++) {
                 GameObject dice = Dice[i]; // Use specified dice
                 Vector3 playerPos = players[current_player].transform.position;
                 dice.transform.position = playerPos + Vector3.up * dice.GetComponent<DiceThrow>().heightAbovePlayer;
@@ -91,7 +92,7 @@ public class GameMaster : MonoBehaviour
                 }
 
                 // Get the result and apply it
-                int diceResult = dice.GetComponent<DiceThrow>().SideUp();
+                diceResult = dice.GetComponent<DiceThrow>().SideUp();
                 players[current_player].GetComponent<PlayerMovement>().increment = diceResult;
                 numberText.text = diceResult.ToString();
             }
