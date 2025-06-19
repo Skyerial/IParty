@@ -39,6 +39,7 @@ public class BombGyro : MonoBehaviour
     {
         Debug.Log("Bomb hit!");
         // GameManagerGyro.Instance.RemoveMoleHit();
+        ScoreDisplay.removemolehits();
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);

@@ -76,10 +76,13 @@ public class MovementHotpotato : MonoBehaviour
     {
         if (!IsHoldingBomb() || !canThrow) return;
 
-        var others = GetOtherPlayers();
-        if (index >= others.Count) return;
+        var allPlayers = bombManager.players;
+        if (index >= allPlayers.Count) return;
 
-        GameObject target = others[index];
+        GameObject target = allPlayers[index];
+
+        // Prevent throwing to yourself
+        if (target == gameObject) return;
 
         GameObject bomb = bombManager.GetCurrentBomb();
         Bomb bombScript = bomb.GetComponent<Bomb>();

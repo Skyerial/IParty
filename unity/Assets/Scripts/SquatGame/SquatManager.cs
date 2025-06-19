@@ -26,7 +26,8 @@ public class SquatManager : MonoBehaviour
     {
         inputEnabled = false;
 
-        ServerManager.SendtoAllSockets("one-button");
+        Debug.Log("Sending one-button controller preset to all players.");
+        changeScene?.SendSingleButton();
 
         if (hudController == null)
         {

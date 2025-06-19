@@ -99,17 +99,7 @@ public class GameManagerGyro : MonoBehaviour
 
         finishCanvas?.gameObject.SetActive(true);
 
-        PlayerInput winner = DetermineWinner();
-        if (winner != null)
-        {
-            string winnerName = PlayerManager.playerStats[winner.devices[0]].name;
-            int hits = GetMoleHits(winner);
-            finishText.text = $"Finish!\nWinner: {winnerName} ({hits} hits)";
-        }
-        else
-        {
-            finishText.text = "Finish!\nNo winner.";
-        }
+        finishText.text = "Finish!";
 
         yield return new WaitForSecondsRealtime(finishDisplayTime);
 
@@ -158,17 +148,6 @@ public class GameManagerGyro : MonoBehaviour
         }
         timerCanvas?.gameObject.SetActive(false);
     }
-
-    private PlayerInput DetermineWinner()
-    {
-        if (moleHits.Count == 0) return null;
-
-        return moleHits.OrderByDescending(entry => entry.Value)
-                       .Select(entry => entry.Key)
-                       .FirstOrDefault();
-    }
-
-
     private void FinalizeRanking()
     {
         var pm = Object.FindFirstObjectByType<PlayerManager>();
