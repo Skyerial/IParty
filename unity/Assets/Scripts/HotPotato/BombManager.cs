@@ -38,12 +38,11 @@ public class BombManager : MonoBehaviour
 
     void SendPlayerStatsToAllClients()
     {
-        string[] buttonLetters = new[] { "A", "B", "C", "D" };
 
         // Build playerstats list in the same order as BombManager.players
         var orderedPlayerConfigs = new List<PlayerConfig>();
 
-        for (int i = 0; i < players.Count && i < buttonLetters.Length; i++)
+        for (int i = 0; i < players.Count; i++)
         {
             GameObject playerObj = players[i];
             var input = playerObj.GetComponent<PlayerInput>();
@@ -58,15 +57,14 @@ public class BombManager : MonoBehaviour
             {
                 name = stats.name,
                 color = stats.color,
-                button = buttonLetters[i]
             });
         }
 
         // Create message object
         var message = new HotPotatoMessage
         {
-            type = "hotpotato",
-            label = "playerstats",
+            type = "controller",
+            controller = "hotpotato",
             playerstats = orderedPlayerConfigs
         };
 
@@ -78,9 +76,6 @@ public class BombManager : MonoBehaviour
             ServerManager.SendMessageToClient(vc.remoteId, json);
         }
     }
-
-
-
 
     void JoinAllPlayers()
     {
@@ -170,14 +165,13 @@ public class BombManager : MonoBehaviour
     {
         public string name;
         public string color;
-        public string button;
     }
 
     [System.Serializable]
     public class HotPotatoMessage
     {
         public string type;
-        public string label;
+        public string controller;
         public List<PlayerConfig> playerstats;
     }
 }
