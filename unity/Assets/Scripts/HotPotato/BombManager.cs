@@ -6,8 +6,9 @@ using UnityEditorInternal;
 
 public class BombManager : MonoBehaviour
 {
-    public MinigameHUDController hudController; // drag this in the Inspector
+    public MinigameHUDController hudController; 
     public GameObject bombPrefab;
+    [SerializeField] private GameObject nameboardPrefab;
     public SwitchScene switchScene;
     public GameObject prefab;
     private GameObject currentBomb;
@@ -111,7 +112,7 @@ public class BombManager : MonoBehaviour
                 PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 if (playerInput != null)
                 {
-                    colorPlayer(playerInput);
+                    initPlayer(playerInput);
                     GameManager.RegisterPlayerGame(playerInput);
                     MovementHotpotato mover = playerInput.GetComponent<MovementHotpotato>();
                     mover.bombManager = this;
@@ -124,11 +125,23 @@ public class BombManager : MonoBehaviour
         }
     }
 
-    void colorPlayer(PlayerInput playerInput)
+    void initPlayer(PlayerInput playerInput)
     {
+        InputDevice device = playerInput.devices[0];
         Transform body = playerInput.transform.Find("Body");
-        SkinnedMeshRenderer renderer = body.GetComponent<SkinnedMeshRenderer>();
-        renderer.material = PlayerManager.findColor(playerInput.devices[0]);
+        var renderer = body.GetComponent<SkinnedMeshRenderer>();
+        renderer.material = PlayerManager.findColor(device);
+
+        if (nameboardPrefab == null) return;
+
+        GameObject nameboard = Instantiate(nameboardPrefab, playerInput.transform);
+        nameboard.transform.localPosition = new Vector3(0, 2f, 0);
+
+        var text = nameboard.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        if (text != null && PlayerManager.playerStats.TryGetValue(device, out var stats))
+        {
+            text.text = stats.name;
+        }
     }
 
     void StartHotPotato()

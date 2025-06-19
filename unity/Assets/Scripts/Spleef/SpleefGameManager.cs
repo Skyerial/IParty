@@ -13,25 +13,34 @@ public class SpleefGameManager : MonoBehaviour
     public static SpleefGameManager Instance { get; private set; }
 
     [Header("Pre-Game Countdown")]
-    public Canvas   countdownCanvas;
+    public Canvas countdownCanvas;
     public TMP_Text countdownText;
-    public int      countdownStart = 3;
+    public int countdownStart = 3;
+
+    [Header("Tile Drop Settings")]
+    public Canvas tileDropCanvas;
+    public TMP_Text tileDropText;
+    public float tileDropDelay = 5f;
+    private bool tilesDroppingEnabled = false;
+    public bool TilesDroppingEnabled => tilesDroppingEnabled;
 
     [Header("Finish Settings")]
-    public Canvas   finishCanvas;
+    public Canvas finishCanvas;
     public TMP_Text finishText;
-    public float    finishDisplayTime = 3f;
+    public float finishDisplayTime = 3f;
 
     class PlayerEntry
     {
         public InputDevice device;
-        public Color       color;
+        public Color color;
     }
 
     readonly List<PlayerEntry> entries = new();
-    readonly List<PlayerInput>   gamePlayers     = new();
-    readonly List<PlayerInput>   eliminationOrder= new();
-    private SwitchScene          sceneSwitcher;
+    readonly List<PlayerInput> gamePlayers = new();
+    readonly List<PlayerInput> eliminationOrder = new();
+
+    private SwitchScene sceneSwitcher;
+    public string nextSceneName;
 
     void Awake()
     {
@@ -48,6 +57,7 @@ public class SpleefGameManager : MonoBehaviour
     }
     void Start()
     {
+        tileDropCanvas?.gameObject.SetActive(false);
         countdownCanvas?.gameObject.SetActive(false);
         finishCanvas?.gameObject.SetActive(false);
     }
@@ -102,6 +112,33 @@ public class SpleefGameManager : MonoBehaviour
 
         foreach (var pi in gamePlayers)
             pi.ActivateInput();
+
+        StartCoroutine(EnableTileDropsAfterDelay());
+    }
+
+    IEnumerator EnableTileDropsAfterDelay()
+    {
+        tileDropCanvas?.gameObject.SetActive(true);
+
+        float elapsed = 0f;
+        while (elapsed < tileDropDelay)
+        {
+            elapsed += Time.deltaTime;
+            UpdateMatchTimerText(tileDropDelay - elapsed);
+            yield return null;
+        }
+
+        tileDropCanvas?.gameObject.SetActive(false);
+        tilesDroppingEnabled = true;
+    }
+
+    void UpdateMatchTimerText(float remaining)
+    {
+        if (tileDropText == null) return;
+        int seconds = Mathf.Max(0, Mathf.CeilToInt(remaining));
+        int mins = seconds / 60;
+        int secs = seconds % 60;
+        tileDropText.text = $"{mins}:{secs:00}";
     }
 
     public void OnPlayerEliminated(PlayerInput pi)
@@ -115,11 +152,16 @@ public class SpleefGameManager : MonoBehaviour
 
             int aliveCount = gamePlayers.Count - eliminationOrder.Count;
             if (aliveCount <= 1)
-            {
-                EndGame();
-                FinalizeRanking();
-            }
+                StartCoroutine(OnPlayerEliminatedRoutine());
         }
+    }
+
+    private IEnumerator OnPlayerEliminatedRoutine()
+    {
+        EndGame();
+        FinalizeRanking();
+        yield return new WaitForSecondsRealtime(finishDisplayTime);
+        sceneSwitcher.LoadNewScene(nextSceneName);
     }
 
     public void EndGame()
@@ -147,5 +189,4 @@ public class SpleefGameManager : MonoBehaviour
         foreach (var dev in sorted)
             pm.tempRankAdd(dev);
     }
-
 }
