@@ -89,15 +89,14 @@ export class SocketManager {
         } else if (controller == "one-button") {
             let js = new OneButton(root)
             js.init()
-        } else if (controller == "hotpotato") {
-            const availableButtons = ["A", "B", "C", "D"];
-            const listItems = data.playerstats.map((player, index) => ({
+        } else if (controller === "hotpotato") {
+            const listItems = data.playerstats.map(player => ({
                 label: player.name,
                 color: player.color,
-                jsonButton: availableButtons[index]
+                jsonButton: player.button
             }));
 
-            let js = new HotPotatoController(root, listItems);
+            const js = new HotPotatoController(root, listItems);
             js.init();
         }
     }
