@@ -6,8 +6,6 @@ import { SocketManager } from "./utils/socketManager.js";
 import { NavBar } from "./pages/navBar.js";
 
 export let socketManager = new SocketManager('iparty.duckdns.org');
-let currentController = null;
-
 window.addEventListener("DOMContentLoaded", async () => {
   let root = document.querySelector(".view-container");
   let navContainer = document.querySelector(".nav-container");
@@ -30,11 +28,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     await cp.init();
   }
 });
-
-export function setCurrentController(controller) {
-    currentController = controller;
-}
-
-export function getCurrentController() {
-    return currentController;
-}

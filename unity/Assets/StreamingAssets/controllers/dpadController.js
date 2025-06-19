@@ -3,7 +3,6 @@ import { LayoutManager } from "../utils/layoutManager.js";
 export class DpadController {
     constructor(container) {
         this.container = container;
-        setCurrentController(this);
     }
 
     async init() {

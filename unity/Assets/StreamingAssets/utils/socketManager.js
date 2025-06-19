@@ -1,5 +1,6 @@
 import { DpadController } from "../controllers/dpadController.js";
 import { GyroController } from "../controllers/gyroController.js";
+import { HotPotatoController } from "../controllers/hotPotatoController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { OneButton } from "../controllers/oneButton.js";
 
@@ -75,7 +76,8 @@ export class SocketManager {
         };
     }
 
-    loadController(controller) {
+    loadController(data) {
+        let controller = data.controller;
         let root = document.querySelector(".view-container");
 
         if (controller == "dpad-preset") {
@@ -87,24 +89,24 @@ export class SocketManager {
         } else if (controller == "one-button") {
             let js = new OneButton(root)
             js.init()
-        }
-    }
+        } else if (controller == "hotpotato") {
+            const availableButtons = ["A", "B", "C", "D"];
+            const listItems = data.playerstats.map((player, index) => ({
+                label: player.name,
+                color: player.color,
+                jsonButton: availableButtons[index]
+            }));
 
-    handleMsgForHotpotato(data) {
-        if (data.label == "deadupdate") {
-
-        } else if (data.label == "playerstats") {
-
+            let js = new HotPotatoController(root, listItems);
+            js.init();
         }
     }
 
     handleCommand(data) {
         if (data.type == "controller") {
-            this.loadController(data.controller);
-        } else if (data.type == "hotpotato") {
-            this.handleMsgForHotpotato(data);
+            this.loadController(data);
         }
-            console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data));
     }
 
     disconnect() {
