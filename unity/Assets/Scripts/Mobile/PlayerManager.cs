@@ -94,4 +94,17 @@ public class PlayerManager : MonoBehaviour
         }
         return mat;
     }
+
+    public static Texture2D findFace(InputDevice device)
+    {
+        Texture2D texture = new Texture2D(2, 2);
+        texture.LoadImage(playerStats[device].face);
+        if (texture == null)
+        {
+            Debug.Log("There is no face data for " + playerStats[device].name);
+            return new Texture2D(2, 2);
+        }
+        
+        return texture;
+    }
 }

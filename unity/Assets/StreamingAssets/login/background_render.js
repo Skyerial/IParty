@@ -75,14 +75,23 @@ function main() {
     }
 
     const snapButton = document.getElementById('picture-snap');
+    let root = document.querySelector(".view-container");
     // Checking if snapshot taken
     snapButton.addEventListener('click', () => {
       if (video.paused) {
         video.play();
         snapButton.innerHTML = "Take Picture";
+        document.getElementById("snapshot").remove();
       } else {
         video.pause();
         snapButton.innerHTML = "Retake Picture";
+        const canvas = document.createElement('canvas');
+        canvas.id = "snapshot"
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        canvas.style = "display:none;"
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        root.appendChild(canvas);
       }
     });
 

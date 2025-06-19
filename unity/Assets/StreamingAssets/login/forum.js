@@ -54,14 +54,15 @@ function main() {
         return;
     }
     
-    const video = document.getElementById('webcam');
-    const canvas = document.createElement('canvas');
-    canvas.height = video.videoHeight;
-    canvas.width = video.videoWidth;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const img = canvas.toDataURL('image/png');
-    const base64Data = img.replace(/^data:image\/png;base64,/, '');
+    const canvas = document.getElementById('snapshot')
+    let base64Data = ""
+    if (canvas == null) 
+    {
+        console.log("No face data.");
+    } else {
+        const img = canvas.toDataURL('image/png');
+        base64Data = img.replace(/^data:image\/png;base64,/, '');   
+    }
 
     // Build JSON object
     const playerData = {
