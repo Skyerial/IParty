@@ -1132,7 +1132,7 @@ MonoBehaviour:
   countdownCanvas: {fileID: 760081222}
   countdownText: {fileID: 15912348}
   countdownStart: 3
-  matchDuration: 50
+  matchDuration: 10
   timerCanvas: {fileID: 760081222}
   timerText: {fileID: 1415314616}
   finishCanvas: {fileID: 760081222}
