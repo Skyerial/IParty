@@ -1,13 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
-
-[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(PlayerInput))]
-[ExecuteInEditMode]
 public class BoardManager : MonoBehaviour
 {
     public Transform tileGroup;      // Assign "Tile Groupe" in Inspector
-    public GameObject player_test;        // Assign player GameObject
+    public Transform players;        // Assign player GameObject
 
     public int tileNr;
 
@@ -16,27 +13,72 @@ public class BoardManager : MonoBehaviour
     private Animator animator;
 
     private InputAction jumpAction;
-
+    private int round;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        cap = GetComponent<CapsuleCollider>();
-        animator = GetComponent<Animator>();
-
         // get InputActions once
         var pi = GetComponent<PlayerInput>();
         jumpAction = pi.actions["Jump"];
-        jumpAction.performed += _ => MovePlayerToTileMarker(player_test, 1, 4);
+        int nr_players = players.childCount;
+        for (int i = 0; i < nr_players; i++)
+        {
+            GameObject player = players.GetChild(i).gameObject;
+            playerAnimations playerScript = player.GetComponent<playerAnimations>();
+            playerScript.ActivateCamera(false);
+        }
+        Debug.LogWarning("Deactivated all cameras");
+        StartCoroutine(gameLoop());
     }
 
-    public void MovePlayerToTileMarker(GameObject player, int steps, int markerIndex = 0, float duration = 0.5f, float jumpHeight = 2f)
+    private IEnumerator gameLoop()
+    {
+        round = 1;
+        int game_over = 0;
+        int nr_players = players.childCount;
+        while (game_over != 1)
+        {
+            for (int i = 0; i < nr_players; i++)
+            {
+                GameObject player = players.GetChild(i).gameObject;
+                playerAnimations playerScript = player.GetComponent<playerAnimations>();
+                playerScript.ActivateCamera(true);
+                yield return WaitForJumpInput();
+                int result = MovePlayerToTileMarker(player, 1, i);
+                playerScript.ActivateCamera(false);
+            }
+            Debug.Log("Round Played:" + round);
+            round++;
+        }
+    }
+    private IEnumerator WaitForJumpInput()
+    {
+        bool jumpPressed = false;
+
+        void OnJump(InputAction.CallbackContext ctx)
+        {
+            jumpPressed = true;
+        }
+
+        jumpAction.performed += OnJump;
+
+        // Wait until jump is pressed
+        while (!jumpPressed)
+        {
+            yield return null; // wait one frame
+        }
+
+        jumpAction.performed -= OnJump; // Unsubscribe when done
+    }
+
+   private int MovePlayerToTileMarker(GameObject player, int steps, int markerIndex = 0, float duration = 0.5f, float jumpHeight = 2f)
     {
         int tileIndex = tileNr + steps;
+        bool finished = false;
         if (tileGroup == null || tileGroup.childCount <= tileIndex)
         {
-            Debug.LogWarning("Tile index out of range or tileGroup not set.");
-            return;
+            finished = true;
+            tileIndex = tileGroup.childCount - 1;
         }
 
         Transform tile = tileGroup.GetChild(tileIndex);
@@ -45,7 +87,7 @@ public class BoardManager : MonoBehaviour
         if (tileScript == null)
         {
             Debug.LogWarning("Tile at index " + tileIndex + " has no Tile script.");
-            return;
+            return -1;
         }
 
         Transform[] markers = tileScript.markers;
@@ -53,37 +95,24 @@ public class BoardManager : MonoBehaviour
         if (markers == null || markers.Length <= markerIndex || markers[markerIndex] == null)
         {
             Debug.LogWarning("Invalid marker index or unassigned marker.");
-            return;
+            return -1;
         }
 
         Vector3 start = player.transform.position;
         Vector3 end = markers[markerIndex].position;
+        end.y += 1;
 
-        // Start the jump coroutine
         tileNr = tileIndex;
-        StartCoroutine(JumpArc(player.transform, start, end, duration, jumpHeight));
-    }
 
-    private IEnumerator JumpArc(Transform target, Vector3 start, Vector3 end, float duration, float height)
-    {
-        float elapsed = 0f;
+        playerAnimations playerScript = player.GetComponent<playerAnimations>();
 
-        while (elapsed < duration)
+        StartCoroutine(playerScript.rotate_and_jump(start, end));
+
+        if (finished == true)
         {
-            float t = elapsed / duration;
-
-            // Basic parabolic arc formula: h * 4(t - t^2)
-            float arc = height * 4 * (t - t * t);
-            Vector3 currentPos = Vector3.Lerp(start, end, t);
-            currentPos.y += arc;
-
-            target.position = currentPos;
-
-            elapsed += Time.deltaTime;
-            yield return null;
+            return 1;
         }
-
-        target.position = end; // Final snap to ground
+        return 0;
     }
 }
 
