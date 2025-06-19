@@ -3,6 +3,7 @@ import { LayoutManager } from "../utils/layoutManager.js";
 export class OneButton {
     constructor(container) {
         this.container = container;
+        setCurrentController(this);
     }
 
     async init() {

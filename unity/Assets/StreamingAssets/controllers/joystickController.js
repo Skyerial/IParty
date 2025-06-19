@@ -3,6 +3,7 @@ import { LayoutManager } from "../utils/layoutManager.js";
 export class JoystickController {
     constructor(container) {
         this.container = container;
+        setCurrentController(this);
     }
 
     async init() {
