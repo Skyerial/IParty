@@ -31,6 +31,9 @@ public class ServerManager : MonoBehaviour
     [Tooltip("Enable to use remote relay servers instead of local HTTP/WS servers.")]
     public bool useRemote = true;
 
+    // Toggle secure websocket, insecure is used to connect testing script
+    public bool useSecure = true;
+
     private string hostId;
 
     // Local server fields
@@ -227,7 +230,9 @@ public class ServerManager : MonoBehaviour
         FleckLog.Level = LogLevel.Debug;
         string ip = ChooseIP() ?? "0.0.0.0";
         Debug.Log(ip);
-        string wsPrefix = $"wss://{ip}:8181";
+
+        // Select secure or insecure websocket
+        string wsPrefix = useSecure ? $"wss://{ip}:8181" : $"ws://{ip}:8181";
         wsServer = new WebSocketServer(wsPrefix);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
         wsServer.Certificate = new X509Certificate2(certPath, "unity");
