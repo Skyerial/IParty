@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;  // Added for PlayerInput and InputAction
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerMovementSpleef : MonoBehaviour
+public class SpleefPlayerMover : MonoBehaviour
 {
     [Header("Movement Settings")]
     [Tooltip("Base movement speed (units/sec).")]

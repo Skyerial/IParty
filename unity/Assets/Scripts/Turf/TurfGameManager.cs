@@ -55,9 +55,11 @@ public class TurfGameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -105,7 +107,8 @@ public class TurfGameManager : MonoBehaviour
         sw.color = turfColor;
         txt.text  = "0.0%";
 
-        entries.Add(new PlayerEntry {
+        entries.Add(new PlayerEntry
+        {
             device      = dev,
             turfColor   = turfColor,
             swatch      = sw,
@@ -201,10 +204,7 @@ public class TurfGameManager : MonoBehaviour
         FinalizeRanking();
         yield return new WaitForSecondsRealtime(finishDisplayTime);
 
-        if (sceneSwitcher != null && !string.IsNullOrEmpty(nextSceneName))
-            sceneSwitcher.LoadNewScene(nextSceneName);
-        else
-            SceneManager.LoadScene("Turf");
+        sceneSwitcher.LoadNewScene(nextSceneName);
     }
 
     void UpdateMatchTimerText(float remaining)
