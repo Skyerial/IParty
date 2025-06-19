@@ -76,7 +76,8 @@ export class SocketManager {
         };
     }
 
-    loadController(controller) {
+    loadController(data) {
+        let controller = data.controller;
         let root = document.querySelector(".view-container");
 
         if (controller == "dpad-preset") {
@@ -103,7 +104,7 @@ export class SocketManager {
 
     handleCommand(data) {
         if (data.type == "controller") {
-            this.loadController(data.controller);
+            this.loadController(data);
         }
         console.log(JSON.stringify(data));
     }
