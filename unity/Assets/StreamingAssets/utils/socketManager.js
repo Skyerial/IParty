@@ -11,6 +11,8 @@ export class SocketManager {
         this.timer = null;
         this.isActive = false;
 
+        this.clientName = null;
+
         this.onOpen = null;
         this.onMessage = null;
         this.onClose = null;
@@ -88,10 +90,20 @@ export class SocketManager {
         }
     }
 
+    handleMsgForHotpotato(data) {
+        if (data.label == "deadupdate") {
+
+        } else if (data.label == "playerstats") {
+
+        }
+    }
+
     handleCommand(data) {
-          if (data.type == "controller") {
-                this.loadController(data.controller)
-            }
+        if (data.type == "controller") {
+            this.loadController(data.controller);
+        } else if (data.type == "hotpotato") {
+            this.handleMsgForHotpotato(data);
+        }
             console.log(JSON.stringify(data));
     }
 
@@ -199,5 +211,9 @@ export class SocketManager {
             console.log("sending:", JSON.stringify(data));
             this.socket.send(JSON.stringify(data));
         }
+    }
+
+    setClientName(name) {
+        this.clientName = name;
     }
 }

@@ -72,6 +72,7 @@ function main() {
 
 
     // NEW CHARACTER CREATION
+    socketManager.setClientName(playerName);
     socketManager.send(playerData)
     const js = new JoystickController(root);
     js.init();
