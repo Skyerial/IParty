@@ -39,7 +39,13 @@ public class Mole : MonoBehaviour
     public void OnHit()
     {
         Debug.Log("Mole was hit!");
-        // GameManagerGyro.Instance.AddMoleHit();
+        var scoreDisplay = transform.root.GetComponentInChildren<ScoreDisplay>();
+
+        if (scoreDisplay != null)
+        {
+            Debug.Log("check check");
+            scoreDisplay.AddMoleHit();
+        }
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
