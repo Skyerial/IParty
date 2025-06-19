@@ -25,10 +25,55 @@ public class BombManager : MonoBehaviour
                 players.Add(obj);
             }
         }
+
+        SendPlayerStatsToAllClients();
+
         if (hudController != null)
         {
             hudController.OnCountdownFinished += StartHotPotato;
             hudController.ShowCountdown();
+        }
+    }
+
+
+    void SendPlayerStatsToAllClients()
+    {
+
+        // Build playerstats list in the same order as BombManager.players
+        var orderedPlayerConfigs = new List<PlayerConfig>();
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            GameObject playerObj = players[i];
+            var input = playerObj.GetComponent<PlayerInput>();
+            if (input == null || input.devices.Count == 0)
+                continue;
+
+            InputDevice device = input.devices[0];
+            if (!PlayerManager.playerStats.TryGetValue(device, out var stats))
+                continue;
+
+            orderedPlayerConfigs.Add(new PlayerConfig
+            {
+                name = stats.name,
+                color = stats.color,
+            });
+        }
+
+        // Create message object
+        var message = new HotPotatoMessage
+        {
+            type = "controller",
+            controller = "hotpotato",
+            playerstats = orderedPlayerConfigs
+        };
+
+        string json = JsonUtility.ToJson(message);
+
+        // Send to all clients
+        foreach (var vc in PlayerManager.playerStats.Keys.OfType<VirtualController>())
+        {
+            ServerManager.SendMessageToClient(vc.remoteId, json);
         }
     }
 
@@ -47,9 +92,6 @@ public class BombManager : MonoBehaviour
                     GameManager.RegisterPlayerGame(playerInput);
                     MovementHotpotato mover = playerInput.GetComponent<MovementHotpotato>();
                     mover.bombManager = this;
-                    // string colorName = PlayerManager.playerStats[device].color;
-                    // string playerName = PlayerManager.playerStats[device].name;
-                    // sendToSockets(playerName, colorName);
                 }
                 else
                 {
@@ -58,12 +100,6 @@ public class BombManager : MonoBehaviour
             }
         }
     }
-
-    // void sendToSockets(string name, string color)
-    // {
-    //     string json = name + "," + color;
-    //     ServerManager.SendSockets(json);
-    // }
 
     void colorPlayer(PlayerInput playerInput)
     {
@@ -122,5 +158,20 @@ public class BombManager : MonoBehaviour
     {
         return currentBomb;
     }
-    
+
+
+    [System.Serializable]
+    public class PlayerConfig
+    {
+        public string name;
+        public string color;
+    }
+
+    [System.Serializable]
+    public class HotPotatoMessage
+    {
+        public string type;
+        public string controller;
+        public List<PlayerConfig> playerstats;
+    }
 }

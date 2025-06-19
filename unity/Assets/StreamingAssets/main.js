@@ -6,7 +6,6 @@ import { SocketManager } from "./utils/socketManager.js";
 import { NavBar } from "./pages/navBar.js";
 
 export let socketManager = new SocketManager('iparty.duckdns.org');
-
 window.addEventListener("DOMContentLoaded", async () => {
   let root = document.querySelector(".view-container");
   let navContainer = document.querySelector(".nav-container");

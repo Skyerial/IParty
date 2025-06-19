@@ -1,5 +1,6 @@
 import { DpadController } from "../controllers/dpadController.js";
 import { GyroController } from "../controllers/gyroController.js";
+import { HotPotatoController } from "../controllers/hotPotatoController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { OneButton } from "../controllers/oneButton.js";
 
@@ -10,6 +11,8 @@ export class SocketManager {
         this.interval = 10;
         this.timer = null;
         this.isActive = false;
+
+        this.clientName = null;
 
         this.onOpen = null;
         this.onMessage = null;
@@ -85,14 +88,24 @@ export class SocketManager {
         } else if (controller == "one-button") {
             let js = new OneButton(root)
             js.init()
+        } else if (controller == "hotpotato") {
+            const availableButtons = ["A", "B", "C", "D"];
+            const listItems = data.playerstats.map((player, index) => ({
+                label: player.name,
+                color: player.color,
+                jsonButton: availableButtons[index]
+            }));
+
+            let js = new HotPotatoController(root, listItems);
+            js.init();
         }
     }
 
     handleCommand(data) {
-          if (data.type == "controller") {
-                this.loadController(data.controller)
-            }
-            console.log(JSON.stringify(data));
+        if (data.type == "controller") {
+            this.loadController(data.controller);
+        }
+        console.log(JSON.stringify(data));
     }
 
     disconnect() {
@@ -199,5 +212,9 @@ export class SocketManager {
             console.log("sending:", JSON.stringify(data));
             this.socket.send(JSON.stringify(data));
         }
+    }
+
+    setClientName(name) {
+        this.clientName = name;
     }
 }
