@@ -16,6 +16,8 @@ public class BombManager : MonoBehaviour
     [System.Obsolete]
     void Start()
     {
+        AudioManager.Instance.PlayRandomMiniGameTrack();
+
         JoinAllPlayers();
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
         foreach (GameObject obj in allObjects)
