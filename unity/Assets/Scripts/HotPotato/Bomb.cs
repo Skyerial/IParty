@@ -61,7 +61,6 @@ public class Bomb : MonoBehaviour
 
     void Explode()
     {
-
         if (explosion != null)
         {
             Instantiate(explosion, transform.position, Quaternion.identity);
@@ -72,14 +71,29 @@ public class Bomb : MonoBehaviour
             var playerInput = transform.parent.GetComponent<PlayerInput>();
             if (playerInput != null)
             {
-                var device = playerInput.devices[0]; // assuming 1 device per player
+                var device = playerInput.devices[0];
                 PlayerManager.instance.tempRankAdd(device);
+
+                // if (device is VirtualController vc)
+                // {
+
+                //     var message = new 
+                //     {
+                //         type = "hotpotato",
+                //         label = "deadupdate",
+                //         playerstats = null
+                //     };
+                //     string clientId = vc.remoteId;
+                //     Debug.Log("ClientID of the player who exploded: " + clientId);
+
+                //     string json = "{\"type\":\"eliminated\",\"message\":\"You exploded!\"}";
+                //     ServerManager.SendMessageToClient(clientId, json);
+                // }
             }
 
             Destroy(transform.parent.gameObject);
         }
 
         Destroy(gameObject);
-
     }
 }

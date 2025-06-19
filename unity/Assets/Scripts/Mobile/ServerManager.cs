@@ -245,7 +245,13 @@ public class ServerManager : MonoBehaviour
                     device.remoteId = connectionId;
                     allControllers[connectionId] = device;
                     allSockets[device] = socket;
-
+                    // var message = new
+                    // {
+                    //     type = "clientinfo",
+                    //     clientId = connectionId
+                    // };
+                    // string json = JsonUtility.ToJson(message);
+                    // SendMessageToClient(connectionId, json);
                     // TESTING CHARACTER CREATION
                     // PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 });
@@ -420,6 +426,11 @@ public class ServerManager : MonoBehaviour
 
         string json = JsonUtility.ToJson(messageObject);
 
+        SendMessages(json);
+    }
+
+    public static void SendMessages(string json)
+    {
         if (instance.useRemote)
         {
             // Remote mode: send via wsTunnel to each remote client
@@ -450,6 +461,38 @@ public class ServerManager : MonoBehaviour
             }
         }
     }
+
+    public static void SendMessageToClient(string clientId, string json)
+{
+    if (instance.useRemote)
+    {
+        // Remote mode: send to one client via wsTunnel
+        if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
+        {
+            string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+            var wrapper = new WSTunnelRequest
+            {
+                clientId = clientId,
+                payloadBase64 = base64Payload,
+                @event = null
+            };
+            string wrapperJson = JsonUtility.ToJson(wrapper);
+            instance.wsTunnel.SendText(wrapperJson);
+        }
+    }
+    else
+    {
+        // Local mode: find the socket and send directly
+        if (allControllers.TryGetValue(clientId, out var device) && allSockets.TryGetValue(device, out var socket))
+        {
+            socket.Send(json);
+        }
+        else
+        {
+            Debug.LogWarning($"[Local][WS] No socket found for client: {clientId}");
+        }
+    }
+}
 
     void HandleCommandOnMainThread(string json, string sender)
     {
