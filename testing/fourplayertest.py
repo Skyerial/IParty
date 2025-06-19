@@ -31,7 +31,8 @@ class MobileClientSimulator:
         # Player name used in setup.json, do not change
         self.player_config = {
             "name": f"player{client_id}",
-            "color": colors[int(client_id) - 1]
+            "color": colors[int(client_id) - 1],
+            "data": b""
         }
 
         # Simulate button state

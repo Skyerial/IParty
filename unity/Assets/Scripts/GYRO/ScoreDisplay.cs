@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class ScoreDisplay : MonoBehaviour
 {
-    public static TMP_Text scoreText;
+    public TMP_Text scoreText;
     private int hits = 0;
 
-    public static void AddMoleHit()
+    public void AddMoleHit()
     {
         // hits++;
         // UpdateDisplay();
