@@ -87,7 +87,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ThrowTo1",
+                    "name": "ButtonA",
                     "type": "Button",
                     "id": "b0a3f101-de0f-48a0-bdaf-db7e4e80d567",
                     "expectedControlType": "",
@@ -96,7 +96,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ThrowTo2",
+                    "name": "ButtonB",
                     "type": "Button",
                     "id": "8dc694ec-d70d-462d-a8bd-48cc984366de",
                     "expectedControlType": "",
@@ -105,7 +105,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ThrowTo3",
+                    "name": "ButtonC",
                     "type": "Button",
                     "id": "d2975262-a72d-4901-bcfc-0930b85c034c",
                     "expectedControlType": "",
@@ -114,7 +114,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ThrowTo4",
+                    "name": "ButtonD",
                     "type": "Button",
                     "id": "00b94590-4e20-4cc9-8041-41be1b48d146",
                     "expectedControlType": "",
@@ -521,11 +521,11 @@
                 {
                     "name": "",
                     "id": "be9aea1a-653c-4cea-87f9-7f20af490266",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "ThrowTo1",
+                    "action": "ButtonA",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -543,33 +543,33 @@
                 {
                     "name": "",
                     "id": "afb66434-4bb4-4713-ab16-e0540835929d",
-                    "path": "<Gamepad>/buttonNorth",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "ThrowTo2",
+                    "action": "ButtonB",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "6ba8bb92-1754-4524-b8b6-2dbdb193b623",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "ThrowTo3",
+                    "action": "ButtonC",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "72e76034-d7e8-4072-8c63-049406466461",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "ThrowTo4",
+                    "action": "ButtonD",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

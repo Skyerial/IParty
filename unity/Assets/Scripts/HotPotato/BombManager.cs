@@ -38,44 +38,65 @@ public class BombManager : MonoBehaviour
 
     void SendPlayerStatsToAllClients()
     {
-
-        // Build playerstats list in the same order as BombManager.players
-        var orderedPlayerConfigs = new List<PlayerConfig>();
+        var availableButtons = new[] { "B", "D", "A", "C" }; // Gamepad: East, North, South, West
 
         for (int i = 0; i < players.Count; i++)
         {
-            GameObject playerObj = players[i];
-            var input = playerObj.GetComponent<PlayerInput>();
-            if (input == null || input.devices.Count == 0)
-                continue;
+            var sender = players[i]; // current player
 
-            InputDevice device = input.devices[0];
-            if (!PlayerManager.playerStats.TryGetValue(device, out var stats))
-                continue;
+            // Prepare opponent list
+            var opponents = players
+                .Where(p => p != sender)
+                .ToList();
 
-            orderedPlayerConfigs.Add(new PlayerConfig
+            var perClientStats = new List<PlayerConfig>();
+
+            for (int j = 0; j < opponents.Count; j++)
             {
-                name = stats.name,
-                color = stats.color,
-            });
-        }
+                var opp = opponents[j];
+                var input = opp.GetComponent<PlayerInput>();
+                if (input == null || input.devices.Count == 0) continue;
 
-        // Create message object
-        var message = new HotPotatoMessage
-        {
-            type = "controller",
-            controller = "hotpotato",
-            playerstats = orderedPlayerConfigs
-        };
+                InputDevice device = input.devices[0];
+                if (!PlayerManager.playerStats.TryGetValue(device, out var stats)) continue;
 
-        string json = JsonUtility.ToJson(message);
+                perClientStats.Add(new PlayerConfig
+                {
+                    name = stats.name,
+                    color = stats.color,
+                    button = availableButtons[j]
+                });
+            }
 
-        // Send to all clients
-        foreach (var vc in PlayerManager.playerStats.Keys.OfType<VirtualController>())
-        {
-            ServerManager.SendMessageToClient(vc.remoteId, json);
+            var message = new HotPotatoMessage
+            {
+                type = "controller",
+                controller = "hotpotato",
+                playerstats = perClientStats
+            };
+
+            string json = JsonUtility.ToJson(message);
+
+            var senderDevice = sender.GetComponent<PlayerInput>()?.devices.FirstOrDefault();
+            if (senderDevice != null &&
+                PlayerManager.playerStats.TryGetValue(senderDevice, out var senderStats))
+            {
+                var vc = PlayerManager.playerStats.FirstOrDefault(kv => kv.Value == senderStats && kv.Key is VirtualController).Key as VirtualController;
+                if (vc != null)
+                {
+                    ServerManager.SendMessageToClient(vc.remoteId, json);
+                    
+                    var mover = sender.GetComponent<MovementHotpotato>();
+                    if (mover != null)
+                    {
+                        mover.ConfigureThrowTargets(perClientStats);
+                    }
+                }
+            }
+
         }
     }
+
 
     void JoinAllPlayers()
     {
@@ -165,6 +186,7 @@ public class BombManager : MonoBehaviour
     {
         public string name;
         public string color;
+        public string button;
     }
 
     [System.Serializable]

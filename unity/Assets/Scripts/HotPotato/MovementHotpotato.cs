@@ -6,13 +6,13 @@ public class MovementHotpotato : MonoBehaviour
 {
     public BombManager bombManager;
     public float throwCooldown = 0.8f;
+
     private float cooldownTimer = 0f;
     private bool canThrow = true;
     private PlayerInput playerInput;
-    private InputAction throwTo1Action;
-    private InputAction throwTo2Action;
-    private InputAction throwTo3Action;
-    private InputAction throwTo4Action;
+
+    // Map button name (e.g., "A") to a target player GameObject
+    private Dictionary<string, GameObject> buttonToTarget = new();
 
     void Start()
     {
@@ -21,33 +21,23 @@ public class MovementHotpotato : MonoBehaviour
 
         if (playerInput != null)
         {
-            throwTo1Action = playerInput.actions["ThrowTo1"];
-            throwTo2Action = playerInput.actions["ThrowTo2"];
-            throwTo3Action = playerInput.actions["ThrowTo3"];
-            throwTo4Action = playerInput.actions["ThrowTo4"];
+            // Bind button inputs dynamically
+            var buttons = new[] { "ButtonA", "ButtonB", "ButtonC", "ButtonD" };
 
-            throwTo1Action.performed += OnThrowTo1Performed;
-            throwTo2Action.performed += OnThrowTo2Performed;
-            throwTo3Action.performed += OnThrowTo3Performed;
-            throwTo4Action.performed += OnThrowTo4Performed;
-
-            throwTo1Action.Enable();
-            throwTo2Action.Enable();
-            throwTo3Action.Enable();
-            throwTo4Action.Enable();
+            foreach (string btn in buttons)
+            {
+                InputAction action = playerInput.actions[btn];
+                if (action != null)
+                {
+                    string buttonName = btn.Replace("Button", ""); // A, B, C, D
+                    action.performed += ctx => OnThrowPressed(buttonName);
+                    action.Enable();
+                }
+            }
         }
     }
 
-
-    private void OnDestroy()
-    {
-        throwTo1Action.performed -= OnThrowTo1Performed;
-        throwTo2Action.performed -= OnThrowTo2Performed;
-        throwTo3Action.performed -= OnThrowTo3Performed;
-        throwTo4Action.performed -= OnThrowTo4Performed;
-    }
-
-    private void Update()
+    void Update()
     {
         if (!canThrow)
         {
@@ -60,6 +50,22 @@ public class MovementHotpotato : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (playerInput == null) return;
+
+        var buttons = new[] { "ButtonA", "ButtonB", "ButtonC", "ButtonD" };
+
+        foreach (string btn in buttons)
+        {
+            InputAction action = playerInput.actions[btn];
+            if (action != null)
+            {
+                action.performed -= ctx => OnThrowPressed(btn.Replace("Button", ""));
+            }
+        }
+    }
+
     private bool IsHoldingBomb()
     {
         return bombManager != null &&
@@ -67,24 +73,27 @@ public class MovementHotpotato : MonoBehaviour
                bombManager.GetCurrentBomb().transform.parent == transform;
     }
 
-    private List<GameObject> GetOtherPlayers()
-    {
-        return bombManager.players.FindAll(p => p != null && p != gameObject);
-    }
-
-    private void TryThrowToIndex(int index)
+    private void OnThrowPressed(string button)
     {
         if (!IsHoldingBomb() || !canThrow) return;
 
-        var allPlayers = bombManager.players;
-        if (index >= allPlayers.Count) return;
+        if (buttonToTarget.TryGetValue(button, out GameObject target) && target != null)
+        {
+            ThrowBombTo(target);
+        }
+        else
+        {
+            Debug.LogWarning($"No target mapped to button {button}");
+        }
+    }
 
-        GameObject target = allPlayers[index];
-
-        // Prevent throwing to yourself
-        if (target == gameObject) return;
+    private void ThrowBombTo(GameObject target)
+    {
+        if (target == null || target == gameObject) return;
 
         GameObject bomb = bombManager.GetCurrentBomb();
+        if (bomb == null) return;
+
         Bomb bombScript = bomb.GetComponent<Bomb>();
         bombScript.isBeingThrown = true;
 
@@ -99,28 +108,25 @@ public class MovementHotpotato : MonoBehaviour
         cooldownTimer = 0f;
     }
 
-    private void OnThrowTo1Performed(InputAction.CallbackContext context)
+    // Call this from BombManager after setting up each player's controls
+    public void ConfigureThrowTargets(List<BombManager.PlayerConfig> playerConfigs)
     {
-        Debug.Log("Throw to 1 performed");
-        TryThrowToIndex(0);
-    }
+        buttonToTarget.Clear();
 
-    private void OnThrowTo2Performed(InputAction.CallbackContext context)
-    {
-        Debug.Log("Throw to 2 performed");
-        TryThrowToIndex(1);
-    }
+        foreach (var config in playerConfigs)
+        {
+            GameObject target = bombManager.players.Find(p =>
+                p.GetComponent<PlayerInput>()?.devices[0] != null &&
+                PlayerManager.playerStats.TryGetValue(p.GetComponent<PlayerInput>().devices[0], out var stats) &&
+                stats.name == config.name
+            );
 
-    private void OnThrowTo3Performed(InputAction.CallbackContext context)
-    {
-        Debug.Log("Throw to 3 performed");
-        TryThrowToIndex(2);
-    }
+            if (target != null)
+            {
+                buttonToTarget[config.button] = target;
+            }
+        }
 
-    private void OnThrowTo4Performed(InputAction.CallbackContext context)
-    {
-        Debug.Log("Throw to 4 performed");
-        TryThrowToIndex(3);
+        Debug.Log($"Configured throw targets for {gameObject.name}");
     }
 }
-
