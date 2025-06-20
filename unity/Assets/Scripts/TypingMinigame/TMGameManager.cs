@@ -60,8 +60,7 @@ public class TMGameManager : MonoBehaviour
             playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
         if (playerInputs == null)
             playerInputs = new List<PlayerInput>();
-
-        Debug.Log($"registering player {controller}");
+            
         playerInputs.Add(pi);
         if (controller == null)
         {
@@ -71,11 +70,9 @@ public class TMGameManager : MonoBehaviour
         var playerIndex = playerInputs.FindIndex(p => p == pi);
         var typingController = players[playerIndex];
 
-        Debug.Log($"debug check {playerControllers} - {controller.remoteId} - {typingController}");
         playerControllers[controller.remoteId] = typingController;
-        Debug.Log("debug check 1");
         playerVirtualControllers[typingController] = controller;
-        Debug.Log("debug check 2");
+        typingController.raceController = pi.GetComponent<PlayerRaceController>();
 
         typingController.textSpawner.words = wordsPerPlayer;
         typingController.textSpawner.SpawnWords();
@@ -83,9 +80,6 @@ public class TMGameManager : MonoBehaviour
         typingController.Initialize();
         typingController.inputField.interactable = true;
         typingController.inputField.text = "";
-
-        // somehow find the race controller from the player input, since that is used to instantiate the prefab
-        // typingController.raceController = pi
 
         TextMeshProUGUI name = players[playerIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         name.text = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == playerIndex).name;
