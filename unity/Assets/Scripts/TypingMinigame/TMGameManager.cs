@@ -17,6 +17,8 @@ public class TMGameManager : MonoBehaviour
 
     public List<PlayerTypingController> players; // list of row1, ro2, etc
 
+    public List<GameObject> spawns; // spawn1, spawn2
+
     private bool gameStarted = false;
 
     public int finishCount = 0;
@@ -26,6 +28,7 @@ public class TMGameManager : MonoBehaviour
     public Dictionary<PlayerTypingController, VirtualController> playerVirtualControllers;
 
     public List<PlayerInput> playerInputs;
+    public GameObject spawn;
 
     private void Awake()
     {
@@ -68,7 +71,11 @@ public class TMGameManager : MonoBehaviour
             return;
         }
         int playerIndex = playerInputs.FindIndex(p => p == pi);
+        Debug.Log($"playerIndex: {playerIndex}");
         PlayerTypingController typingController = players[playerIndex];
+
+        // place the player on its spawn
+        pi.transform.position = spawn.transform.GetChild(playerIndex).transform.position;
 
         playerControllers[controller.remoteId] = typingController;
         playerVirtualControllers[typingController] = controller;
