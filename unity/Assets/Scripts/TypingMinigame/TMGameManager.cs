@@ -60,20 +60,22 @@ public class TMGameManager : MonoBehaviour
             playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
         if (playerInputs == null)
             playerInputs = new List<PlayerInput>();
-            
+
         playerInputs.Add(pi);
         if (controller == null)
         {
             Debug.LogWarning("Controller is not a VirtualController. Skipping.");
             return;
         }
-        var playerIndex = playerInputs.FindIndex(p => p == pi);
-        var typingController = players[playerIndex];
+        int playerIndex = playerInputs.FindIndex(p => p == pi);
+        PlayerTypingController typingController = players[playerIndex];
 
         playerControllers[controller.remoteId] = typingController;
         playerVirtualControllers[typingController] = controller;
-        typingController.raceController = pi.GetComponent<PlayerRaceController>();
 
+        ColorPlayer(pi);
+
+        typingController.raceController = pi.GetComponent<PlayerRaceController>();
         typingController.textSpawner.words = wordsPerPlayer;
         typingController.textSpawner.SpawnWords();
         typingController.raceController.InitializeRace(wordsPerPlayer);
@@ -83,6 +85,15 @@ public class TMGameManager : MonoBehaviour
 
         TextMeshProUGUI name = players[playerIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         name.text = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == playerIndex).name;
+    }
+
+    private void ColorPlayer(PlayerInput pi)
+    {
+        InputDevice dev = pi.devices[0];
+        Material mat = PlayerManager.findColor(dev);
+
+        SkinnedMeshRenderer body = pi.transform.Find("Body").GetComponent<SkinnedMeshRenderer>();
+        body.material = mat;
     }
 
     private void AttachMobilePlayer()
