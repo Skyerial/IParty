@@ -11,17 +11,21 @@ public class GameMaster : MonoBehaviour
 {
     public int current_player = -1;
     public int change_player = 0;
-    static public List<GameObject> players = new List<GameObject>();
-    static public List<GameObject> Dice = new List<GameObject>();
+    public List<GameObject> players = new List<GameObject>();
+    public List<GameObject> Dice = new List<GameObject>();
     public TextMeshProUGUI numberText;
     public int press_random = 0;
 
     public bool numberShown = false;
     private bool waitingForDice = false;
+    private Camera diceCam;
+    private Camera currentPlayerCam;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
+        currentPlayerCam = players[current_player].GetComponentInChildren<Camera>(true);
     }
 
     // Update is called once per frame
@@ -30,34 +34,27 @@ public class GameMaster : MonoBehaviour
         if (current_player != change_player)
         {
             current_player = change_player;
-            for (int i = 0; i < players.Count; i++)
-            {
-                // Get the Camera component from the child object
-                Debug.Log(players[i]);
-                Camera cam = players[i].GetComponentInChildren<Camera>(true); // true = include inactive
-                if (cam != null)
-                {
-                    cam.gameObject.SetActive(i == current_player);
-                }
-            }
+            EnablePlayerCamera(current_player);
         }
 
-        if (press_random == 1 && !numberShown)
+        if (press_random == 1 && !waitingForDice)
         {
-            // StartCoroutine(RollDiceForPlayer()); // Replace random logic with dice roll
+            waitingForDice = true;
+            EnableDiceCamera();
+            StartCoroutine(RollDiceForPlayer()); // Replace random logic with dice roll
 
-            int randomNumber = Random.Range(1, 6); // change range as needed
-            //numberText.text = randomNumber.ToString();
-            //numberShown = true; // Prevent multiple updates
-            // Debug.Log(players[current_player]);
-            // Debug.Log(players[current_player].GetComponent<PlayerManager>());
-            players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
-            numberText.text = randomNumber.ToString();
-            press_random = 2;
+            // int randomNumber = Random.Range(1, 6); // change range as needed
+            // //numberText.text = randomNumber.ToString();
+            // //numberShown = true; // Prevent multiple updates
+            // // Debug.Log(players[current_player]);
+            // // Debug.Log(players[current_player].GetComponent<PlayerManager>());
+            // players[current_player].GetComponent<PlayerMovement>().increment = randomNumber;
+            // numberText.text = randomNumber.ToString();
         }
         if (press_random == 2 && players[current_player].GetComponent<PlayerMovement>().increment == 0)
         {
             change_player = (current_player + 1) % players.Count;
+            EnablePlayerCamera(current_player);
             press_random = 0;
 
             // If the variabele = 0 after updating it means a full round has been played.
@@ -70,19 +67,25 @@ public class GameMaster : MonoBehaviour
 
     private IEnumerator RollDiceForPlayer(int diceIndex = 0)
     {
-        waitingForDice = true;
-
         // Position dice above current player
-        int total_amount = 0;
-        int diceResult = 0;
+        int totalAmount = 0;
+        // int diceResult = 0;
+        var device = players[current_player].GetComponent<PlayerInput>().devices[0];
+        int throws = PlayerManager.playerStats[device].winner ? 0 : 1;
         if (Dice.Count > 0)
         {
-            for (int i = 0; i < diceIndex; i++) {
-                GameObject dice = Dice[i]; // Use specified dice
-                Vector3 playerPos = players[current_player].transform.position;
-                dice.transform.position = playerPos + Vector3.up * dice.GetComponent<DiceThrow>().heightAbovePlayer;
+            Debug.Log("Dice found!");
+
+            for (int i = 0; i <= throws; i++)
+            {
+                GameObject dice = Dice[0]; // Use specified dice
+
+                // Transforms the dice above the players head.
+                // Vector3 playerPos = players[current_player].transform.position;
+                // dice.transform.position = playerPos + Vector3.up * dice.GetComponent<DiceThrow>().heightAbovePlayer;
 
                 // Throw the dice
+                Debug.Log("Throwing the dice");
                 dice.GetComponent<DiceThrow>().ThrowDice();
 
                 // Wait for dice to settle
@@ -92,11 +95,15 @@ public class GameMaster : MonoBehaviour
                 }
 
                 // Get the result and apply it
-                diceResult = dice.GetComponent<DiceThrow>().SideUp();
-                players[current_player].GetComponent<PlayerMovement>().increment = diceResult;
-                numberText.text = diceResult.ToString();
+                totalAmount += dice.GetComponent<DiceThrow>().SideUp();
+                numberText.text = totalAmount.ToString();
             }
-            total_amount = total_amount + diceResult;
+
+            EnablePlayerCamera(current_player);
+            players[current_player].GetComponent<PlayerMovement>().increment = totalAmount;
+
+            // Updating the players position in PlayerManager
+            PlayerManager.AddPosition(device, totalAmount);
         }
         else
         {
@@ -110,8 +117,7 @@ public class GameMaster : MonoBehaviour
         waitingForDice = false;
     }
 
-
-    public static void RegisterPlayer(PlayerInput playerInput)
+    public void RegisterPlayer(PlayerInput playerInput)
     {
         Debug.Log(playerInput.gameObject.name);
         var device = playerInput.devices[0];
@@ -123,7 +129,27 @@ public class GameMaster : MonoBehaviour
     void LoadRandomMinigame()
     {
         Debug.Log("Loading random minigame...");
-        int index = Random.Range(5, 9);
-        SceneManager.LoadScene(index);
+        // int index = Random.Range(5, 9);
+        SceneManager.LoadScene("TankGame");
+    }
+
+    void EnablePlayerCamera(int player)
+    {
+        diceCam.gameObject.SetActive(false);
+        for (int i = 0; i < players.Count; i++)
+        {
+            Camera cam = players[i].GetComponentInChildren<Camera>(true);
+            cam.gameObject.SetActive(i == player);
+        }
+    }
+
+    void EnableDiceCamera()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            Camera cam = players[i].GetComponentInChildren<Camera>(true);
+            cam.gameObject.SetActive(false);
+        }
+        diceCam.gameObject.SetActive(true);
     }
 }
