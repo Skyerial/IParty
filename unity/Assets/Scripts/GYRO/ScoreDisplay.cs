@@ -8,8 +8,8 @@ public class ScoreDisplay : MonoBehaviour
 
     public void AddMoleHit()
     {
-        // hits++;
-        // UpdateDisplay();
+        hits++;
+        UpdateDisplay();
     }
 
     public void RemoveMoleHit()
