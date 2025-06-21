@@ -14,14 +14,16 @@ public class TurfPlayerShooter : MonoBehaviour
     public float      projectileLifeTime = 5f;
     public LayerMask  paintLayerMask;
     public float      turfCheckDistance  = 1f;
-    public ParticleSystem muzzleFlash;
-    public AudioClip       shootSound;
+    public AudioClip shootSound;
+
+    [Header("Particle Effects")]
+    public ParticleSystem continuousSpray;
 
     [Header("Ammo UI")]
-    public int   maxAmmo         = 10;
-    public float ammoRegenRate   = 1f;
-    public float turfRegenPenalty = 0.5f;
-    public Image ammoBarFill;
+    public int    maxAmmo         = 10;
+    public float  ammoRegenRate   = 1f;
+    public float  turfRegenPenalty = 0.5f;
+    public Image  ammoBarFill;
 
     private PlayerInput  pi;
     private InputAction  attackAction;
@@ -35,8 +37,8 @@ public class TurfPlayerShooter : MonoBehaviour
     {
         pi = GetComponent<PlayerInput>();
         attackAction = pi.actions["Attack"];
-        attackAction.performed += _ => isFiring = true;
-        attackAction.canceled  += _ => isFiring = false;
+        attackAction.performed += _ => BeginSpray();
+        attackAction.canceled  += _ => EndSpray();
     }
 
     void OnEnable()
@@ -79,7 +81,7 @@ public class TurfPlayerShooter : MonoBehaviour
             }
             else
             {
-                isFiring = false;
+                EndSpray();
             }
         }
         else if (!isFiring && currentAmmo < maxAmmo)
@@ -95,6 +97,20 @@ public class TurfPlayerShooter : MonoBehaviour
             );
             UpdateAmmoUI();
         }
+    }
+
+    void BeginSpray()
+    {
+        isFiring = true;
+        if (continuousSpray != null && !continuousSpray.isPlaying)
+            continuousSpray.Play();
+    }
+
+    void EndSpray()
+    {
+        isFiring = false;
+        if (continuousSpray != null && continuousSpray.isPlaying)
+            continuousSpray.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 
     void Shoot()
@@ -121,10 +137,7 @@ public class TurfPlayerShooter : MonoBehaviour
         if (projGO.TryGetComponent<Rigidbody>(out var rb))
             rb.linearVelocity = rot * Vector3.forward * projectileSpeed;
 
-        // play effects only if assigned
-        if (muzzleFlash != null)
-            muzzleFlash.Play();
-
+        // play shooting sound
         if (shootSound != null && audioSrc != null)
             audioSrc.PlayOneShot(shootSound);
     }
