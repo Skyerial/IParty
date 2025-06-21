@@ -49,9 +49,9 @@ public class HexTile : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Only trigger when a Player (tagged "Player") steps on it
-        // and no fall routine is already running
-        if (!isScheduledToFall && collision.collider.CompareTag("Player"))
+        if (!isScheduledToFall
+            && collision.collider.CompareTag("Player")
+            && SpleefGameManager.Instance.TilesDroppingEnabled)
         {
             isScheduledToFall = true;
             StartCoroutine(FallAndRespawnRoutine());

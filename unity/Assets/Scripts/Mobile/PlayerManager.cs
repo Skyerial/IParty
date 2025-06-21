@@ -68,9 +68,9 @@ public class PlayerManager : MonoBehaviour
         currentPlayers--;
     }
 
-    public static void AddPosition(InputDevice device, int position)
+    public static void AddPosition(InputDevice device, int increment)
     {
-        playerStats[device].position += position;
+        playerStats[device].position += increment;
 
     }
 

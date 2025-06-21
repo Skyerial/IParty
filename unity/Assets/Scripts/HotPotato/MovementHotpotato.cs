@@ -6,12 +6,9 @@ public class MovementHotpotato : MonoBehaviour
 {
     public BombManager bombManager;
     public float throwCooldown = 0.8f;
-
     private float cooldownTimer = 0f;
     private bool canThrow = true;
     private PlayerInput playerInput;
-
-    // Map button name (e.g., "A") to a target player GameObject
     private Dictionary<string, GameObject> buttonToTarget = new();
 
     void Start()
@@ -21,7 +18,6 @@ public class MovementHotpotato : MonoBehaviour
 
         if (playerInput != null)
         {
-            // Bind button inputs dynamically
             var buttons = new[] { "ButtonA", "ButtonB", "ButtonC", "ButtonD" };
 
             foreach (string btn in buttons)
@@ -29,7 +25,7 @@ public class MovementHotpotato : MonoBehaviour
                 InputAction action = playerInput.actions[btn];
                 if (action != null)
                 {
-                    string buttonName = btn.Replace("Button", ""); // A, B, C, D
+                    string buttonName = btn.Replace("Button", ""); 
                     action.performed += ctx => OnThrowPressed(buttonName);
                     action.Enable();
                 }
@@ -108,7 +104,6 @@ public class MovementHotpotato : MonoBehaviour
         cooldownTimer = 0f;
     }
 
-    // Call this from BombManager after setting up each player's controls
     public void ConfigureThrowTargets(List<BombManager.PlayerConfig> playerConfigs)
     {
         buttonToTarget.Clear();

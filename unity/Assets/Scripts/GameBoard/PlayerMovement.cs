@@ -42,6 +42,14 @@ public class PlayerMovement : MonoBehaviour
         // Assigning the correct Player ID
         player_id = PlayerManager.playerStats[playerInput.devices[0]].playerID;
 
+        // Assigning players to the correct position
+        current_pos = PlayerManager.playerStats[playerInput.devices[0]].position;
+        Debug.Log("The spawning position is: " + current_pos);
+        GameObject masterSpawn = GameObject.Find("SpawnSpawner");
+        Transform group = masterSpawn.transform.GetChild(current_pos);
+        Transform spawnPoint = group.GetChild(player_id);
+        transform.position = spawnPoint.transform.position;
+
         step_spawner = FindAnyObjectByType<script>();
         radius = step_spawner.radius;
         step_distance = step_spawner.step_distance;
@@ -52,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleInput()
     {
-        Debug.Log("Button pressed.");
+        Debug.Log($"Button pressed by {player_id}, the current player is {gameMaster.current_player}.");
         if (player_id == gameMaster.current_player && !gameMaster.numberShown)
         {
             gameMaster.press_random = 1;

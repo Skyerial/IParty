@@ -17,10 +17,11 @@ public class DiceThrow : MonoBehaviour
 
     [SerializeField]
     public float forceUp = 2f; // Force applied to the dice when thrown
-    public float velocityThreshold = 0.1f; // Velocity below this = dice settled
+    public float velocityThreshold = 0.01f; // Velocity below this = dice settled
     public float maxWaitTime = 5f; // Maximum time to wait for dice to settle
     public float heightAbovePlayer = 2f;
     public bool debug = false;
+    private bool done = false;
 
     private float throwTime; // Time when the dice was thrown
 
@@ -55,13 +56,14 @@ public class DiceThrow : MonoBehaviour
     public void ThrowDice()
     {
         _rigidbody.isKinematic = false;
-        
+
         Vector3 force = new Vector3(0f, forceUp, 0f);
         Vector3 torque = new Vector3(Random.Range(-10f, 10f), Random.Range(-10f, 10f), Random.Range(-10f, 10f));
         _rigidbody.AddForce(force, ForceMode.Impulse);
         _rigidbody.AddTorque(torque, ForceMode.Impulse);
 
         throwTime = Time.time; // Update throw time when dice is thrown
+        done = true;
     }
 
     public int SideUp()
@@ -90,9 +92,18 @@ public class DiceThrow : MonoBehaviour
 
     public bool DiceSettled()
     {
-        float timeSinceThrow = Time.time - throwTime;
-        float currentVelocity = _rigidbody.linearVelocity.magnitude;
+        // Waiting 2 seconds before checking if the dice is set.
+        Debug.Log("Current remaining: " + (Time.time - throwTime));
+        if (Time.time - throwTime >= 2)
+        {
+            float timeSinceThrow = Time.time - throwTime;
+            float currentVelocity = _rigidbody.linearVelocity.magnitude;
 
-        return timeSinceThrow >= maxWaitTime || currentVelocity < velocityThreshold;
+            return timeSinceThrow >= maxWaitTime || currentVelocity < velocityThreshold;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

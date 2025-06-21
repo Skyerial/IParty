@@ -35,6 +35,9 @@ public class ChangeScene : MonoBehaviour
             case 7:
                 level = "SkyGlutes";
                 break;
+            case 8:
+                level = "NewBoard";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);

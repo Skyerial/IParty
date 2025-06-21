@@ -16,7 +16,7 @@ public class Bomb : MonoBehaviour
 
     void Start()
     {
-        countdownTime = Random.Range(2f, 8f);
+        countdownTime = Random.Range(10f, 18f);
         rend = GetComponentInChildren<Renderer>();
         audioSource = GetComponent<AudioSource>();
         originalColor = rend.material.color;
