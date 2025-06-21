@@ -73,6 +73,7 @@ public class TurfGameManager : MonoBehaviour
         countdownCanvas?.gameObject.SetActive(false);
         matchTimerCanvas?.gameObject.SetActive(false);
         finishCanvas?.gameObject.SetActive(false);
+        ServerManager.SendtoAllSockets("turf");
     }
 
     public static void RegisterPlayerGame(PlayerInput pi)

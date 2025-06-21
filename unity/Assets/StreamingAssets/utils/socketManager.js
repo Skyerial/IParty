@@ -3,6 +3,7 @@ import { GyroController } from "../controllers/gyroController.js";
 import { HotPotatoController } from "../controllers/hotPotatoController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { OneButton } from "../controllers/oneButton.js";
+import { TurfController } from "../controllers/turfController.js";
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
@@ -98,6 +99,9 @@ export class SocketManager {
 
             const js = new HotPotatoController(root, listItems);
             js.init();
+        } else if (controller == "turf") {
+            let turf = new TurfController(root);
+            turf.init();
         }
     }
 

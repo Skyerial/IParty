@@ -42,8 +42,8 @@ export class LayoutManager extends ViewRenderer {
         this.hasMovementComponent = true;
     }
 
-    async addButtons() {
-        await this.addComponent(ButtonsComponent);
+    async addButtons(twoButtons = false) {
+        await this.addComponent(ButtonsComponent, twoButtons);
     }
 
     async addButton() {
