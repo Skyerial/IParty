@@ -3679,6 +3679,10 @@ PrefabInstance:
       propertyPath: moveSpeed
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 3250892949710444285, guid: 94b168eb25941476aa8cd50395dd2b33, type: 3}
+      propertyPath: muzzleFlash
+      value: 
+      objectReference: {fileID: 6700771162390576147, guid: cb30685f5c00efbb2941e60a57e63d5c, type: 3}
     - target: {fileID: 4481656687914491091, guid: 94b168eb25941476aa8cd50395dd2b33, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.6
@@ -3733,7 +3737,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6746160418932128126, guid: 94b168eb25941476aa8cd50395dd2b33, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
