@@ -44,7 +44,7 @@ public class BoardManager : MonoBehaviour
                 playerAnimations playerScript = player.GetComponent<playerAnimations>();
                 playerScript.ActivateCamera(true);
                 yield return WaitForJumpInput();
-                int result = MovePlayerToTileMarker(player, 1, i);
+                int result = MovePlayerToTileMarker(player, 2, i);
                 playerScript.ActivateCamera(false);
             }
             Debug.Log("Round Played:" + round);

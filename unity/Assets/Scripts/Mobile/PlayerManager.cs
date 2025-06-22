@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
         public int playerID;
         public int position;
         public string color;
-        public bool winner;
+        public int winner;
         public string name;
         public byte[] face;
     }
@@ -40,6 +40,7 @@ public class PlayerManager : MonoBehaviour
             playerID = currentPlayers,
             position = 0,
             color = color,
+            winner = 0,
             name = name,
             face = face
         };

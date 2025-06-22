@@ -110,8 +110,16 @@ export class SocketManager {
     }
 
     handleCommand(data) {
+        let root = document.querySelector(".view-container");
         if (data.type == "controller") {
             this.loadController(data);
+        } else if (data.type == "reconnect-status") {
+            if (data.approved) {
+                let js = new JoystickController(root)
+                js.init() 
+            } else {
+                alert("Player not found, please make sure you've entered the correct code.")
+            }
         }
         console.log(JSON.stringify(data));
     }

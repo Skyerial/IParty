@@ -145,7 +145,6 @@ public class ServerManager : MonoBehaviour
 
         using var reader = new StreamReader(ssl);
         using var writer = new StreamWriter(ssl) { AutoFlush = true };
-
         var requestLine = reader.ReadLine();
         if (string.IsNullOrEmpty(requestLine)) return;
 
@@ -250,6 +249,7 @@ public class ServerManager : MonoBehaviour
                     device.remoteId = connectionId;
                     allControllers[connectionId] = device;
                     allSockets[device] = socket;
+
                     // var message = new
                     // {
                     //     type = "clientinfo",
@@ -265,18 +265,29 @@ public class ServerManager : MonoBehaviour
             socket.OnClose = () =>
             {
                 string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
+                string port = socket.ConnectionInfo.ClientPort.ToString();
                 Debug.Log($"[Local][WS] Disconnected: {connectionId}");
                 MainThreadDispatcher.Enqueue(() =>
                 {
-                    if (allControllers.TryGetValue(connectionId, out var dev))
+                    // RECONNECT EVENT SLOT
+                    Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
+                    if (reconnectFunction)
                     {
-                        foreach (var p in PlayerInput.all)
+                        reconnectFunction.DisconnectEvent(connectionId, port);
+                    }
+                    else
+                    {
+                        // Old method
+                        if (allControllers.TryGetValue(connectionId, out var dev))
                         {
-                            if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
-                        }
-                        PlayerManager.RemovePlayer(allControllers[connectionId]);
-                        allSockets.Remove(allControllers[connectionId]);
-                        allControllers.Remove(connectionId);
+                            foreach (var p in PlayerInput.all)
+                            {
+                                if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
+                            }
+                            PlayerManager.RemovePlayer(allControllers[connectionId]);
+                            allSockets.Remove(allControllers[connectionId]);
+                            allControllers.Remove(connectionId);
+                        }   
                     }
                 });
             };
@@ -467,37 +478,69 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    public static void SendMessageToClient(string clientId, string json)
-{
-    if (instance.useRemote)
+    public void HandleReconnect(string key, string ip, string port)
     {
-        // Remote mode: send to one client via wsTunnel
-        if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
-        {
-            string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
-            var wrapper = new WSTunnelRequest
-            {
-                clientId = clientId,
-                payloadBase64 = base64Payload,
-                @event = null
-            };
-            string wrapperJson = JsonUtility.ToJson(wrapper);
-            instance.wsTunnel.SendText(wrapperJson);
+        string oldKey = $"{ip}:{port}"; // reconnecting client
+        if (!allControllers.ContainsKey(oldKey) || !allControllers.ContainsKey(key)) {
+            Debug.LogWarning($"[Reconnect] Missing key: {oldKey} or {key}");
+            return;
         }
-    }
-    else
-    {
-        // Local mode: find the socket and send directly
-        if (allControllers.TryGetValue(clientId, out var device) && allSockets.TryGetValue(device, out var socket))
+
+        var reconnectingDevice = allControllers[oldKey];
+        var oldDevice = allControllers[key];
+
+        
+        if (!allSockets.TryGetValue(oldDevice, out var socket))
         {
-            socket.Send(json);
+            Debug.LogWarning($"[Reconnect] No socket found for device with key: {key}");
+            return;
+        }
+
+        
+        allSockets[reconnectingDevice] = socket;
+        allSockets.Remove(oldDevice);
+        InputSystem.RemoveDevice(oldDevice);
+
+        // Replace controller in key map
+        allControllers[key] = reconnectingDevice;
+        allControllers.Remove(oldKey);
+
+        Debug.Log($"[Reconnect] Swapped controller {oldKey} -> {key}");
+
+        var reconnectFunction = FindAnyObjectByType<Reconnect>();
+        reconnectFunction?.ReconnectEvent();
+    }
+    public static void SendMessageToClient(string clientId, string json)
+    {
+        if (instance.useRemote)
+        {
+            // Remote mode: send to one client via wsTunnel
+            if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
+            {
+                string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+                var wrapper = new WSTunnelRequest
+                {
+                    clientId = clientId,
+                    payloadBase64 = base64Payload,
+                    @event = null
+                };
+                string wrapperJson = JsonUtility.ToJson(wrapper);
+                instance.wsTunnel.SendText(wrapperJson);
+            }
         }
         else
         {
-            Debug.LogWarning($"[Local][WS] No socket found for client: {clientId}");
+            // Local mode: find the socket and send directly
+            if (allControllers.TryGetValue(clientId, out var device) && allSockets.TryGetValue(device, out var socket))
+            {
+                socket.Send(json);
+            }
+            else
+            {
+                Debug.LogWarning($"[Local][WS] No socket found for client: {clientId}");
+            }
         }
     }
-}
 
     void HandleCommandOnMainThread(string json, string sender)
     {
@@ -534,9 +577,40 @@ public class ServerManager : MonoBehaviour
             else
             {
                 var cmd = JsonUtility.FromJson<PlayerConfig>(json);
-                byte[] face = Convert.FromBase64String(cmd.data);
-                PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
-                PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller);
+                if (cmd.type == "reconnect")
+                {
+                    string ip = sender.Split(":")[0];
+                    string port = sender.Split(":")[1];
+                    if (allControllers.ContainsKey($"{ip}:{cmd.code}"))
+                    {
+                        HandleReconnect(sender, ip, cmd.code);
+                        var messageObject = new ReconnectJSON
+                        {
+                            type = "reconnect-status",
+                            approved = true
+                        };
+
+                        var data = JsonUtility.ToJson(messageObject);
+                        SendMessageToClient(sender, data);
+                    }
+                    else
+                    {
+                        var messageObject = new ReconnectJSON
+                        {
+                            type = "reconnect-status",
+                            approved = false
+                        };
+
+                        var data = JsonUtility.ToJson(messageObject);
+                        SendMessageToClient(sender, data);
+                    }
+                }
+                else
+                {
+                    byte[] face = Convert.FromBase64String(cmd.data);
+                    PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
+                    PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller);
+                }
             }
         }
         catch (Exception e)
@@ -544,17 +618,6 @@ public class ServerManager : MonoBehaviour
             Debug.LogWarning("Invalid command JSON: " + e.Message);
         }
     }
-
-    // void parseImage(string image, string name)
-    // {
-    //     Debug.Log("Parsing image...");
-    //     // var cmd = JsonUtility.FromJson<ImageJSON>(image);
-    //     byte[] imageBytes = Convert.FromBase64String(image);
-    //     Debug.Log(imageBytes);
-    //     string path = Path.Combine(Application.dataPath, "Resources", "Images", "Faces", name + ".png");
-    //     File.WriteAllBytes(path, imageBytes);
-    //     Debug.Log("Saving file at " + path);
-    // }
 
     void SpawnController(string clientId)
     {
@@ -609,10 +672,13 @@ public class ServerManager : MonoBehaviour
     }
 
     [Serializable]
-    public class PlayerConfig { public string name; public string color; public string data; }
+    public class PlayerConfig { public string type; public string code; public string name; public string color; public string data; }
 
     [Serializable]
     public class MessagePlayers { public string type;  public string controller;/* public List<PlayerConfig> playerstats; */ }
+
+    [Serializable]
+    public class ReconnectJSON { public string type; public bool approved;}
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }

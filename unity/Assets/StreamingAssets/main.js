@@ -15,6 +15,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   const params = new URLSearchParams(window.location.search);
   const code = params.get("hostId");
+  console.log(params);
 
   if (code && !socketManager.isConnected()) {
     socketManager.connect(code);
