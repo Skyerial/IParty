@@ -81,6 +81,7 @@ public class TMGameManager : MonoBehaviour
         playerVirtualControllers[typingController] = controller;
 
         ColorPlayer(pi);
+        AddFacePlayer(pi);
 
         typingController.raceController = pi.GetComponent<PlayerRaceController>();
         typingController.textSpawner.words = wordsPerPlayer;
@@ -101,6 +102,16 @@ public class TMGameManager : MonoBehaviour
 
         SkinnedMeshRenderer body = pi.transform.Find("Body").GetComponent<SkinnedMeshRenderer>();
         body.material = mat;
+    }
+
+    private void AddFacePlayer(PlayerInput pi)
+    {
+        Transform face = pi.transform.Find("Face");
+        SkinnedMeshRenderer renderer_face = face.GetComponent<SkinnedMeshRenderer>();
+        Texture2D faceTexture = new Texture2D(2, 2);
+        faceTexture.LoadImage(PlayerManager.playerStats[pi.devices[0]].face);
+        renderer_face.material = new Material(renderer_face.material);
+        renderer_face.material.mainTexture = faceTexture;
     }
 
     private void AttachMobilePlayer()
