@@ -46,8 +46,8 @@ export class LayoutManager extends ViewRenderer {
         await this.addComponent(ButtonsComponent, twoButtons);
     }
 
-    async addButton() {
-        await this.addComponent(ButtonComponent);
+    async addButton(items = {}) {
+        await this.addComponent(ButtonComponent, items);
     }
 
     async addList(items = []) {

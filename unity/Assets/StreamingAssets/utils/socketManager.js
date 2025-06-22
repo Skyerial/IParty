@@ -3,6 +3,7 @@ import { GyroController } from "../controllers/gyroController.js";
 import { HotPotatoController } from "../controllers/hotPotatoController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { OneButton } from "../controllers/oneButton.js";
+import { ReadyController } from "../controllers/readyController.js";
 import { TurfController } from "../controllers/turfController.js";
 
 export class SocketManager {
@@ -102,6 +103,9 @@ export class SocketManager {
         } else if (controller == "turf") {
             let turf = new TurfController(root);
             turf.init();
+        } else if (controller == "ready") {
+            let r = new ReadyController(root);
+            r.init();
         }
     }
 
