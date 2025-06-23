@@ -7,60 +7,68 @@ export class GyroComponent extends ViewRenderer {
     }
 
     bindEvents() {
-        const motionThreshold = 15; // example threshold
-        let isFlickDetected = false;
-        const enableButton = this.container.querySelector("#enableButton");
-        const jumpIndicator = this.container.querySelector("#jumpIndicator");
-        const gyroDataDisplay = this.container.querySelector("#gyroData");
+        this.motionThreshold = 15;
+        this.isFlickDetected = false;
 
-        function handleMotionEvent(e) {
-            const acceleration = e.acceleration;
-            const rotation = e.rotationRate;
+        this.permissionPrompt = this.container.querySelector("#permissionPrompt");
+        this.playView = this.container.querySelector("#playView");
+        this.enableButton = this.container.querySelector("#enableButton");
 
-            // Update gyro data display
-            if (rotation) {
-                gyroDataDisplay.innerHTML = `
-                <strong>Gyroscope:</strong><br>
-                Alpha (Z): ${rotation.alpha?.toFixed(2) || "0"} °/s<br>
-                Beta (X): ${rotation.beta?.toFixed(2) || "0"} °/s<br>
-                Gamma (Y): ${rotation.gamma?.toFixed(2) || "0"} °/s
-            `;
-            }
+        this.requestMotionPermission();
+    }
 
-            // Check motion threshold
-            if (
-                acceleration?.x > motionThreshold ||
-                acceleration?.y > motionThreshold ||
-                acceleration?.z > motionThreshold
-            ) {
-                if (!isFlickDetected) {
-                    isFlickDetected = true;
-                    jumpIndicator.style.display = "block";
-                    socketManager.updateButton("A", true);
-                    socketManager.updateButton("A", false);
-                }
-            } else {
-                isFlickDetected = false;
-                jumpIndicator.style.display = "none";
-            }
-        }
-
-        enableButton.addEventListener('click', () => {
-            if (typeof DeviceMotionEvent.requestPermission === "function") {
-                DeviceMotionEvent.requestPermission().then((permissionState) => {
+    requestMotionPermission() {
+        if (typeof DeviceMotionEvent?.requestPermission === "function") {
+            DeviceMotionEvent.requestPermission()
+                .then((permissionState) => {
                     if (permissionState === "granted") {
-                        hideEnableButton();
-                        window.addEventListener("devicemotion", handleMotionEvent, true);
+                        this.showPlayView();
+                        this.startMotionTracking();
+                    } else {
+                        this.showPermissionPrompt();
                     }
-                });
-            } else {
-                hideEnableButton();
-                window.addEventListener("devicemotion", handleMotionEvent, true);
-            }
-        })
+                })
+                .catch(() => this.showPermissionPrompt());
+        } else {
+            this.showPlayView();
+            this.startMotionTracking();
+        }
+    }
 
-        function hideEnableButton() {
-            document.getElementById("enableButton").style.display = "none";
+    showPlayView() {
+        this.permissionPrompt.style.display = "none";
+        this.playView.style.display = "block";
+    }
+
+    showPermissionPrompt() {
+        this.permissionPrompt.style.display = "block";
+        this.playView.style.display = "none";
+        this.enableButton.addEventListener("click", () => {
+            this.requestMotionPermission();
+        }, { once: true });
+    }
+
+    startMotionTracking() {
+        window.addEventListener("devicemotion", this.handleMotionEvent.bind(this), true);
+    }
+
+    handleMotionEvent(e) {
+        const { acceleration } = e;
+
+        if (
+            acceleration?.x > this.motionThreshold ||
+            acceleration?.y > this.motionThreshold ||
+            acceleration?.z > this.motionThreshold
+        ) {
+            if (!this.isFlickDetected) {
+                this.isFlickDetected = true;
+                this.jumpIndicator.style.display = "block";
+                socketManager.updateButton("A", true);
+                socketManager.updateButton("A", false);
+            }
+        } else {
+            this.isFlickDetected = false;
+            this.jumpIndicator.style.display = "none";
         }
     }
 }

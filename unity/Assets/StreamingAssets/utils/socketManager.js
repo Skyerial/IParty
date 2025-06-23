@@ -7,6 +7,17 @@ import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
 import { CustomJoystickController } from "../controllers/customJoystickController.js";
 
+const CONTROLLER_MAP = {
+  "dpad-preset": DpadController,
+  "joystick-preset": JoystickController,
+  "text-preset": TextController,
+  "one-button": OneButton,
+  "turf": CustomJoystickController,
+  "spleef": CustomJoystickController,
+  "ready": ReadyController,
+  "gyro": GyroController
+};
+
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
         this.socket = null;
@@ -81,38 +92,20 @@ export class SocketManager {
     }
 
     loadController(data) {
-        // let controller = data.controller;
-        let root = document.querySelector(".view-container");
-        let controller = data.controller;
+        const root = document.querySelector(".view-container");
+        const { controller, playerstats = [] } = data;
 
-        if (controller == "dpad-preset") {
-            let js = new GyroController(root)
-            js.init()
-        } else if (controller == "joystick-preset") {
-            let js = new JoystickController(root)
-            js.init()
-        } else if (controller == "text-preset") {
-            console.log("loading text controller")
-            let js = new TextController(root)
-            js.init()
-        } else if (controller == "one-button") {
-            let js = new OneButton(root)
-            js.init()
-        } else if (controller === "hotpotato") {
-            const listItems = data.playerstats.map(player => ({
-                label: player.name,
-                color: player.color,
-                jsonButton: player.button
-            }));
-
-            const js = new HotPotatoController(root, listItems);
-            js.init();
-        } else if (controller == "turf" || controller == "spleef") {
-            let c = new CustomJoystickController(root);
-            c.init();
-        } else if (controller == "ready") {
-            let r = new ReadyController(root);
-            r.init();
+        if (controller === "hotpotato") {
+        const listItems = playerstats.map(({ name, color, button }) => ({
+            label: name,
+            color,
+            jsonButton: button
+        }));
+            new HotPotatoController(root, listItems).init();
+        } else if (CONTROLLER_MAP[controller]) {
+            new CONTROLLER_MAP[controller](root).init();
+        } else {
+            console.warn(`Unknown controller type: ${controller}`);
         }
     }
 
