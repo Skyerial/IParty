@@ -20,12 +20,10 @@ public class SettingScript : MonoBehaviour
         }
 
     }
-
     public void OnMusicVolumeChanged(float value)
     {
         audioSource.volume = value;
     }
-
     public void Fullscreen()
     {
         Screen.fullScreen = !Screen.fullScreen;
