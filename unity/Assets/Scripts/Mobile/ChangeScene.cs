@@ -39,7 +39,7 @@ public class ChangeScene : MonoBehaviour
             case 8:
                 level = "SkyGlutes";
                 break;
-            case 8:
+            case 9:
                 level = "NewBoard";
                 break;
         }
