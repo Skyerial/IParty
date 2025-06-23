@@ -220,6 +220,7 @@ public class SquatManager : MonoBehaviour
 
         var nameboard = Instantiate(nameboardPrefab, player.transform);
         nameboard.transform.localPosition = new Vector3(0, 2f, 0);
+        nameboard.transform.localRotation = Quaternion.identity;
 
         var text = nameboard.GetComponentInChildren<TextMeshProUGUI>();
         if (text != null)
