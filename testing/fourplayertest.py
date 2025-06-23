@@ -1,9 +1,13 @@
 """
-notes:
-  Move setup.example.json to setup.json before running this script
-  make sure setup.json has the correct websocket URL
+Run python3 fourplayertest.py from
+the lobby when the webserver is active, set to local, and set to accept insecure connections.
 
-  assumes the default joystick is used, ask me if you'd like something else
+Running the script fills all open connections with player that follow one of four patterns:
+- circle: circular movement
+- figure_eight: movement in a figure-8 pattern
+- button mashing: random with more button presses
+- random: random movement with occasional button presses
+
 """
 
 import asyncio
@@ -208,7 +212,7 @@ class FourClientTester:
 
     async def create_clients(self, num_clients: int = 4):
         """Create and connect multiple client simulators"""
-        print(f"🚀 Creating {num_clients} client simulators...")
+        print(f"Creating {num_clients} client simulators")
         print("=" * 50)
 
         # Create clients
@@ -243,7 +247,7 @@ class FourClientTester:
 
         for client in self.clients:
             await client.register_player()
-            await asyncio.sleep(0.5)  # Stagger registrations
+            await asyncio.sleep(0.5)
 
         print("All players registered!")
 
@@ -288,20 +292,21 @@ class FourClientTester:
         if not self.clients:
             return
 
-        print("\n🚪 Disconnecting all clients...")
+        print("\nDisconnecting all clients...")
 
         for client in self.clients:
             await client.disconnect()
-            await asyncio.sleep(0.2)  # Stagger disconnections
+            # Stagger disconnections
+            await asyncio.sleep(0.2)
 
-        print("✅ All clients disconnected")
+        print("All clients disconnected")
 
     async def run_full_test(self, duration: int = 60):
         """Run the complete test scenario"""
         try:
             # Step 1: Connect clients
             if not await self.create_clients(4):
-                print("❌ No clients connected successfully. Exiting.")
+                print("No clients connected successfully. Exiting.")
                 return
 
             # Step 2: Register players
@@ -311,14 +316,14 @@ class FourClientTester:
             await self.start_simulation(duration)
 
         except Exception as e:
-            print(f"❌ Test error: {e}")
+            print(f"Test error: {e}")
         finally:
             # Step 4: Clean up
             await self.disconnect_all()
 
 async def main():
     """Main test function"""
-    print("🎯 Unity Server 4-Client Mobile Simulator")
+    print("Unity Server 4-Client Mobile Simulator")
     print("=" * 55)
 
     websocket = setup.get("websocket", 'ws://localhost:8182')

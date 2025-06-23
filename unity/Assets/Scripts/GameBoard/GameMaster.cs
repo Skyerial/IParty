@@ -7,6 +7,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
+/**
+ * @brief Manages player turns, dice rolling, and game state transitions.
+ * Handles player camera switching and dice camera activation.
+ * Coordinates player movements and triggers minigames after a full round.
+ */
+
+
 public class GameMaster : MonoBehaviour
 {
     public int current_player = -1;
@@ -136,7 +143,7 @@ public class GameMaster : MonoBehaviour
     }
 
     private IEnumerator MovePlayerToTileMarker(GameObject player, int steps, int markerIndex = 0, float duration = 0.5f, float jumpHeight = 2f)
-    {   
+    {
         PlayerMovement playerScript = player.GetComponent<PlayerMovement>();
         int tileNr = playerScript.current_pos;
         int tileIndex = tileNr + steps;
