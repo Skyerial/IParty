@@ -17,6 +17,8 @@ public class PlayerTypingController : MonoBehaviour
     private int inputCounter = 0;
     private int cleanupCounter = 0;
     private int wordsLeft = 0;
+    public int playerInputIndex;
+    public int finishPostion;
 
 
     // private void Start()

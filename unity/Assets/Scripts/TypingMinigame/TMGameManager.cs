@@ -8,6 +8,7 @@ using UnityEngine.Video;
 using UnityEngine.InputSystem;
 using UnityEditor.Build.Player;
 using System.Linq;
+using UnityEditor.SearchService;
 
 public class TMGameManager : MonoBehaviour
 {
@@ -29,11 +30,15 @@ public class TMGameManager : MonoBehaviour
 
     public List<PlayerInput> playerInputs;
     public GameObject spawn;
+    public string WinScreen;
+    private SwitchScene sceneSwitcher;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        sceneSwitcher = GetComponent<SwitchScene>();
     }
 
     private void Start()
@@ -73,6 +78,7 @@ public class TMGameManager : MonoBehaviour
         int playerIndex = playerInputs.FindIndex(p => p == pi);
         Debug.Log($"playerIndex: {playerIndex}");
         PlayerTypingController typingController = players[playerIndex];
+        typingController.playerInputIndex = playerIndex;
 
         // place the player on its spawn
         pi.transform.position = spawn.transform.GetChild(playerIndex).transform.position;
@@ -114,44 +120,44 @@ public class TMGameManager : MonoBehaviour
         renderer_face.material.mainTexture = faceTexture;
     }
 
-    private void AttachMobilePlayer()
-    {
-        int i = 0;
+    // private void AttachMobilePlayer()
+    // {
+    //     int i = 0;
 
-        foreach (var mobilePlayer in PlayerManager.playerStats)
-        {
-            if (i >= players.Count) break;
+    //     foreach (var mobilePlayer in PlayerManager.playerStats)
+    //     {
+    //         if (i >= players.Count) break;
 
-            var controller = mobilePlayer.Key as VirtualController;
-            if (controller == null)
-            {
-                Debug.LogWarning("Controller is not a VirtualController. Skipping.");
-                continue;
-            }
-            var typingController = players[i];
+    //         var controller = mobilePlayer.Key as VirtualController;
+    //         if (controller == null)
+    //         {
+    //             Debug.LogWarning("Controller is not a VirtualController. Skipping.");
+    //             continue;
+    //         }
+    //         var typingController = players[i];
 
-            playerControllers[controller.remoteId] = typingController;
-            playerVirtualControllers[typingController] = controller;
+    //         playerControllers[controller.remoteId] = typingController;
+    //         playerVirtualControllers[typingController] = controller;
 
-            typingController.textSpawner.words = wordsPerPlayer;
-            typingController.textSpawner.SpawnWords();
-            typingController.raceController.InitializeRace(wordsPerPlayer);
-            typingController.Initialize();
-            typingController.inputField.interactable = true;
-            typingController.inputField.text = "";
+    //         typingController.textSpawner.words = wordsPerPlayer;
+    //         typingController.textSpawner.SpawnWords();
+    //         typingController.raceController.InitializeRace(wordsPerPlayer);
+    //         typingController.Initialize();
+    //         typingController.inputField.interactable = true;
+    //         typingController.inputField.text = "";
 
-            TextMeshProUGUI name = players[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-            name.text = mobilePlayer.Value.name;
+    //         TextMeshProUGUI name = players[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+    //         name.text = mobilePlayer.Value.name;
 
-            i++;
-        }
+    //         i++;
+    //     }
 
-        while (i < players.Count)
-        {
-            players[i].gameObject.SetActive(false);
-            i++;
-        }
-    }
+    //     while (i < players.Count)
+    //     {
+    //         players[i].gameObject.SetActive(false);
+    //         i++;
+    //     }
+    // }
 
     public void HandleMobileInput(VirtualController player, string input)
     {
@@ -175,6 +181,7 @@ public class TMGameManager : MonoBehaviour
     public void OnPlayerFinished(PlayerTypingController player)
     {
         finishCount++;
+        player.finishPostion = finishCount;     
         Debug.Log($"{player.name} finished in position {finishCount}");
         player.inputField.interactable = false;
 
@@ -187,15 +194,32 @@ public class TMGameManager : MonoBehaviour
             StartCoroutine(HandleEndGameSequence());
         }
     }
-    
+
     private IEnumerator HandleEndGameSequence()
     {
         TM_MusicController.Instance.FadeOutBGM(1f);
         yield return new WaitForSeconds(1f); // Wait for fade out to finish
-        
+
         TM_MusicController.Instance.PlayEndGameSFX();
 
         // TODO: Add win screen or restart logic
+        PlayerManager pm = FindFirstObjectByType<PlayerManager>();
+        List<PlayerTypingController> sortedControllers = playerControllers
+            .Values
+            .OrderBy(controller => controller.finishPostion)
+            .ToList();
+
+        Debug.Log($"sortedControllers: {sortedControllers}");
+        Debug.Log($"PlayerManager: {pm}");
+
+        foreach (var controller in sortedControllers)
+        {
+            InputDevice id = playerInputs[controller.playerInputIndex].devices[0];
+            Debug.Log($"playerInput: {id}");
+            pm.tempRankAdd(id);
+        }
+
+        sceneSwitcher.LoadNewScene(WinScreen);
     }
 
 }

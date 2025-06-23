@@ -51,6 +51,7 @@ public class PlayerManager : MonoBehaviour
 
     public void tempRankAdd(InputDevice device)
     {
+        Debug.Log($"device: {device}");
         if (!tempRanking.Contains(playerStats[device]))
         {
             tempRanking.Insert(0, playerStats[device]);

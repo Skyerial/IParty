@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/WinScreen.unity
     guid: fff0e1f83f9cbab41b8bb915dd871f07
   - enabled: 1
+    path: Assets/Scenes/WinScreen3D.unity
+    guid: 7d1e5932e051fcd498e7cd928b1995d5
+  - enabled: 1
     path: Assets/Scenes/MobileSandbox.unity
     guid: 6cd82f28518635c4498c186539e5fb0a
   - enabled: 1
