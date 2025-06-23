@@ -53,6 +53,8 @@ public class ServerManager : MonoBehaviour
 
     // Map of unique connectionId (IP:Port or clientId:connectionId) → VirtualController
     public static Dictionary<string, VirtualController> allControllers = new Dictionary<string, VirtualController>();
+    public static List<string> takenColors = new List<string>();
+
     public static Dictionary<VirtualController, IWebSocketConnection> allSockets = new Dictionary<VirtualController, IWebSocketConnection>();
 
     // NEWLY ADDED:
@@ -628,9 +630,38 @@ public class ServerManager : MonoBehaviour
                 }
                 else
                 {
-                    byte[] face = Convert.FromBase64String(cmd.data);
-                    PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
-                    PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller);
+                    Debug.Log("Current color: " + cmd.color);
+                    Debug.Log(takenColors.Contains(cmd.color));
+                    if (takenColors.Contains(cmd.color))
+                    {
+                        var messageObject = new CreatorJSON
+                        {
+                            type = "character-status",
+                            approved = false,
+                            name = cmd.name
+                        };
+
+                        var data = JsonUtility.ToJson(messageObject);
+                        SendMessageToClient(sender, data);
+                    } 
+                    else
+                    {
+                        takenColors.Add(cmd.color);
+                        byte[] face = Convert.FromBase64String(cmd.data);
+                        PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
+                        PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller); 
+                        
+                        var messageObject = new CreatorJSON
+                            {
+                                type = "character-status",
+                                approved = true,
+                                name = cmd.name
+                            };
+
+                        var data = JsonUtility.ToJson(messageObject);   
+                        SendMessageToClient(sender, data);
+                    }
+                        
                 }
             }
         // }
@@ -701,6 +732,8 @@ public class ServerManager : MonoBehaviour
 
     [Serializable]
     public class ReconnectJSON { public string type; public bool approved;}
+    [Serializable]
+    public class CreatorJSON { public string type; public bool approved; public string name; }
 
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
