@@ -62,13 +62,12 @@ export class GyroComponent extends ViewRenderer {
         ) {
             if (!this.isFlickDetected) {
                 this.isFlickDetected = true;
-                this.jumpIndicator.style.display = "block";
                 socketManager.updateButton("A", true);
                 socketManager.updateButton("A", false);
             }
         } else {
             this.isFlickDetected = false;
-            this.jumpIndicator.style.display = "none";
         }
     }
+
 }

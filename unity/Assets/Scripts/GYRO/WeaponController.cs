@@ -34,7 +34,6 @@ public class WeaponController : MonoBehaviour
     {
         // playerInput = GetComponent<PlayerInput>();
         // slamAction = playerInput.actions.FindAction("Jump");
-        ServerManager.SendtoAllSockets("dpad-preset");
         var rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.isKinematic = false;
