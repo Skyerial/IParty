@@ -60,7 +60,6 @@ export class SocketManager {
     connect(code) {
         if (this.socket) return;
         const isRemote = location.hostname === this.relayHost
-        // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
         const url = !isRemote
             ? `wss://${location.hostname}:8181`
             : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
@@ -79,7 +78,6 @@ export class SocketManager {
             }
             const data = JSON.parse(rawData);
             this.handleCommand(data);
-            // if (this.onMessage) this.onMessage(data);
         };
         this.socket.onclose = (e) => {
             console.log('🔴 Disconnected');
@@ -87,7 +85,6 @@ export class SocketManager {
             console.log(e.reason);
             console.log(e.wasClean);
             this.socket = null;
-            // if (this.onClose) this.onClose();
         };
     }
 
@@ -96,11 +93,12 @@ export class SocketManager {
         const { controller, playerstats = [] } = data;
 
         if (controller === "hotpotato") {
-        const listItems = playerstats.map(({ name, color, button }) => ({
-            label: name,
-            color,
-            jsonButton: button
-        }));
+            const listItems = playerstats.map(({ name, color, button }) => ({
+                label: name,
+                color,
+                jsonButton: button
+            }));
+
             new HotPotatoController(root, listItems).init();
         } else if (CONTROLLER_MAP[controller]) {
             new CONTROLLER_MAP[controller](root).init();
@@ -173,7 +171,6 @@ export class SocketManager {
     }
 
     updateText(char) {
-        // console.log(char)
         this.state.T = char
         if (this.isConnected()) {
             this.sendFiltered();
