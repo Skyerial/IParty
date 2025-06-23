@@ -80,8 +80,8 @@ export class SocketManager {
         };
     }
 
-    loadController(data) {
-        let controller = data.controller;
+    loadController(controller) {
+        // let controller = data.controller;
         let root = document.querySelector(".view-container");
 
         if (controller == "dpad-preset") {
@@ -91,6 +91,7 @@ export class SocketManager {
             let js = new JoystickController(root)
             js.init()
         } else if (controller == "text-preset") {
+            console.log("loading text controller")
             let js = new TextController(root)
             js.init()
         } else if (controller == "one-button") {
@@ -117,6 +118,7 @@ export class SocketManager {
     handleCommand(data) {
         let root = document.querySelector(".view-container");
         if (data.type == "controller") {
+            console.log("loading controller")
             this.loadController(data.controller)
         } else if (data.type == "clear-text") {
             const text = document.querySelector('#myText');
