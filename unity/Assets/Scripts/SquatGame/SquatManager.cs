@@ -180,8 +180,20 @@ public class SquatManager : MonoBehaviour
                 continue;
 
             var player = input.gameObject;
+
             if (i < spawnPoints.Length)
-                player.transform.position = spawnPoints[i].position;
+            {
+                var spawnPoint = spawnPoints[i];
+
+                player.transform.position = spawnPoint.position;
+
+                Vector3 targetPos = Camera.main.transform.position;
+                Vector3 lookDirection = (targetPos - player.transform.position).normalized;
+                lookDirection.y = 0f;
+
+                if (lookDirection != Vector3.zero)
+                    player.transform.rotation = Quaternion.LookRotation(lookDirection);
+            }
 
             SetPlayerVisuals(player, device);
             playerList.Add(player);
@@ -190,31 +202,41 @@ public class SquatManager : MonoBehaviour
 
     void SetPlayerVisuals(GameObject player, InputDevice device)
     {
-        // Set body color
+        SetPlayerBodyColor(player, device);
+        SetPlayerFaceTexture(player, device);
+        SetPlayerNameboard(player, device);
+    }
+
+    void SetPlayerBodyColor(GameObject player, InputDevice device)
+    {
         var body = player.transform.Find("Body")?.GetComponent<Renderer>();
         if (body != null)
             body.material = PlayerManager.findColor(device);
+    }
 
-        // Set face texture (create unique material instance for each player)
+    void SetPlayerFaceTexture(GameObject player, InputDevice device)
+    {
         var faceTransform = player.transform.Find("Face");
-        if (faceTransform != null)
+        if (faceTransform == null)
+            return;
+
+        var faceRenderer = faceTransform.GetComponent<Renderer>();
+        if (faceRenderer == null)
+            return;
+
+        var newMat = new Material(faceRenderer.material);
+        Texture2D faceTexture = PlayerManager.findFace(device);
+
+        if (faceTexture != null && faceTexture.width > 2)
         {
-            var faceRenderer = faceTransform.GetComponent<Renderer>();
-            if (faceRenderer != null)
-            {
-                var newMat = new Material(faceRenderer.material); // clone the original
-                Texture2D faceTexture = PlayerManager.findFace(device);
-
-                if (faceTexture != null && faceTexture.width > 2) // means real face was loaded
-                {
-                    newMat.mainTexture = faceTexture;
-                }
-
-                faceRenderer.material = newMat; // assign unique material
-            }
+            newMat.mainTexture = faceTexture;
         }
 
-        // Set nameboard
+        faceRenderer.material = newMat;
+    }
+
+    void SetPlayerNameboard(GameObject player, InputDevice device)
+    {
         if (nameboardPrefab == null)
             return;
 
