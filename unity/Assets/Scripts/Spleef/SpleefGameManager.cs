@@ -60,6 +60,8 @@ public class SpleefGameManager : MonoBehaviour
         tileDropCanvas?.gameObject.SetActive(false);
         countdownCanvas?.gameObject.SetActive(false);
         finishCanvas?.gameObject.SetActive(false);
+
+        ServerManager.SendtoAllSockets("spleef");
     }
 
     public static void RegisterPlayerGame(PlayerInput pi)
