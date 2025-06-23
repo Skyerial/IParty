@@ -1286,6 +1286,8 @@ MonoBehaviour:
   wordsLeftText: {fileID: 2121423797}
   raceController: {fileID: 0}
   textSpawner: {fileID: 1505018047}
+  playerInputIndex: 0
+  finishPostion: 0
 --- !u!1 &248097043
 GameObject:
   m_ObjectHideFlags: 0
@@ -4288,6 +4290,8 @@ MonoBehaviour:
   wordsLeftText: {fileID: 456078253}
   raceController: {fileID: 0}
   textSpawner: {fileID: 687351486}
+  playerInputIndex: 0
+  finishPostion: 0
 --- !u!4 &780661168 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a5c64582a41ac2a43bb4dc79969e3dbc, type: 3}
@@ -5213,6 +5217,8 @@ MonoBehaviour:
   wordsLeftText: {fileID: 13933331}
   raceController: {fileID: 0}
   textSpawner: {fileID: 1312680058}
+  playerInputIndex: 0
+  finishPostion: 0
 --- !u!4 &1031902053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 57d3eed6d2253d24994d5ad37e00aedc, type: 3}
@@ -8856,6 +8862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1659248547}
   - component: {fileID: 1659248546}
+  - component: {fileID: 1659248548}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -8885,6 +8892,7 @@ MonoBehaviour:
   finishCount: 0
   playerInputs: []
   spawn: {fileID: 399466856}
+  WinScreen: WinScreen
 --- !u!4 &1659248547
 Transform:
   m_ObjectHideFlags: 0
@@ -8900,6 +8908,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1659248548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659248545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d1c14cdda2b7dfd9012c42d5bd6e98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fader: {fileID: 5301017381564912727, guid: d9dbabc3149e39c4aa4e3336e75f7575, type: 3}
 --- !u!4 &1693635521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: ad3119cbd6dce024e8460ef32dec49df, type: 3}
@@ -10561,6 +10582,8 @@ MonoBehaviour:
   wordsLeftText: {fileID: 1349750150}
   raceController: {fileID: 0}
   textSpawner: {fileID: 678055378}
+  playerInputIndex: 0
+  finishPostion: 0
 --- !u!1001 &2062745384
 PrefabInstance:
   m_ObjectHideFlags: 0

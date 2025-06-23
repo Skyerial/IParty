@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class Reconnect : MonoBehaviour
 {
@@ -11,26 +12,41 @@ public class Reconnect : MonoBehaviour
     public TMP_Text Name;
     public RawImage face;
     public TMP_Text reconnectCode;
+    private Queue<(string, string)> disconnectedPlayers = new Queue<(string, string)>();
     private string connectionId;
 
     public void DisconnectEvent(string id, string code)
     {
-        connectionId = id;
-        ReconnectPanel.SetActive(true);
-        Time.timeScale = 0;
-
-        var device = ServerManager.allControllers[id];
-        var name = PlayerManager.playerStats[device].name;
-        Texture2D faceTexture = PlayerManager.findFace(device);
-        Name.text = name;
-        face.texture = faceTexture;
-        reconnectCode.text = code;
+        Debug.Log("Current disconnected players: " + disconnectedPlayers.Count);
+        if (!ReconnectPanel.activeSelf)
+        {
+            ReconnectPanel.SetActive(true);
+            Time.timeScale = 0;
+            connectionId = id;
+            MessageUpdate(id, code);
+        }
+        else
+        {
+            disconnectedPlayers.Enqueue((id, code));
+        }
     }
 
     public void ReconnectEvent()
-    {
-        ReconnectPanel.SetActive(false);
-        Time.timeScale = 1;
+    {   
+        if (disconnectedPlayers.Count >= 1)
+        {
+            // Removing the handled client
+            // disconnectedPlayers.Dequeue();
+
+            var (id, code) = disconnectedPlayers.Dequeue();
+            connectionId = id;
+            MessageUpdate(id, code);
+        }
+        else
+        {
+            ReconnectPanel.SetActive(false);
+            Time.timeScale = 1;
+        }
     }
 
     public void Continue()
@@ -47,7 +63,29 @@ public class Reconnect : MonoBehaviour
         }
 
 
-        ReconnectPanel.SetActive(false);
-        Time.timeScale = 1;
+        if (disconnectedPlayers.Count >= 1)
+        {
+            // Removing the handled client
+            // disconnectedPlayers.Dequeue();
+
+            var (id, code) = disconnectedPlayers.Dequeue();
+            connectionId = id;
+            MessageUpdate(id, code);
+        }
+        else
+        {
+            ReconnectPanel.SetActive(false);
+            Time.timeScale = 1;
+        }
     }
+
+    void MessageUpdate(string id, string code)
+    {
+        var device = ServerManager.allControllers[id];
+        var name = PlayerManager.playerStats[device].name;
+        Texture2D faceTexture = PlayerManager.findFace(device);
+        Name.text = name;
+        face.texture = faceTexture;
+        reconnectCode.text = code;
+    } 
 }

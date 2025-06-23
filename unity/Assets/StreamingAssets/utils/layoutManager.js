@@ -23,7 +23,7 @@ export class LayoutManager extends ViewRenderer {
 
     async addDpad() {
         if (this.hasMovementComponent){
-            alert("You can only use a joystick or a D-pad, not both.");
+            alert("Too many movement components");
             return;
         }
 
@@ -34,7 +34,7 @@ export class LayoutManager extends ViewRenderer {
 
     async addJoystick() {
         if (this.hasMovementComponent){
-            alert("You can only use a joystick or a D-pad, not both.");
+            alert("Too many movement components");
             return;
         }
 
@@ -48,8 +48,8 @@ export class LayoutManager extends ViewRenderer {
         await this.addComponent(TextComponent)
     }
 
-    async addButtons() {
-        await this.addComponent(ButtonsComponent);
+    async addButtons(buttons = []) {
+        await this.addComponent(ButtonsComponent, buttons);
     }
 
     async addButton(items = {}) {

@@ -36,6 +36,7 @@ public class GameManagerGyro : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
         sceneSwitcher = GetComponent<SwitchScene>();
+        ServerManager.SendtoAllSockets("gyro");
     }
 
     public void RegisterPlayer(PlayerInput player)

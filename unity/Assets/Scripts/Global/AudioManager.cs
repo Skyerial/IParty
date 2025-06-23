@@ -1,9 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
+
+    // [SerializeField]
+    // private AudioSource audioSource;
+
+    // [SerializeField]
+    // private Slider musicVolumeSlider;
 
     [Header("Audio Setup")]
     public AudioSource musicSource;

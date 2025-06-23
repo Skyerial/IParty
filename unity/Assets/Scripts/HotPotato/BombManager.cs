@@ -41,13 +41,12 @@ public class BombManager : MonoBehaviour
 
     void SendPlayerStatsToAllClients()
     {
-        var availableButtons = new[] { "B", "D", "A", "C" }; // Gamepad: East, North, South, West
+        var availableButtons = new[] { "B", "D", "A", "C" }; 
 
         for (int i = 0; i < players.Count; i++)
         {
-            var sender = players[i]; // current player
+            var sender = players[i];
 
-            // Prepare opponent list
             var opponents = players
                 .Where(p => p != sender)
                 .ToList();
@@ -132,10 +131,31 @@ public class BombManager : MonoBehaviour
         var renderer = body.GetComponent<SkinnedMeshRenderer>();
         renderer.material = PlayerManager.findColor(device);
 
+        var faceTransform = playerInput.transform.Find("Face");
+        if (faceTransform != null)
+        {
+            var faceRenderer = faceTransform.GetComponent<Renderer>();
+            if (faceRenderer != null)
+            {
+                var newMat = new Material(faceRenderer.material);
+                Texture2D faceTexture = PlayerManager.findFace(device);
+
+                if (faceTexture != null && faceTexture.width > 2)
+                {
+                    newMat.mainTexture = faceTexture;
+                }
+
+                faceRenderer.material = newMat; 
+            }
+        }
+        
         if (nameboardPrefab == null) return;
 
-        GameObject nameboard = Instantiate(nameboardPrefab, playerInput.transform);
-        nameboard.transform.localPosition = new Vector3(0, 2f, 0);
+        GameObject nameboard = Instantiate(nameboardPrefab);
+        
+        nameboard.transform.position = playerInput.transform.position + new Vector3(0, 2f, 0);
+        nameboard.transform.localRotation = Quaternion.identity;
+        
 
         var text = nameboard.GetComponentInChildren<TMPro.TextMeshProUGUI>();
         if (text != null && PlayerManager.playerStats.TryGetValue(device, out var stats))

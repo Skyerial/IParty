@@ -17,6 +17,8 @@ public class PlayerTypingController : MonoBehaviour
     private int inputCounter = 0;
     private int cleanupCounter = 0;
     private int wordsLeft = 0;
+    public int playerInputIndex;
+    public int finishPostion;
 
 
     // private void Start()
@@ -136,13 +138,6 @@ public class PlayerTypingController : MonoBehaviour
 
         Destroy(word);
         cleanupCounter++;
-        UpdateWordsLeftText();
-
-        if (spawner.transform.childCount == 0)
-        {
-            Debug.Log($"{gameObject.name} finished!");
-            TMGameManager.Instance?.OnPlayerFinished(this);
-        }
     }
 
     private void UpdateWordHighlight(string userInput, string targetWord, TextMeshProUGUI wordText)

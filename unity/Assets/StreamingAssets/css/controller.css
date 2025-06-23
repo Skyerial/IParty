@@ -294,6 +294,45 @@
   background-color: #007bff;
 }
 
+.gyro-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  gap: 20px;
+  text-align: center;
+}
+
+.gyro-play-view {
+  display: none;
+}
+
+.gyro-play-view img {
+  width: 200px;
+  max-width: 80%;
+}
+
+.gyro-play-view p {
+  color: white;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+#gyroData {
+  color: white;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.gyro-permission p {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
 
 @media (max-height: 500px) {
   .joystick-container,

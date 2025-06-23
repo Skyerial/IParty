@@ -5,7 +5,18 @@ import { JoystickController } from "../controllers/joystickController.js";
 import { TextController } from "../controllers/textController.js";
 import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
-import { TurfController } from "../controllers/turfController.js";
+import { CustomJoystickController } from "../controllers/customJoystickController.js";
+
+const CONTROLLER_MAP = {
+  "dpad-preset": DpadController,
+  "joystick-preset": JoystickController,
+  "text-preset": TextController,
+  "one-button": OneButton,
+  "turf": CustomJoystickController,
+  "spleef": CustomJoystickController,
+  "ready": ReadyController,
+  "gyro": GyroController
+};
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
@@ -49,7 +60,6 @@ export class SocketManager {
     connect(code) {
         if (this.socket) return;
         const isRemote = location.hostname === this.relayHost
-        // const isLocal = location.hostname === 'localhost' || location.hostname.startsWith('192.168.');
         const url = !isRemote
             ? `wss://${location.hostname}:8181`
             : `wss://iparty.duckdns.org:5001/host/${code}/ws`;
@@ -68,7 +78,6 @@ export class SocketManager {
             }
             const data = JSON.parse(rawData);
             this.handleCommand(data);
-            // if (this.onMessage) this.onMessage(data);
         };
         this.socket.onclose = (e) => {
             console.log('🔴 Disconnected');
@@ -76,42 +85,25 @@ export class SocketManager {
             console.log(e.reason);
             console.log(e.wasClean);
             this.socket = null;
-            // if (this.onClose) this.onClose();
         };
     }
 
-    loadController(controller) {
-        // let controller = data.controller;
-        let root = document.querySelector(".view-container");
+    loadController(data) {
+        const root = document.querySelector(".view-container");
+        const { controller, playerstats = [] } = data;
 
-        if (controller == "dpad-preset") {
-            let js = new GyroController(root)
-            js.init()
-        } else if (controller == "joystick-preset") {
-            let js = new JoystickController(root)
-            js.init()
-        } else if (controller == "text-preset") {
-            console.log("loading text controller")
-            let js = new TextController(root)
-            js.init()
-        } else if (controller == "one-button") {
-            let js = new OneButton(root)
-            js.init()
-        } else if (controller === "hotpotato") {
-            const listItems = data.playerstats.map(player => ({
-                label: player.name,
-                color: player.color,
-                jsonButton: player.button
+        if (controller === "hotpotato") {
+            const listItems = playerstats.map(({ name, color, button }) => ({
+                label: name,
+                color,
+                jsonButton: button
             }));
 
-            const js = new HotPotatoController(root, listItems);
-            js.init();
-        } else if (controller == "turf") {
-            let turf = new TurfController(root);
-            turf.init();
-        } else if (controller == "ready") {
-            let r = new ReadyController(root);
-            r.init();
+            new HotPotatoController(root, listItems).init();
+        } else if (CONTROLLER_MAP[controller]) {
+            new CONTROLLER_MAP[controller](root).init();
+        } else {
+            console.warn(`Unknown controller type: ${controller}`);
         }
     }
 
@@ -119,7 +111,7 @@ export class SocketManager {
         let root = document.querySelector(".view-container");
         if (data.type == "controller") {
             console.log("loading controller")
-            this.loadController(data.controller)
+            this.loadController(data)
         } else if (data.type == "clear-text") {
             const text = document.querySelector('#myText');
             text.value = ''
@@ -179,7 +171,6 @@ export class SocketManager {
     }
 
     updateText(char) {
-        // console.log(char)
         this.state.T = char
         if (this.isConnected()) {
             this.sendFiltered();

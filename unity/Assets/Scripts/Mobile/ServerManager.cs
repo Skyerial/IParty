@@ -558,8 +558,8 @@ public class ServerManager : MonoBehaviour
 
     void HandleCommandOnMainThread(string json, string sender)
     {
-        try
-        {
+        // try
+        // {
             var controller = allControllers[sender];
             if (PlayerManager.playerStats.ContainsKey(controller))
             {
@@ -633,11 +633,11 @@ public class ServerManager : MonoBehaviour
                     PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("Invalid command JSON: " + e.Message);
-        }
+        // }
+        // catch (Exception e)
+        // {
+        //     Debug.LogWarning("Invalid command JSON: " + e.Message);
+        // }
     }
 
     void SpawnController(string clientId)
