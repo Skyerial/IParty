@@ -247,26 +247,4 @@ public class SquatManager : MonoBehaviour
         if (text != null)
             text.text = PlayerManager.playerStats[device].name;
     }
-
-    void PrintPlayerScores()
-    {
-        Debug.Log("=== Player Scores ===");
-
-        foreach (var player in rankingList)
-        {
-            var mash = player.GetComponent<PlayerMash>();
-            var input = player.GetComponent<PlayerInput>();
-
-            if (
-                mash != null
-                && input != null
-                && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats)
-            )
-            {
-                Debug.Log($"{stats.name}: {mash.GetMashCounter()} presses");
-            }
-        }
-
-        Debug.Log("=====================");
-    }
 }
