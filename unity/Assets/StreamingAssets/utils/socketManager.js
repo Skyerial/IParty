@@ -80,9 +80,10 @@ export class SocketManager {
         };
     }
 
-    loadController(controller) {
+    loadController(data) {
         // let controller = data.controller;
         let root = document.querySelector(".view-container");
+        let controller = data.controller;
 
         if (controller == "dpad-preset") {
             let js = new GyroController(root)
@@ -108,7 +109,7 @@ export class SocketManager {
             js.init();
         } else if (controller == "turf" || controller == "spleef") {
             let c = new CustomJoystickController(root);
-            turf.init();
+            c.init();
         } else if (controller == "ready") {
             let r = new ReadyController(root);
             r.init();
@@ -119,7 +120,7 @@ export class SocketManager {
         let root = document.querySelector(".view-container");
         if (data.type == "controller") {
             console.log("loading controller")
-            this.loadController(data.controller)
+            this.loadController(data)
         } else if (data.type == "clear-text") {
             const text = document.querySelector('#myText');
             text.value = ''

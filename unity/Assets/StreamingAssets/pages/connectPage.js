@@ -6,7 +6,6 @@ import { ListComponent } from "../controllers/components/listComponent.js";
 import { HotPotatoController } from "../controllers/hotPotatoController.js";
 import { OneButton } from "../controllers/oneButton.js";
 import { Reconnect } from "../reconnect/reconnect.js";
-import { TurfController } from "../controllers/customJoystickController.js";
 
 
 export class ConnectPage extends ViewRenderer {
@@ -23,7 +22,7 @@ export class ConnectPage extends ViewRenderer {
             }
 
             // TEST: Init character login
-            const js = new TurfController(this.container)
+            const js = new Login(this.container)
             await js.init()
 
             // Init joystick
