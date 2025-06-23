@@ -15,6 +15,9 @@ public class Mole : MonoBehaviour
 
     public Camera playerCamera;
 
+    public AudioClip hitSound;
+    private AudioSource audioSource;
+
 
     private Vector3 upPosition;
     private Vector3 downPosition;
@@ -25,6 +28,7 @@ public class Mole : MonoBehaviour
         downPosition = transform.position;
         upPosition = downPosition + Vector3.up * Mathf.Abs(popDownDistance);
         transform.position = downPosition;
+        audioSource = GetComponent<AudioSource>();
     }
 
     public IEnumerator PopCycle()
@@ -39,7 +43,6 @@ public class Mole : MonoBehaviour
     public void OnHit()
     {
         Debug.Log("Mole was hit!");
-        // GameManagerGyro.Instance.AddMoleHit();
 
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
@@ -49,6 +52,10 @@ public class Mole : MonoBehaviour
             Vector3 centerPos = playerCamera.transform.position + playerCamera.transform.forward * 5f;
             GameObject fx = Instantiate(hitEffect, centerPos, Quaternion.identity);
         }
+
+
+    if (audioSource && hitSound)
+        audioSource.PlayOneShot(hitSound);
 
         currentRoutine = StartCoroutine(MoveTo(downPosition));
     }

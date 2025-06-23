@@ -26,8 +26,7 @@ public class SquatManager : MonoBehaviour
     {
         inputEnabled = false;
 
-        Debug.Log("Sending one-button controller preset to all players.");
-        changeScene?.SendSingleButton();
+        ServerManager.SendtoAllSockets("one-button");
 
         if (hudController == null)
         {
@@ -91,7 +90,7 @@ public class SquatManager : MonoBehaviour
             if (input != null && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats))
             {
                 stats.position = i + 1;
-                stats.winner = (i == 0);
+                // stats.winner = (i == 0);
             }
         }
     }

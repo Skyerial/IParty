@@ -92,12 +92,13 @@ public class PlayerSpawn : MonoBehaviour
             // TESTING FACES
             Transform face = playerInput.transform.Find("Face");
             SkinnedMeshRenderer renderer_face = face.GetComponent<SkinnedMeshRenderer>();
-            Texture2D faceTexture = new Texture2D(2, 2);
-            faceTexture.LoadImage(PlayerManager.playerStats[playerInput.devices[0]].face);
-            if (faceTexture == null)
-                Debug.LogError("Texture not loaded!");
-            else
-                Debug.Log("Texture loaded successfully.");
+            Texture2D faceTexture = PlayerManager.findFace(playerInput.devices[0]);
+            // Texture2D faceTexture = new Texture2D(2, 2);
+            // faceTexture.LoadImage(PlayerManager.playerStats[playerInput.devices[0]].face);
+            // if (faceTexture == null)
+            //     Debug.LogError("Texture not loaded!");
+            // else
+            //     Debug.Log("Texture loaded successfully.");
             renderer_face.material = new Material(renderer_face.material);
             renderer_face.material.mainTexture = faceTexture;
 

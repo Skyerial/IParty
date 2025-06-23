@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class MinigameRanking : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class MinigameRanking : MonoBehaviour
         for (int i = 0; i < PlayerManager.tempRanking.Count && i < children.Length; i++)
         {
             var player = PlayerManager.tempRanking[i];
+            player.winner = 2 - i < 0 ? 0 : 2 - i;
             GameObject parentChild = children[i];
 
             Transform nameChild = parentChild.transform.Find("Name");
@@ -32,7 +34,19 @@ public class MinigameRanking : MonoBehaviour
                 if (nameText != null)
                 {
                     nameText.text = player.name;
-                } 
+                }
+            }
+
+            Transform imageChild = parentChild.transform.Find("PlayerImage");
+            if (imageChild != null)
+            {
+                Image image = imageChild.GetComponent<Image>();
+                if (image != null && player.face != null)
+                {
+                    Texture2D faceTexture = new Texture2D(2, 2);
+                    faceTexture.LoadImage(player.face);
+                    image.sprite = Sprite.Create(faceTexture, new Rect(0, 0, faceTexture.width, faceTexture.height), new Vector2(0.5f, 0.5f));
+                }
             }
         }
     }

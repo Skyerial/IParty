@@ -6,9 +6,11 @@ public class JoinAllGameBoard : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public GameObject prefab;
+    public GameMaster gameMaster;
     // public Material targetMaterial;
     void Start()
     {
+        gameMaster = FindAnyObjectByType<GameMaster>();
         if (ServerManager.allControllers != null)
         {
             foreach (var device in ServerManager.allControllers.Values.ToArray())
@@ -18,7 +20,7 @@ public class JoinAllGameBoard : MonoBehaviour
                 PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 if (playerInput != null)
                 {
-                    GameMaster.RegisterPlayer(playerInput);
+                    gameMaster.RegisterPlayer(playerInput);
                     // colorPlayer(playerInput);
                 }
                 else

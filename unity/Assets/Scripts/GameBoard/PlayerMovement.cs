@@ -8,29 +8,23 @@ public class PlayerMovement : MonoBehaviour
     public int player_id = 0;
     public int current_pos = 0;
     public int increment = 0;
-    private script step_spawner;
-    public CharacterController characterController;
-    public Vector3 TargetPos;
-    
-    public float radius;
-
-    private float theta = 0;
-    private float step_distance;
-    private float height;
-    private Vector3 new_pos;
-    private Rigidbody rb;
-    private Vector3 velocity;
-    public float jumpSpeed = 10f;  // Speed of the jump
-    public Vector3 direction;
-    private bool isJumping = false;  // Flag to check if the object is jumping
-    private float r_xy;
-    private float sum_xz;
+    private Animator animator;
+    public LayerMask groundLayerMask;
+    public float groundCheckOffset = 0.1f;
+    private CapsuleCollider cap;
     private GameMaster gameMaster;
     private PlayerInput playerInput;
     private InputAction moveAction;
 
     private void Start()
     {
+        // Newly added
+        cap = GetComponent<CapsuleCollider>();
+
+        // Get the Animator component attached to the same GameObject
+        animator = GetComponent<Animator>();
+
+
         // Mapping the input
         playerInput = GetComponent<PlayerInput>();
         moveAction = playerInput.actions.FindAction("Jump");
@@ -42,92 +36,91 @@ public class PlayerMovement : MonoBehaviour
         // Assigning the correct Player ID
         player_id = PlayerManager.playerStats[playerInput.devices[0]].playerID;
 
-        step_spawner = FindAnyObjectByType<script>();
-        radius = step_spawner.radius;
-        step_distance = step_spawner.step_distance;
-        height = step_spawner.height;
-        rb = GetComponent<Rigidbody>();
-        new_pos = transform.position;
+        // Assigning players to the correct position NEEDS TO CHANGE
+        current_pos = PlayerManager.playerStats[playerInput.devices[0]].position;
+        Debug.Log("The spawning position is: " + current_pos);
+        Transform tile = gameMaster.tileGroup.GetChild(current_pos);
+        Transform spawnPoint = tile.GetChild(player_id);
+        transform.position = spawnPoint.transform.position;
     }
 
     private void HandleInput()
     {
-        Debug.Log("Button pressed.");
+        Debug.Log($"Button pressed by {player_id}, the current player is {gameMaster.current_player}.");
         if (player_id == gameMaster.current_player && !gameMaster.numberShown)
         {
             gameMaster.press_random = 1;
-        } 
-    }
-
-    private void take_step()
-    {
-
-        float b = -radius / (8 * 3.14f);
-        float a = radius;
-
-        float r = a + b * theta;
-        if (player_id == 1)
-        {
-            r_xy = r - 0.1f;
         }
-        else if (player_id == 2)
-        {
-            r_xy = r - 0.03f;
-        }
-        else if (player_id == 3)
-        {
-            r_xy = r + 0.03f;
-        }
-        else if (player_id == 4)
-        {
-            r_xy = r + 0.1f;
-        }
-        else
-        {
-            r_xy = r;
-        }
-        float x = TargetPos.x + r_xy * Mathf.Cos(theta);
-        float y = TargetPos.y + (1 - (r / radius)) * height;
-        float z = TargetPos.z + r_xy * Mathf.Sin(theta);
-        new_pos = new Vector3(
-            x,
-            y,
-            z
-        );
-
-        theta = theta + step_distance / (Mathf.Sqrt(b * b + r * r));
-        increment = increment - 1;
-        current_pos = current_pos + 1;
-
     }
 
     void Update()
     {
-        // Trigger jump when space is pressed
-        transform.rotation = Quaternion.Euler(0, - (theta/(3.14f)*180f), 0);
-        if (increment > 0 && isJumping == false) {
-            take_step();
-            //StartCoroutine(JumpToPosition());
-            rb.linearVelocity = new Vector3(0,5f,0);
-            isJumping = true;
+        animator.SetBool("IsGrounded", IsGrounded());
+    }
 
-        } else if (isJumping == true) {
-            direction = (new_pos - transform.position);
-            sum_xz = Mathf.Abs(direction.x + direction.z) * 0.3f;
-            if (sum_xz < 0.1f) {
-                sum_xz = 0.1f;
+    public IEnumerator rotate_and_jump(Vector3 start, Vector3 end)
+    {
+        Vector3 direction = end - start;
+        direction.y = 0f; // eliminate vertical angle
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            if (transform == null)
+            {
+                Debug.Log("Player image found not");
             }
-            direction.x = direction.x / sum_xz;
-            direction.y = rb.linearVelocity.y;
-            direction.z = direction.z / sum_xz;
-            // Calculate the velocity needed to move towards the new position
-            rb.linearVelocity = direction;
-            if (Vector3.Distance(transform.position, new_pos) < 0.1f) {
-                isJumping = false;
-            }
-        } else if (isJumping == true) {
-            transform.position = new_pos;
+            transform.rotation = targetRotation;
         }
+        animator.SetTrigger("Jump");
+        yield return StartCoroutine(JumpArc(transform, start, end, 1.0f, 3.0f));
+    }
+
+    private bool IsGrounded()
+    {
+        // compute sphere‐check at bottom of capsule
+        Vector3 worldCenter = transform.TransformPoint(cap.center);
+        float bottomOffset = (cap.height * 0.5f) - cap.radius;
+        Vector3 origin = worldCenter + Vector3.down * bottomOffset;
+        float radius = cap.radius + groundCheckOffset;
+
+        return Physics.CheckSphere(
+            origin,
+            radius,
+            groundLayerMask,
+            QueryTriggerInteraction.Ignore
+        );
+    }
+
+    private IEnumerator JumpArc(Transform target, Vector3 start, Vector3 end, float duration, float height)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            float arc = height * 4f * (t - t * t); // Parabolic arc
+            Vector3 currentPos = Vector3.Lerp(start, end, t);
+            currentPos.y += arc;
+
+            target.position = currentPos;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (Vector3.Distance(target.position, end) > 2f)
+        {
+            target.position = end; // only correct if it's noticeably off
+            Debug.Log("Repositioning");
+        }
+
+        if (!IsGrounded())
+        {
+            // Preventing a double jump
+            yield return new WaitForSeconds(0.5f);
+        }
+
     }
 
 }

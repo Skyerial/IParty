@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
         public int playerID;
         public int position;
         public string color;
-        public bool winner;
+        public int winner;
         public string name;
         public byte[] face;
     }
@@ -40,6 +40,7 @@ public class PlayerManager : MonoBehaviour
             playerID = currentPlayers,
             position = 0,
             color = color,
+            winner = 0,
             name = name,
             face = face
         };
@@ -68,9 +69,9 @@ public class PlayerManager : MonoBehaviour
         currentPlayers--;
     }
 
-    public static void AddPosition(InputDevice device, int position)
+    public static void AddPosition(InputDevice device, int increment)
     {
-        playerStats[device].position += position;
+        playerStats[device].position += increment;
 
     }
 
@@ -93,5 +94,18 @@ public class PlayerManager : MonoBehaviour
                 break;
         }
         return mat;
+    }
+
+    public static Texture2D findFace(InputDevice device)
+    {
+        Texture2D texture = new Texture2D(2, 2);
+        texture.LoadImage(playerStats[device].face);
+        if (texture == null)
+        {
+            Debug.Log("There is no face data for " + playerStats[device].name);
+            return new Texture2D(2, 2);
+        }
+        
+        return texture;
     }
 }

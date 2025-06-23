@@ -1,8 +1,11 @@
 import { DpadController } from "../controllers/dpadController.js";
 import { GyroController } from "../controllers/gyroController.js";
+import { HotPotatoController } from "../controllers/hotPotatoController.js";
 import { JoystickController } from "../controllers/joystickController.js";
 import { TextController } from "../controllers/textController.js";
 import { OneButton } from "../controllers/oneButton.js";
+import { ReadyController } from "../controllers/readyController.js";
+import { TurfController } from "../controllers/turfController.js";
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
@@ -11,6 +14,8 @@ export class SocketManager {
         this.interval = 10;
         this.timer = null;
         this.isActive = false;
+
+        this.clientName = null;
 
         this.onOpen = null;
         this.onMessage = null;
@@ -75,7 +80,8 @@ export class SocketManager {
         };
     }
 
-    loadController(controller) {
+    loadController(data) {
+        let controller = data.controller;
         let root = document.querySelector(".view-container");
 
         if (controller == "dpad-preset") {
@@ -90,15 +96,38 @@ export class SocketManager {
         } else if (controller == "one-button") {
             let js = new OneButton(root)
             js.init()
+        } else if (controller === "hotpotato") {
+            const listItems = data.playerstats.map(player => ({
+                label: player.name,
+                color: player.color,
+                jsonButton: player.button
+            }));
+
+            const js = new HotPotatoController(root, listItems);
+            js.init();
+        } else if (controller == "turf") {
+            let turf = new TurfController(root);
+            turf.init();
+        } else if (controller == "ready") {
+            let r = new ReadyController(root);
+            r.init();
         }
     }
 
     handleCommand(data) {
+        let root = document.querySelector(".view-container");
         if (data.type == "controller") {
             this.loadController(data.controller)
         } else if (data.type == "clear-text") {
             const text = document.querySelector('#myText');
             text.value = ''
+        } else if (data.type == "reconnect-status") {
+            if (data.approved) {
+                let js = new JoystickController(root)
+                js.init() 
+            } else {
+                alert("Player not found, please make sure you've entered the correct code.")
+            }
         }
         console.log(JSON.stringify(data));
     }
@@ -215,5 +244,9 @@ export class SocketManager {
             console.log("sending:", JSON.stringify(data));
             this.socket.send(JSON.stringify(data));
         }
+    }
+
+    setClientName(name) {
+        this.clientName = name;
     }
 }

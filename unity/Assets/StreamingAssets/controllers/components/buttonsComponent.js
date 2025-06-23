@@ -2,12 +2,13 @@ import { ViewRenderer } from '../../utils/viewRenderer.js';
 import { socketManager } from '../../main.js';
 
 export class ButtonsComponent extends ViewRenderer {
-  constructor(container, vertical = false) {
-    super(
-      "./views/components/buttonsComponentView.html",
-      container,
-      "buttonInput"
-    );
+  constructor(container, vertical = false, twoButtons = false) {
+    let htmlPath = "./views/components/buttonsComponentView.html";
+    if (twoButtons) {
+      htmlPath = "./views/components/twoButtonsComponentVIew.html";
+    }
+
+    super(htmlPath, container);
     this.vertical = vertical;
   }
 
