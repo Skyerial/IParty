@@ -1,12 +1,15 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerMash : MonoBehaviour
 {
-    [SerializeField] private Animator animator;
-    [SerializeField] private AudioSource squatSFX;
+    [SerializeField]
+    private Animator animator;
+
+    [SerializeField]
+    private AudioSource squatSFX;
 
     private PlayerInput playerInput;
     private InputAction mashAction;
@@ -44,7 +47,8 @@ public class PlayerMash : MonoBehaviour
 
     private void OnMashPerformed(InputAction.CallbackContext context)
     {
-        if (!SquatManager.inputEnabled) return;
+        if (!SquatManager.inputEnabled)
+            return;
 
         mashCounter++;
         animator.speed = baseSpeed + (mashCounter / pressesPerSpeedUp) * speedIncrement;
