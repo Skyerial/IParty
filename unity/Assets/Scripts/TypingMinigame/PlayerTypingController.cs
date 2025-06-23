@@ -138,13 +138,6 @@ public class PlayerTypingController : MonoBehaviour
 
         Destroy(word);
         cleanupCounter++;
-        UpdateWordsLeftText();
-
-        if (spawner.transform.childCount == 0)
-        {
-            Debug.Log($"{gameObject.name} finished!");
-            TMGameManager.Instance?.OnPlayerFinished(this);
-        }
     }
 
     private void UpdateWordHighlight(string userInput, string targetWord, TextMeshProUGUI wordText)

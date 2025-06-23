@@ -178,10 +178,28 @@ public class TMGameManager : MonoBehaviour
         ServerManager.SendtoSocket(controller);
     }
 
+    private string FinishPositionIntToString(int position)
+    {
+        switch (position)
+        {
+            case 1:
+                return "1st";
+            case 2:
+                return "2nd";
+            case 3:
+                return "3rd";
+            case 4:
+                return "4th";
+        }
+
+        return "";
+    }
+
     public void OnPlayerFinished(PlayerTypingController player)
     {
         finishCount++;
-        player.finishPostion = finishCount;     
+        player.finishPostion = finishCount;
+        player.wordsLeftText.text = FinishPositionIntToString(finishCount);
         Debug.Log($"{player.name} finished in position {finishCount}");
         player.inputField.interactable = false;
 
@@ -209,13 +227,9 @@ public class TMGameManager : MonoBehaviour
             .OrderBy(controller => controller.finishPostion)
             .ToList();
 
-        Debug.Log($"sortedControllers: {sortedControllers}");
-        Debug.Log($"PlayerManager: {pm}");
-
         foreach (var controller in sortedControllers)
         {
             InputDevice id = playerInputs[controller.playerInputIndex].devices[0];
-            Debug.Log($"playerInput: {id}");
             pm.tempRankAdd(id);
         }
 
