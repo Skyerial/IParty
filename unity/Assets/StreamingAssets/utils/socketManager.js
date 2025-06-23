@@ -5,7 +5,7 @@ import { JoystickController } from "../controllers/joystickController.js";
 import { TextController } from "../controllers/textController.js";
 import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
-import { TurfController } from "../controllers/turfController.js";
+import { CustomJoystickController } from "../controllers/customJoystickController.js";
 
 export class SocketManager {
     constructor(relayHost = 'iparty.duckdns.org', movementType = 'analog') {
@@ -106,8 +106,8 @@ export class SocketManager {
 
             const js = new HotPotatoController(root, listItems);
             js.init();
-        } else if (controller == "turf") {
-            let turf = new TurfController(root);
+        } else if (controller == "turf" || controller == "spleef") {
+            let c = new CustomJoystickController(root);
             turf.init();
         } else if (controller == "ready") {
             let r = new ReadyController(root);

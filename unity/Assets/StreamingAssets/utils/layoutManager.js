@@ -48,8 +48,8 @@ export class LayoutManager extends ViewRenderer {
         await this.addComponent(TextComponent)
     }
 
-    async addButtons() {
-        await this.addComponent(ButtonsComponent);
+    async addButtons(buttons = []) {
+        await this.addComponent(ButtonsComponent, buttons);
     }
 
     async addButton(items = {}) {

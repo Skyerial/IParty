@@ -1,6 +1,6 @@
 import { LayoutManager } from "../utils/layoutManager.js";
 
-export class TurfController {
+export class CustomJoystickController {
     constructor(container) {
         this.container = container;
     }
@@ -10,6 +10,6 @@ export class TurfController {
         await layout.init();
 
         await layout.addJoystick();
-        await layout.addButtons(true);
+        await layout.addButtons(["C", "A"]);
     }
 }
