@@ -1,22 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 public class SquatManager : MonoBehaviour
 {
     public static bool inputEnabled = false;
-    [SerializeField] private ChangeScene changeScene;
-    [SerializeField] private SwitchScene switchScene;
-    [SerializeField] private float floatStartDelay = 2f;
-    [SerializeField] private MinigameHUDController hudController;
-    [SerializeField] private GameObject nameboardPrefab;
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform spawnParent;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip floatStartSFX;
+
+    [SerializeField]
+    private ChangeScene changeScene;
+
+    [SerializeField]
+    private SwitchScene switchScene;
+
+    [SerializeField]
+    private float floatStartDelay = 2f;
+
+    [SerializeField]
+    private MinigameHUDController hudController;
+
+    [SerializeField]
+    private GameObject nameboardPrefab;
+
+    [SerializeField]
+    private GameObject playerPrefab;
+
+    [SerializeField]
+    private Transform spawnParent;
+
+    [SerializeField]
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private AudioClip floatStartSFX;
 
     private List<GameObject> playerList = new();
     private List<GameObject> rankingList = new();
@@ -54,16 +72,15 @@ public class SquatManager : MonoBehaviour
         UpdatePlayerStats();
 
         PlayerManager.instance.tempRankClear();
-        foreach (var player in rankingList)
+        for (int i = rankingList.Count - 1; i >= 0; i--)
         {
-            var input = player.GetComponent<PlayerInput>();
+            var input = rankingList[i].GetComponent<PlayerInput>();
             if (input != null)
                 PlayerManager.instance.tempRankAdd(input.devices[0]);
         }
 
         StartCoroutine(FloatAndLoadWin());
     }
-
 
     void ResetPlayers()
     {
@@ -87,10 +104,12 @@ public class SquatManager : MonoBehaviour
         for (int i = 0; i < rankingList.Count; i++)
         {
             var input = rankingList[i].GetComponent<PlayerInput>();
-            if (input != null && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats))
+            if (
+                input != null
+                && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats)
+            )
             {
                 stats.position = i + 1;
-                // stats.winner = (i == 0);
             }
         }
     }
@@ -107,7 +126,9 @@ public class SquatManager : MonoBehaviour
         AssignCamera();
         StartFloatAnimations();
 
-        yield return new WaitUntil(() => playerList.All(p => p.GetComponent<PlayerMash>()?.IsFloatDone == true));
+        yield return new WaitUntil(() =>
+            playerList.All(p => p.GetComponent<PlayerMash>()?.IsFloatDone == true)
+        );
         yield return new WaitForSeconds(1f);
 
         switchScene?.LoadNewScene("WinScreen");
@@ -115,7 +136,8 @@ public class SquatManager : MonoBehaviour
 
     void AssignCamera()
     {
-        if (highestPlayer == null) return;
+        if (highestPlayer == null)
+            return;
         Camera.main?.GetComponent<CameraFollow>()?.SetTarget(highestPlayer.transform);
     }
 
@@ -132,19 +154,19 @@ public class SquatManager : MonoBehaviour
                 float floatMultiplier = 1f;
                 float scaledHeight = mashCount * floatMultiplier;
 
-
                 mash.TriggerFloatAnimation(scaledHeight);
             }
         }
     }
 
-
     void SpawnPlayers()
     {
         var devices = ServerManager.allControllers?.Values.ToArray();
-        if (devices == null) return;
+        if (devices == null)
+            return;
 
-        var spawnPoints = spawnParent.GetComponentsInChildren<Transform>()
+        var spawnPoints = spawnParent
+            .GetComponentsInChildren<Transform>()
             .Where(t => t != spawnParent)
             .ToArray();
 
@@ -154,7 +176,8 @@ public class SquatManager : MonoBehaviour
         {
             var device = devices[i];
             var input = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
-            if (input == null) continue;
+            if (input == null)
+                continue;
 
             var player = input.gameObject;
             if (i < spawnPoints.Length)
@@ -167,11 +190,33 @@ public class SquatManager : MonoBehaviour
 
     void SetPlayerVisuals(GameObject player, InputDevice device)
     {
+        // Set body color
         var body = player.transform.Find("Body")?.GetComponent<Renderer>();
         if (body != null)
             body.material = PlayerManager.findColor(device);
 
-        if (nameboardPrefab == null) return;
+        // Set face texture (create unique material instance for each player)
+        var faceTransform = player.transform.Find("Face");
+        if (faceTransform != null)
+        {
+            var faceRenderer = faceTransform.GetComponent<Renderer>();
+            if (faceRenderer != null)
+            {
+                var newMat = new Material(faceRenderer.material); // clone the original
+                Texture2D faceTexture = PlayerManager.findFace(device);
+
+                if (faceTexture != null && faceTexture.width > 2) // means real face was loaded
+                {
+                    newMat.mainTexture = faceTexture;
+                }
+
+                faceRenderer.material = newMat; // assign unique material
+            }
+        }
+
+        // Set nameboard
+        if (nameboardPrefab == null)
+            return;
 
         var nameboard = Instantiate(nameboardPrefab, player.transform);
         nameboard.transform.localPosition = new Vector3(0, 2f, 0);
@@ -190,7 +235,11 @@ public class SquatManager : MonoBehaviour
             var mash = player.GetComponent<PlayerMash>();
             var input = player.GetComponent<PlayerInput>();
 
-            if (mash != null && input != null && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats))
+            if (
+                mash != null
+                && input != null
+                && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats)
+            )
             {
                 Debug.Log($"{stats.name}: {mash.GetMashCounter()} presses");
             }
