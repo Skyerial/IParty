@@ -60,6 +60,12 @@ public class PlayerMovement : MonoBehaviour
 
     public IEnumerator rotate_and_jump(Vector3 start, Vector3 end)
     {
+        yield return StartCoroutine(rotate(start, end));
+        yield return StartCoroutine(jump(start, end));
+    }
+
+    public IEnumerator rotate(Vector3 start, Vector3 end)
+    {
         Vector3 direction = end - start;
         direction.y = 0f; // eliminate vertical angle
         if (direction != Vector3.zero)
@@ -71,6 +77,10 @@ public class PlayerMovement : MonoBehaviour
             }
             yield return StartCoroutine(RotateToTarget(targetRotation, 0.5f));
         }
+    }
+
+    public IEnumerator jump(Vector3 start, Vector3 end)
+    {
         animator.SetTrigger("Jump");
         yield return StartCoroutine(JumpArc(transform, start, end, 1.0f, 3.0f));
     }

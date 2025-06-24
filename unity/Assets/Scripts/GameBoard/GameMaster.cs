@@ -35,6 +35,8 @@ public class GameMaster : MonoBehaviour
     {
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
         currentPlayerCam = players[current_player].GetComponentInChildren<Camera>(true);
+        AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
+        audioHandler.PlayRandomMiniGameTrack();
     }
 
     // Update is called once per frame
@@ -229,7 +231,7 @@ public class GameMaster : MonoBehaviour
         StartCoroutine(MoveAlongParabola(spawnPosition, player.transform.position, newBird, player, playerNr));
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
         PlayerManager.AddPosition(device, 5);
-
+        player.GetComponent<PlayerMovement>().current_pos += 5;
     }
 
     private Vector3 getTileMarkerPos(int tileNr, int marker_nr)

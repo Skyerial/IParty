@@ -27,12 +27,14 @@ public class DeathIndicator : MonoBehaviour
         lr.positionCount = 2;
         lr.startWidth   = 0.1f;
         lr.endWidth     = 0.1f;
-        lr.material     = new Material(Shader.Find("Unlit/Color")) { color = Color.red };
+        lr.material = new Material(Shader.Find("Unlit/Color"));
         audioSrc.playOnAwake = false;
     }
 
-    public void ShowAt(Vector3 worldPos)
+    public void ShowAt(Vector3 worldPos, Color playerColor)
     {
+        lr.material.color = playerColor;
+
         basePos = new Vector3(worldPos.x, worldPos.y, worldPos.z);
         lr.SetPosition(0, basePos);
         lr.SetPosition(1, basePos);
