@@ -59,7 +59,7 @@ public class playerAnimations : MonoBehaviour
             playerImageTransform.rotation = targetRotation;
         }
         animator.SetTrigger("Jump");
-        yield return StartCoroutine(JumpArc(transform, start, end, 1.0f, 3.0f));
+        yield return StartCoroutine(JumpArc(transform, start, end, 0.5f, 3.0f));
     }
 
     private bool IsGrounded()
