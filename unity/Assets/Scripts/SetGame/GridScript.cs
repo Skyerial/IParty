@@ -2,23 +2,42 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
-using TMPro;
+using UnityEngine.InputSystem;
 
 public class GridScript : MonoBehaviour {
     public GameObject cardPrefab;
-    public Text scoreText;
+    public GameObject PlayerScore;
     private List<CardData> allCards = new List<CardData>();
     private List<CardData> dealtCards = new List<CardData>();
-    private List<CardData> selectedSet = new List<CardData>();
 
-    private int score = 0;
+    public static List<PlayerInput> gamePlayers = new List<PlayerInput>();
+    private Dictionary<PlayerInput, int> scores = new Dictionary<PlayerInput, int>();
+    private Dictionary<PlayerInput, List<CardData>> PlayerSelection = new Dictionary<PlayerInput, List<CardData>>();
 
     void Start() {
+        if (ServerManager.allControllers != null) {
+            foreach (var device in ServerManager.allControllers.Values.ToArray()) {
+                Debug.Log("Spawning...");
+                PlayerInputManager.instance.playerPrefab = PlayerScore;
+                PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
+
+                if (playerInput != null) {
+                    RegisterPlayerScore(playerInput);
+                } else {
+                    Debug.LogError("PlayerInput == NULL");
+                }
+            }
+        }
+
+        foreach (PlayerInput player in gamePlayers) {
+            scores.Add(player, 0);
+        }
+
         CreateCards();
         Shuffle();
         DealCards();
         CreateCardGrid();
-        UpdateScoreUI();
+        ActivateAllInput();
     }
 
     // Checks if cards c1, c2 and c3 form a valid set.
@@ -42,10 +61,10 @@ public class GridScript : MonoBehaviour {
 
     // Checks if the DealtCards list contains a valid set.
     bool hasSet() {
-        for (int i = 0; i < 12; i++) {
-            for (int j = 0; j < 12; j++) {
+        for (int i = 0; i < dealtCards.Count; i++) {
+            for (int j = 0; j < dealtCards.Count; j++) {
                 if (i != j) {
-                    for (int k = 0; k < 12; k++) {
+                    for (int k = 0; k < dealtCards.Count; k++) {
                         if (i != k && j != k) {
                             if (isSet(dealtCards[i], dealtCards[j], dealtCards[k])) {
                                 return true;
@@ -103,9 +122,11 @@ public class GridScript : MonoBehaviour {
             allCards[i] = dealtCards[j];
             dealtCards[j] = temp;
         }
+
+        UpdateScoreUI();
     }
 
-    // Initializes the 12 cards in the DealtCards list.
+    // Initializes the cards in the DealtCards list.
     void CreateCardGrid() {
         for (int i = 0; i < dealtCards.Count; i++) {
             GameObject cardGO = Instantiate(cardPrefab, transform);
@@ -113,46 +134,59 @@ public class GridScript : MonoBehaviour {
             CardData data = dealtCards[i];
             setCard.Initialize(data);
             setCard.SetGridScript(this);
-            if (selectedSet.Contains(dealtCards[i])) {
-                setCard.GetComponent<Image>().color = new Color(0.8f, 0.8f, 0.8f);
-            }
         }
     }
 
-    // Adds or removes the selected ard from the selectedSet list,
+    // Adds or removes the selected ard from the selected list for that player,
     // depending on if it's already present or not.
     //
     // If the selectedSet list reaches 3 elements it checks if this is a valid set,
     // adding a point to the score when it is valid, and removing the cards from the dealtCards.
     // It clears the selectedCard list whenever it reaches 3 elements.
-    public void CardSelected(CardData selectedCard) {
-        if (selectedSet.Contains(selectedCard)) {
-            selectedSet.Remove(selectedCard);
+    public void CardSelected(CardData selectedCard, PlayerInput player) {
+        if (PlayerSelection[player].Contains(selectedCard)) {
+            PlayerSelection[player].Remove(selectedCard);
         } else {
-            selectedSet.Add(selectedCard);
-            if (selectedSet.Count == 3) {
-                if (isSet(selectedSet[0], selectedSet[1], selectedSet[2])) {
-                    score++;
-                    UpdateScoreUI();
-                    dealtCards.Remove(selectedSet[0]);
-                    dealtCards.Remove(selectedSet[1]);
-                    dealtCards.Remove(selectedSet[2]);
+            PlayerSelection[player].Add(selectedCard);
+            if (PlayerSelection[player].Count == 3) {
+                if (isSet(PlayerSelection[player][0], PlayerSelection[player][1], PlayerSelection[player][2])) {
+                    scores[player]++;
+                    dealtCards.Remove(PlayerSelection[player][0]);
+                    dealtCards.Remove(PlayerSelection[player][1]);
+                    dealtCards.Remove(PlayerSelection[player][2]);
                 }
-                selectedSet.Clear();
+                foreach (PlayerInput p in gamePlayers) {
+                    PlayerSelection[p].Clear();
+                }
             }
         }
 
+        // Re-initialize the card grid.
         for (int i = 0; i < this.transform.childCount; i++) {
             Destroy(this.transform.GetChild(i).gameObject);
         }
-
         DealCards();
         CreateCardGrid();
     }
 
     void UpdateScoreUI() {
-        if (scoreText != null)
-            scoreText.text = "Score:\n" + score;
+
+    }
+
+    void EndGame() {
+        Debug.Log("FINISHED GAME");
+    }
+
+    public static void RegisterPlayerScore(PlayerInput player) {
+        Debug.Log(player);
+        gamePlayers.Add(player);
+        player.DeactivateInput();
+    }
+
+    void ActivateAllInput() {
+        foreach (var player in gamePlayers) {
+            player.ActivateInput();
+        }
     }
 }
 
