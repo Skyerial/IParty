@@ -1,6 +1,6 @@
-import { ConnectPage } from "./connectPage.js";
-import { ViewRenderer } from "../utils/viewRenderer.js";
-import { socketManager } from "../main.js";
+import { ConnectPage } from "../connectPage.js";
+import { ViewRenderer } from "../../utils/viewRenderer.js";
+import { socketManager } from "../../main.js";
 
 export class NavBar extends ViewRenderer {
     constructor(container) {

@@ -1,25 +1,12 @@
 import { socketManager } from "../main.js";
-import { JoystickController } from "../controllers/joystickController.js";
+import { ViewRenderer } from "../utils/viewRenderer.js";
 
-export class Reconnect {
+export class ReconnectPage extends ViewRenderer {
     constructor(container) {
+        super("./views/reconnectView.html", container);
         this.container = container
     }
 
-    async loadHTML(file) {
-        const response = await fetch(file);
-        if (!response.ok) {
-            console.error(`Failed to load ${file}`);
-        }
-        return await response.text();
-    }
-
-    async init() {
-        const html = await this.loadHTML("./reconnect/reconnect.html");
-        this.container.innerHTML = html;
-        this.bindevents();
-    }
-    
     bindevents() {
         let inputfield = document.querySelector(".reconnect-input");
         document.querySelector(".reconnect").addEventListener("click", async () => {
