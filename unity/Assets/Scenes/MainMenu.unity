@@ -3134,6 +3134,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 1915028080}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!114 &1845443623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3222,7 +3227,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Play local
+  m_text: 'Play Local
 
 '
   m_isRightToLeft: 0
@@ -3990,6 +3995,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 1915028080}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!114 &2103970043
 MonoBehaviour:
   m_ObjectHideFlags: 0
