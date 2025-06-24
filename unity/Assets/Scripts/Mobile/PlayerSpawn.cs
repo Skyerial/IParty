@@ -1,11 +1,7 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 using System.Linq;
-using UnityEngine.TextCore;
-using UnityEngine.UI;
-using System;
 using TMPro;
 
 public class PlayerSpawn : MonoBehaviour

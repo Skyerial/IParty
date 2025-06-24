@@ -9,9 +9,12 @@ public class MovementHotpotato : MonoBehaviour
 {
     public BombManager bombManager;
     public float throwCooldown = 0.8f;
+
+    public Animator animator;
     private float cooldownTimer = 0f;
     private bool canThrow = true;
     private PlayerInput playerInput;
+
     private Dictionary<string, GameObject> buttonToTarget = new();
 
     /**
@@ -55,6 +58,8 @@ public class MovementHotpotato : MonoBehaviour
                 cooldownTimer = 0f;
             }
         }
+
+        // animator.SetBool("Throw", IsHoldingBomb());
     }
 
     /**
