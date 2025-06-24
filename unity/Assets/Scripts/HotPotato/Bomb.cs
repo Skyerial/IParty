@@ -85,6 +85,17 @@ public class Bomb : MonoBehaviour
             {
                 var device = playerInput.devices[0];
                 PlayerManager.instance.tempRankAdd(device);
+                string playerName = PlayerManager.playerStats[device].name;
+
+                var allTexts = FindObjectsByType<TMPro.TextMeshProUGUI>(FindObjectsSortMode.None);
+                foreach (var text in allTexts)
+                {
+                    if (text.text == playerName)
+                    {
+                        Destroy(text.gameObject); 
+                        break;
+                    }
+                }
             }
 
             Destroy(transform.parent.gameObject);
