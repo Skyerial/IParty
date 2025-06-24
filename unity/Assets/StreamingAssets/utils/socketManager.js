@@ -122,7 +122,16 @@ export class SocketManager {
             } else {
                 alert("Player not found, please make sure you've entered the correct code.")
             }
+        } else if (data.type == "character-status") {
+            if (data.approved) {
+                this.setClientName(data.name)
+                let js = new JoystickController(root)
+                js.init() 
+            } else {
+                alert("Choose another color, this color is already chosen.")
+            }
         }
+        
         console.log(JSON.stringify(data));
     }
 
