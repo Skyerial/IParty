@@ -1,33 +1,55 @@
 using UnityEngine;
 
+/**
+ * @brief Handles dice throwing mechanics including physics and face detection.
+ */
+
 public class DiceThrow : MonoBehaviour
 {
     private Rigidbody _rigidbody;
 
-    // Define face normal vectors instead of rotations
-    // These represent the "up" direction for each face when that face is on top
     private Vector3[] diceFaceNormals = {
         Vector3.forward, // Face 1
-        Vector3.up,      // Face 2 (top face in default orientation)
+        Vector3.up,      // Face 2
         Vector3.left,    // Face 3
         Vector3.right,   // Face 4
-        Vector3.down,    // Face 5 (bottom face)
+        Vector3.down,    // Face 5
         Vector3.back     // Face 6
     };
 
     [SerializeField]
-    public float forceUp = 2f; // Force applied to the dice when thrown
-    public float velocityThreshold = 0.01f; // Velocity below this = dice settled
-    public float maxWaitTime = 5f; // Maximum time to wait for dice to settle
+    public float forceUp = 2f;
+
+    /**
+     * @brief Threshold velocity below which the dice is considered settled.
+     */
+    public float velocityThreshold = 0.01f;
+
+    /**
+     * @brief Maximum time to wait for the dice to settle before assuming a result.
+     */
+    public float maxWaitTime = 5f;
+
+    /**
+     * @brief Height above the player where the dice spawns or activates.
+     */
     public float heightAbovePlayer = 2f;
+
+    /**
+     * @brief Enables debug mode to allow manual dice throws via keyboard input.
+     */
     public bool debug = false;
+
     private bool done = false;
 
-    private float throwTime; // Time when the dice was thrown
+    private float throwTime;
 
+    /**
+     * @brief Unity event called when the script is enabled.
+     * Resets the throw timer.
+     */
     private void OnEnable()
     {
-        // Reset throw time when the script is enabled
         throwTime = Time.time;
     }
 
@@ -36,11 +58,15 @@ public class DiceThrow : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
+    /**
+     * @brief Unity event called once per frame.
+     * Allows debug input for manually throwing the dice or checking the upward face.
+     */
     void Update()
     {
         if (!debug)
         {
-            return; // Exit if debug mode is off
+            return;
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -53,6 +79,10 @@ public class DiceThrow : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Applies force and torque to simulate throwing the dice.
+     * Records throw time for settled state check.
+     */
     public void ThrowDice()
     {
         _rigidbody.isKinematic = false;
@@ -62,10 +92,14 @@ public class DiceThrow : MonoBehaviour
         _rigidbody.AddForce(force, ForceMode.Impulse);
         _rigidbody.AddTorque(torque, ForceMode.Impulse);
 
-        throwTime = Time.time; // Update throw time when dice is thrown
+        throwTime = Time.time;
         done = true;
     }
 
+    /**
+     * @brief Determines which face of the dice is currently facing up.
+     * @return The face number (1 to 6) that is currently up.
+     */
     public int SideUp()
     {
         Vector3 worldUp = Vector3.up;
@@ -74,7 +108,6 @@ public class DiceThrow : MonoBehaviour
 
         for (int i = 0; i < diceFaceNormals.Length; i++)
         {
-            // Transform the face normal from local space to world space
             Vector3 worldFaceNormal = _rigidbody.transform.TransformDirection(diceFaceNormals[i]);
             float dot = Vector3.Dot(worldUp, worldFaceNormal);
 
@@ -86,13 +119,15 @@ public class DiceThrow : MonoBehaviour
         }
 
         Debug.Log($"Face {bestFaceIndex + 1} is up (dot product: {maxDot:F3})");
-        return bestFaceIndex + 1; // Return face number (1-6)
-
+        return bestFaceIndex + 1;
     }
 
+    /**
+     * @brief Checks whether the dice has settled (stopped moving or timeout).
+     * @return True if the dice is considered settled, false otherwise.
+     */
     public bool DiceSettled()
     {
-        // Waiting 2 seconds before checking if the dice is set.
         Debug.Log("Current remaining: " + (Time.time - throwTime));
         if (Time.time - throwTime >= 2)
         {

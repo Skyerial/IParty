@@ -5,8 +5,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Manages game flow for squat minigame: countdown, input, scoring, float animation, and scene transition.
+ */
 public class SquatManager : MonoBehaviour
 {
+    /**
+     * @brief Controls whether mash input is allowed.
+     */
     public static bool inputEnabled = false;
 
     [SerializeField]
@@ -40,6 +46,9 @@ public class SquatManager : MonoBehaviour
     private List<GameObject> rankingList = new();
     private GameObject highestPlayer;
 
+    /**
+     * @brief Unity callback. Initializes game, shows countdown, and spawns players.
+     */
     void Start()
     {
         inputEnabled = false;
@@ -58,6 +67,9 @@ public class SquatManager : MonoBehaviour
         hudController.ShowCountdown();
     }
 
+    /**
+     * @brief Called when countdown ends. Enables input and starts timer.
+     */
     void StartRound()
     {
         inputEnabled = true;
@@ -65,6 +77,9 @@ public class SquatManager : MonoBehaviour
         hudController.StartGameTimer();
     }
 
+    /**
+     * @brief Called when game timer ends. Disables input, ranks players, updates stats, starts float animation.
+     */
     void EndRound()
     {
         inputEnabled = false;
@@ -82,6 +97,9 @@ public class SquatManager : MonoBehaviour
         StartCoroutine(FloatAndLoadWin());
     }
 
+    /**
+     * @brief Resets mash state for all players.
+     */
     void ResetPlayers()
     {
         foreach (var player in playerList)
@@ -90,6 +108,9 @@ public class SquatManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Sorts players by mash count, highest first.
+     */
     void RankPlayers()
     {
         rankingList = playerList
@@ -99,6 +120,9 @@ public class SquatManager : MonoBehaviour
         highestPlayer = rankingList.FirstOrDefault();
     }
 
+    /**
+     * @brief Updates playerStats with final ranking positions.
+     */
     void UpdatePlayerStats()
     {
         for (int i = 0; i < rankingList.Count; i++)
@@ -114,6 +138,9 @@ public class SquatManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Plays float animation, waits for completion, then loads win screen.
+     */
     IEnumerator FloatAndLoadWin()
     {
         yield return new WaitForSeconds(floatStartDelay);
@@ -134,6 +161,9 @@ public class SquatManager : MonoBehaviour
         switchScene?.LoadNewScene("WinScreen");
     }
 
+    /**
+     * @brief Makes the camera follow the top-ranked player.
+     */
     void AssignCamera()
     {
         if (highestPlayer == null)
@@ -141,6 +171,9 @@ public class SquatManager : MonoBehaviour
         Camera.main?.GetComponent<CameraFollow>()?.SetTarget(highestPlayer.transform);
     }
 
+    /**
+     * @brief Triggers float animation for all players based on mash count.
+     */
     void StartFloatAnimations()
     {
         float maxMash = playerList.Max(p => p.GetComponent<PlayerMash>()?.GetMashCounter() ?? 1);
@@ -159,6 +192,9 @@ public class SquatManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Spawns players and assigns their visuals.
+     */
     void SpawnPlayers()
     {
         var devices = ServerManager.allControllers?.Values.ToArray();
@@ -200,6 +236,9 @@ public class SquatManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Sets body color, face texture, and nameboard for a player.
+     */
     void SetPlayerVisuals(GameObject player, InputDevice device)
     {
         SetPlayerBodyColor(player, device);
@@ -207,6 +246,9 @@ public class SquatManager : MonoBehaviour
         SetPlayerNameboard(player, device);
     }
 
+    /**
+     * @brief Sets player body color based on device.
+     */
     void SetPlayerBodyColor(GameObject player, InputDevice device)
     {
         var body = player.transform.Find("Body")?.GetComponent<Renderer>();
@@ -214,6 +256,9 @@ public class SquatManager : MonoBehaviour
             body.material = PlayerManager.findColor(device);
     }
 
+    /**
+     * @brief Sets player face texture based on device.
+     */
     void SetPlayerFaceTexture(GameObject player, InputDevice device)
     {
         var faceTransform = player.transform.Find("Face");
@@ -235,6 +280,9 @@ public class SquatManager : MonoBehaviour
         faceRenderer.material = newMat;
     }
 
+    /**
+     * @brief Adds nameboard above player and sets player name.
+     */
     void SetPlayerNameboard(GameObject player, InputDevice device)
     {
         if (nameboardPrefab == null)

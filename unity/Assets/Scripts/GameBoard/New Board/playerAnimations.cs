@@ -39,6 +39,11 @@ public class playerAnimations : MonoBehaviour
     void Update()
     {
         animator.SetBool("IsGrounded", IsGrounded());
+
+        if (IsGrounded())
+        {
+            animator.SetBool("Dash", false);
+        }
     }
     public IEnumerator rotate_and_jump(Vector3 start, Vector3 end)
     {
@@ -104,6 +109,24 @@ public class playerAnimations : MonoBehaviour
         {
             playerCamera.gameObject.SetActive(activate);
         }
+    }
+
+    public IEnumerator LinearMovement(Vector3 start, Vector3 end, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            transform.position = Vector3.Lerp(start, end, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void makeFall()
+    {
+        animator.SetBool("Dash", true);
     }
 }
 

@@ -51,6 +51,8 @@ public class TurfGameManager : MonoBehaviour
     void Awake()
     {
         sceneSwitcher = GetComponent<SwitchScene>();
+        if (sceneSwitcher == null)
+            Debug.Log("No sceneswitcher");
 
         if (Instance == null)
         {

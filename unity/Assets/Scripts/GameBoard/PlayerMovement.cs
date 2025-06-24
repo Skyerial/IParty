@@ -69,10 +69,25 @@ public class PlayerMovement : MonoBehaviour
             {
                 Debug.Log("Player image found not");
             }
-            transform.rotation = targetRotation;
+            yield return StartCoroutine(RotateToTarget(targetRotation, 0.5f));
         }
         animator.SetTrigger("Jump");
         yield return StartCoroutine(JumpArc(transform, start, end, 1.0f, 3.0f));
+    }
+
+    public IEnumerator RotateToTarget(Quaternion targetRotation, float duration)
+    {
+        Quaternion startRotation = transform.rotation;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, time / duration);
+            time += Time.deltaTime;
+            yield return null; // Wait until next frame
+        }
+
+        transform.rotation = targetRotation; // Snap to final rotation to avoid overshoot
     }
 
     private bool IsGrounded()
@@ -121,6 +136,24 @@ public class PlayerMovement : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
+    }
+
+    public IEnumerator LinearMovement(Vector3 start, Vector3 end, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            transform.position = Vector3.Lerp(start, end, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void makeFall()
+    {
+        animator.SetBool("Dash", true);
     }
 
 }

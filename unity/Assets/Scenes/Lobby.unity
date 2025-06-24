@@ -956,6 +956,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 1915028080}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!114 &786053656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1733,6 +1738,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 1915028080}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!114 &1172141943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2611,7 +2621,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -170.00009, y: 0}
+  m_AnchoredPosition: {x: -170.00012, y: 0}
   m_SizeDelta: {x: -340, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2089460170

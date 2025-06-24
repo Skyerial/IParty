@@ -7,38 +7,35 @@ public class TurfPlayerShooter : MonoBehaviour
 {
     [Header("Shooting Settings")]
     public GameObject projectilePrefab;
-    public Transform  firePoint;
-    public float      projectileSpeed    = 20f;
-    public float      fireRate           = 0.2f;
-    public float      maxSpreadAngle     = 5f;
-    public float      projectileLifeTime = 5f;
-    public LayerMask  paintLayerMask;
-    public float      turfCheckDistance  = 1f;
+    public Transform firePoint;
+    public float projectileSpeed = 20f;
+    public float fireRate = 0.2f;
+    public float maxSpreadAngle = 5f;
+    public float projectileLifeTime = 5f;
+    public LayerMask paintLayerMask;
+    public float turfCheckDistance = 1f;
     public AudioClip shootSound;
 
-    [Header("Particle Effects")]
-    public ParticleSystem continuousSpray;
-
     [Header("Ammo UI")]
-    public int    maxAmmo         = 10;
-    public float  ammoRegenRate   = 1f;
-    public float  turfRegenPenalty = 0.5f;
-    public Image  ammoBarFill;
+    public int maxAmmo = 10;
+    public float ammoRegenRate = 1f;
+    public float turfRegenPenalty = 0.5f;
+    public Image ammoBarFill;
 
-    private PlayerInput  pi;
-    private InputAction  attackAction;
-    private AudioSource  audioSrc;
-    private float        currentAmmo;
-    private float        nextFireTime;
-    private bool         isFiring;
-    private Color        playerColor;
+    private PlayerInput pi;
+    private InputAction attackAction;
+    private AudioSource audioSrc;
+    private float currentAmmo;
+    private float nextFireTime;
+    private bool isFiring;
+    private Color playerColor;
 
     void Awake()
     {
         pi = GetComponent<PlayerInput>();
         attackAction = pi.actions["Attack"];
-        attackAction.performed += _ => BeginSpray();
-        attackAction.canceled  += _ => EndSpray();
+        attackAction.performed += _ => isFiring = true;
+        attackAction.canceled += _ => isFiring = false;
     }
 
     void OnEnable()
@@ -81,7 +78,7 @@ public class TurfPlayerShooter : MonoBehaviour
             }
             else
             {
-                EndSpray();
+                isFiring = false;
             }
         }
         else if (!isFiring && currentAmmo < maxAmmo)
@@ -97,20 +94,6 @@ public class TurfPlayerShooter : MonoBehaviour
             );
             UpdateAmmoUI();
         }
-    }
-
-    void BeginSpray()
-    {
-        isFiring = true;
-        if (continuousSpray != null && !continuousSpray.isPlaying)
-            continuousSpray.Play();
-    }
-
-    void EndSpray()
-    {
-        isFiring = false;
-        if (continuousSpray != null && continuousSpray.isPlaying)
-            continuousSpray.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 
     void Shoot()
@@ -137,7 +120,6 @@ public class TurfPlayerShooter : MonoBehaviour
         if (projGO.TryGetComponent<Rigidbody>(out var rb))
             rb.linearVelocity = rot * Vector3.forward * projectileSpeed;
 
-        // play shooting sound
         if (shootSound != null && audioSrc != null)
             audioSrc.PlayOneShot(shootSound);
     }

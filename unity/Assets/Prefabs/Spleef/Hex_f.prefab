@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 59ff5140e55aedc72be91c335f437e5a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 700
+      value: 900
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 59ff5140e55aedc72be91c335f437e5a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 59ff5140e55aedc72be91c335f437e5a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     - target: {fileID: 919132149155446097, guid: 59ff5140e55aedc72be91c335f437e5a, type: 3}
       propertyPath: m_Name
       value: Hex_f
@@ -149,5 +153,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallDelay: 0.75
-  respawnDelay: 10
+  respawnDelay: 15
   growDuration: 10

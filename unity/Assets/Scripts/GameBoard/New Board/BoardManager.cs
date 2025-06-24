@@ -7,6 +7,10 @@ public class BoardManager : MonoBehaviour
     public Transform players;        // Assign player GameObject
 
     public int tileNr;
+    public GameObject Bird;
+    public GameObject Ants;
+    public float arcHeight = 5f;           // Arc height
+    public float arcDuration = 1.5f;       // Time to reach the target
 
     private Rigidbody rb;
     private CapsuleCollider cap;
@@ -14,6 +18,7 @@ public class BoardManager : MonoBehaviour
 
     private InputAction jumpAction;
     private int round;
+    private int[] myPlaces = { 0 };
 
     void Awake()
     {
@@ -44,7 +49,9 @@ public class BoardManager : MonoBehaviour
                 playerAnimations playerScript = player.GetComponent<playerAnimations>();
                 playerScript.ActivateCamera(true);
                 yield return WaitForJumpInput();
-                int result = MovePlayerToTileMarker(player, 2, i);
+                myPlaces[i] = myPlaces[i] + 1;
+                int result = MovePlayerToTileMarker(i, 1, i);
+
                 playerScript.ActivateCamera(false);
             }
             Debug.Log("Round Played:" + round);
@@ -71,8 +78,9 @@ public class BoardManager : MonoBehaviour
         jumpAction.performed -= OnJump; // Unsubscribe when done
     }
 
-   private int MovePlayerToTileMarker(GameObject player, int steps, int markerIndex = 0, float duration = 0.5f, float jumpHeight = 2f)
+    private int MovePlayerToTileMarker(int player_nr, int steps, int markerIndex = 0, float duration = 0.5f, float jumpHeight = 2f)
     {
+        GameObject player = players.GetChild(player_nr).gameObject;
         int tileIndex = tileNr + steps;
         bool finished = false;
         if (tileGroup == null || tileGroup.childCount <= tileIndex)
@@ -81,32 +89,14 @@ public class BoardManager : MonoBehaviour
             tileIndex = tileGroup.childCount - 1;
         }
 
-        Transform tile = tileGroup.GetChild(tileIndex);
-        tileHandler tileScript = tile.GetComponent<tileHandler>();
-
-        if (tileScript == null)
-        {
-            Debug.LogWarning("Tile at index " + tileIndex + " has no Tile script.");
-            return -1;
-        }
-
-        Transform[] markers = tileScript.markers;
-
-        if (markers == null || markers.Length <= markerIndex || markers[markerIndex] == null)
-        {
-            Debug.LogWarning("Invalid marker index or unassigned marker.");
-            return -1;
-        }
 
         Vector3 start = player.transform.position;
-        Vector3 end = markers[markerIndex].position;
+        Vector3 end = getTileMarkerPos(tileIndex, markerIndex);
         end.y += 1;
 
         tileNr = tileIndex;
 
-        playerAnimations playerScript = player.GetComponent<playerAnimations>();
-
-        StartCoroutine(playerScript.rotate_and_jump(start, end));
+        StartCoroutine(JumpAndDoAfter(start, end, player, player_nr));
 
         if (finished == true)
         {
@@ -114,5 +104,114 @@ public class BoardManager : MonoBehaviour
         }
         return 0;
     }
+
+    private IEnumerator JumpAndDoAfter(Vector3 start, Vector3 end, GameObject player, int player_nr)
+    {
+        playerAnimations playerScript = player.GetComponent<playerAnimations>();
+        yield return StartCoroutine(playerScript.rotate_and_jump(start, end));
+        landedTileHandler(player, player_nr);
+    }
+
+    private void landedTileHandler(GameObject player, int player_nr)
+    {
+        int tile_nr = myPlaces[player_nr];
+        Transform tile = tileGroup.GetChild(tile_nr);
+        tileHandler tileScript = tile.GetComponent<tileHandler>();
+        if (tileScript.tileType == 2)
+        {
+            flyPlayer(player, player_nr);
+        }
+        else if (tileScript.tileType == 1)
+        {
+            scarePlayer(player, player_nr);
+        }
+    }
+
+    private void flyPlayer(GameObject player, int playerNr)
+    {
+        Vector3 offset = new Vector3(0, 15, -20); // e.g., 2 units above the player
+
+        // Calculate spawn position relative to the player
+        Vector3 spawnPosition = player.transform.position + offset;
+        GameObject newBird = Instantiate(Bird, spawnPosition, Quaternion.identity, player.transform);
+        StartCoroutine(MoveAlongParabola(spawnPosition, player.transform.position, newBird, player, playerNr));
+
+    }
+
+    private Vector3 getTileMarkerPos(int tileNr, int marker_nr)
+    {
+        Transform tile = tileGroup.GetChild(tileNr);
+        tileHandler tileScript = tile.GetComponent<tileHandler>();
+
+        if (tileScript == null)
+        {
+            Debug.LogWarning("Tile at index " + tileNr + " has no Tile script.");
+            return Vector3.negativeInfinity;
+        }
+
+        Transform[] markers = tileScript.markers;
+
+        if (markers == null || markers.Length <= marker_nr || markers[marker_nr] == null)
+        {
+            Debug.LogWarning("Invalid marker index or unassigned marker.");
+            return Vector3.negativeInfinity;
+        }
+        return markers[marker_nr].position;
+    }
+
+    private IEnumerator MoveAlongParabola(Vector3 start, Vector3 end, GameObject bird, GameObject player, int playerNr)
+    {
+
+        for (float t = 0; t < 1; t += Time.deltaTime / arcDuration)
+        {
+            Vector3 point = Vector3.Lerp(start, end, t);
+            point.y -= arcHeight * 4 * t * (1 - t); // Parabola: 4h * t(1 - t)
+
+            bird.transform.position = point;
+            yield return null;
+        }
+
+        transform.position = end;
+        Vector3 oldEnd = end;
+        if (myPlaces[playerNr] + 5 >= tileGroup.childCount)
+        {
+            myPlaces[playerNr] = tileGroup.childCount - 1;
+        }
+        else
+        {
+            myPlaces[playerNr] = myPlaces[playerNr] + 5;
+        }
+        end = getTileMarkerPos(myPlaces[playerNr], playerNr);
+        end = new Vector3(end.x, end.y + 20, end.z);
+
+        float elapsed = 0f;
+
+        playerAnimations playerScript = player.GetComponent<playerAnimations>();
+        StartCoroutine(playerScript.LinearMovement(oldEnd, end, arcDuration));
+
+        while (elapsed < arcDuration)
+        {
+            float t = elapsed / arcDuration;
+            bird.transform.position = Vector3.Lerp(oldEnd, end, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure final position
+        transform.position = end;
+        Destroy(bird);
+        playerScript.makeFall();
+    }
+
+    private void scarePlayer(GameObject player, int playerNr)
+    {
+        int tileNr = myPlaces[playerNr]; // e.g., 2 units above the player
+
+        // Calculate spawn position relative to the player
+        Vector3 spawnPosition = getTileMarkerPos(tileNr + 1, 4);
+        spawnPosition = new Vector3(spawnPosition.x, spawnPosition.y + 20, spawnPosition.z);
+        GameObject newAnts = Instantiate(Ants, spawnPosition, Quaternion.identity, player.transform);
+    }
+
 }
 
