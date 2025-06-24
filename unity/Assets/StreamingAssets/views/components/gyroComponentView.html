@@ -1,27 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Motion Detection with Gyro</title>
-    <style>
-        #jumpIndicator {
-            display: none;
-            font-size: 3rem;
-            color: red;
-            text-align: center;
-            margin-top: 20px;
-        }
-        #gyroData {
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <button id="enableButton">Enable Motion Detection</button>
-    <div id="jumpIndicator">JUMP</div>
-    <div id="gyroData">Gyro data will appear here...</div>
-</body>
-</html>
+<div class="gyro-container">
+  <div id="permissionPrompt" class="gyro-permission">
+    <p>Motion Access needed to play the game</p>
+    <button id="enableButton" class="button">Enable</button>
+  </div>
+
+  <div id="playView" class="gyro-play-view">
+    <img src="phone.png" alt="Phone">
+    <p>Shake your phone to whack a mole</p>
+  </div>
+</div>

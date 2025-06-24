@@ -80,6 +80,7 @@ public class SpleefGameManager : MonoBehaviour
             audioSource.loop = true;
             StartCoroutine(FadeIn(3f));
         }
+        ServerManager.SendtoAllSockets("spleef");
     }
 
     public static void RegisterPlayerGame(PlayerInput pi)

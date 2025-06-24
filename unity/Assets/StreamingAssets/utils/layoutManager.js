@@ -3,6 +3,7 @@ import { ButtonComponent } from "../controllers/components/buttonComponent.js";
 import { ButtonsComponent } from "../controllers/components/buttonsComponent.js";
 import { DpadComponent } from "../controllers/components/dpadComponent.js";
 import { JoystickComponent } from "../controllers/components/joystickComponent.js";
+import { TextComponent } from "../controllers/components/textComponent.js";
 import { ViewRenderer } from "./viewRenderer.js";
 import { ListComponent } from "../controllers/components/listComponent.js";
 import { GyroComponent } from "../controllers/components/gyroComponent.js";
@@ -22,7 +23,7 @@ export class LayoutManager extends ViewRenderer {
 
     async addDpad() {
         if (this.hasMovementComponent){
-            alert("You can only use a joystick or a D-pad, not both.");
+            alert("Too many movement components");
             return;
         }
 
@@ -33,7 +34,7 @@ export class LayoutManager extends ViewRenderer {
 
     async addJoystick() {
         if (this.hasMovementComponent){
-            alert("You can only use a joystick or a D-pad, not both.");
+            alert("Too many movement components");
             return;
         }
 
@@ -42,8 +43,13 @@ export class LayoutManager extends ViewRenderer {
         this.hasMovementComponent = true;
     }
 
-    async addButtons(twoButtons = false) {
-        await this.addComponent(ButtonsComponent, twoButtons);
+    async addText() {
+        socketManager.changeMovementType("text");
+        await this.addComponent(TextComponent)
+    }
+
+    async addButtons(buttons = []) {
+        await this.addComponent(ButtonsComponent, buttons);
     }
 
     async addButton(items = {}) {

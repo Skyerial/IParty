@@ -8,7 +8,6 @@ public class PlayerRaceController : MonoBehaviour
     private Vector3 startPosition;
     private float stepDistance;
     private int wordsTyped = 0;
-    public GameObject player;
     private Animator animator;
     private bool gameEnd = false;
 
@@ -70,10 +69,12 @@ public class PlayerRaceController : MonoBehaviour
 
     private IEnumerator MovePlayer(Vector3 targetPos)
     {
+        Debug.Log($"raceController gameobject {gameObject}");
+        Debug.Log($"raceController animator {animator}");
         animator.SetBool("IsRunning", true);
-        player.LeanMoveX(targetPos.x, 0.4f);
+        gameObject.LeanMoveX(targetPos.x, 0.4f);
 
-        while (LeanTween.isTweening(player.gameObject))
+        while (LeanTween.isTweening(gameObject))
         {
             yield return null;
         }

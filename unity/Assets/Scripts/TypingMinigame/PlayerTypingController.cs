@@ -17,6 +17,8 @@ public class PlayerTypingController : MonoBehaviour
     private int inputCounter = 0;
     private int cleanupCounter = 0;
     private int wordsLeft = 0;
+    public int playerInputIndex;
+    public int finishPostion;
 
 
     // private void Start()
@@ -45,7 +47,7 @@ public class PlayerTypingController : MonoBehaviour
         UpdateCursorPosition(0);
     }
 
-    private void HandleInput(string input)
+    public void HandleInput(string input)
     {
         int visualIndex = inputCounter - cleanupCounter;
         if (visualIndex < 0 || visualIndex >= spawner.transform.childCount)
@@ -66,6 +68,7 @@ public class PlayerTypingController : MonoBehaviour
         if (inputLower == originalLower)
         {
             InputWordCorrect(wordObj);
+            TMGameManager.Instance?.SendClearCommandtoClient(this);
         }
     }
 
@@ -135,13 +138,6 @@ public class PlayerTypingController : MonoBehaviour
 
         Destroy(word);
         cleanupCounter++;
-        UpdateWordsLeftText();
-
-        if (spawner.transform.childCount == 0)
-        {
-            Debug.Log($"{gameObject.name} finished!");
-            TMGameManager.Instance?.OnPlayerFinished(this);
-        }
     }
 
     private void UpdateWordHighlight(string userInput, string targetWord, TextMeshProUGUI wordText)

@@ -21,21 +21,25 @@ public class ChangeScene : MonoBehaviour
                 level = "TankGame";
                 break;
             case 3:
-                level = "Game_Board";
+                level = "TypingMinigame";
+                SendTextBox();
                 break;
             case 4:
-                level = "HotPotato";
+                level = "Game_Board";
                 break;
             case 5:
-                level = "Winscreen";
+                level = "HotPotato";
                 break;
             case 6:
-                level = "GYRO";
+                level = "Winscreen";
                 break;
             case 7:
-                level = "SkyGlutes";
+                level = "GYRO";
                 break;
             case 8:
+                level = "SkyGlutes";
+                break;
+            case 9:
                 level = "NewBoard";
                 break;
         }
@@ -52,7 +56,12 @@ public class ChangeScene : MonoBehaviour
     public void SendJoystick()
     {
         Debug.Log("Test data send.");
-        ServerManager.SendtoAllSockets("joystick-preset"); 
+        ServerManager.SendtoAllSockets("joystick-preset");
+    }
+
+    public void SendTextBox()
+    {
+        ServerManager.SendtoAllSockets("text-preset");
     }
 
     public void SendSingleButton()

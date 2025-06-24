@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/WinScreen.unity
     guid: fff0e1f83f9cbab41b8bb915dd871f07
   - enabled: 1
+    path: Assets/Scenes/WinScreen3D.unity
+    guid: 7d1e5932e051fcd498e7cd928b1995d5
+  - enabled: 1
     path: Assets/Scenes/MobileSandbox.unity
     guid: 6cd82f28518635c4498c186539e5fb0a
   - enabled: 1
@@ -32,6 +35,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TankGame.unity
     guid: f794345d1e324d04697a9b762c96a671
+  - enabled: 1
+    path: Assets/Scenes/TypingMinigame.unity
+    guid: 81a228c89be31edeb855e3a1adef6c02
   - enabled: 1
     path: Assets/Scenes/HotPotato.unity
     guid: 41da57fe7b27fcc4c9cb32366f56c75b
