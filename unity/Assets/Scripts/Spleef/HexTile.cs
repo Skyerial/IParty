@@ -58,6 +58,18 @@ public class HexTile : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay(Collision collision)
+    {
+        if (isScheduledToFall) return;
+
+        if (collision.collider.CompareTag("Player")
+        && SpleefGameManager.Instance.TilesDroppingEnabled)
+        {
+            isScheduledToFall = true;
+            StartCoroutine(FallAndRespawnRoutine());
+        }
+    }
+
     private IEnumerator FallAndRespawnRoutine()
     {
         // Wait for fallDelay before dropping
@@ -65,7 +77,7 @@ public class HexTile : MonoBehaviour
 
         // Enable physics so the tile falls
         rb.isKinematic = false;
-        rb.useGravity  = true;
+        rb.useGravity = true;
 
         // Wait for respawnDelay to allow tile to fall offscreen
         yield return new WaitForSeconds(respawnDelay);

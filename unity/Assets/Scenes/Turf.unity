@@ -1081,7 +1081,7 @@ MonoBehaviour:
   countdownCanvas: {fileID: 131663174}
   countdownText: {fileID: 158986772}
   countdownStart: 3
-  matchDuration: 30
+  matchDuration: 60
   nextSceneName: WinScreen
   matchTimerCanvas: {fileID: 1030505477}
   matchTimerText: {fileID: 1075431506}
@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09d1c14cdda2b7dfd9012c42d5bd6e98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fader: {fileID: 0}
+  fader: {fileID: 5301017381564912727, guid: d9dbabc3149e39c4aa4e3336e75f7575, type: 3}
 --- !u!1001 &563624341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1253,7 +1253,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: cdb15ba2e13f53845b9edee6036605dd, type: 3}
       propertyPath: m_LocalScale.x
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cdb15ba2e13f53845b9edee6036605dd, type: 3}
       propertyPath: m_LocalScale.y
@@ -1261,7 +1261,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cdb15ba2e13f53845b9edee6036605dd, type: 3}
       propertyPath: m_LocalScale.z
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cdb15ba2e13f53845b9edee6036605dd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3714,10 +3714,6 @@ PrefabInstance:
     - target: {fileID: 6746160418932128126, guid: 94b168eb25941476aa8cd50395dd2b33, type: 3}
       propertyPath: m_Name
       value: Player_
-      objectReference: {fileID: 0}
-    - target: {fileID: 6746160418932128126, guid: 94b168eb25941476aa8cd50395dd2b33, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
