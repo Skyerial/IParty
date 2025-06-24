@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
+/**
+ * @brief Handles player input and bomb throwing logic for the Hot Potato game.
+ */
 public class MovementHotpotato : MonoBehaviour
 {
     public BombManager bombManager;
@@ -11,6 +14,10 @@ public class MovementHotpotato : MonoBehaviour
     private PlayerInput playerInput;
     private Dictionary<string, GameObject> buttonToTarget = new();
 
+    /**
+     * @brief Initializes input actions for throw buttons and sets up event listeners.
+     * @return void
+     */
     void Start()
     {
         cooldownTimer = throwCooldown;
@@ -33,6 +40,10 @@ public class MovementHotpotato : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Updates the throw cooldown timer to re-enable throwing after a delay.
+     * @return void
+     */
     void Update()
     {
         if (!canThrow)
@@ -46,6 +57,10 @@ public class MovementHotpotato : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Removes event listeners on input actions when this object is destroyed.
+     * @return void
+     */
     private void OnDestroy()
     {
         if (playerInput == null) return;
@@ -62,6 +77,10 @@ public class MovementHotpotato : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Checks if this player is currently holding the bomb.
+     * @return bool True if holding bomb, false otherwise.
+     */
     private bool IsHoldingBomb()
     {
         return bombManager != null &&
@@ -69,6 +88,11 @@ public class MovementHotpotato : MonoBehaviour
                bombManager.GetCurrentBomb().transform.parent == transform;
     }
 
+    /**
+     * @brief Handles input when a throw button is pressed. Throws the bomb if possible.
+     * @param button The button pressed ("A", "B", "C", "D").
+     * @return void
+     */
     private void OnThrowPressed(string button)
     {
         if (!IsHoldingBomb() || !canThrow) return;
@@ -83,6 +107,11 @@ public class MovementHotpotato : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Detaches the bomb and initiates the throw toward the target player.
+     * @param target The GameObject to throw the bomb to.
+     * @return void
+     */
     private void ThrowBombTo(GameObject target)
     {
         if (target == null || target == gameObject) return;
@@ -104,6 +133,11 @@ public class MovementHotpotato : MonoBehaviour
         cooldownTimer = 0f;
     }
 
+    /**
+     * @brief Maps controller buttons to target players based on provided player config data.
+     * @param playerConfigs List of opponent player configurations.
+     * @return void
+     */
     public void ConfigureThrowTargets(List<BombManager.PlayerConfig> playerConfigs)
     {
         buttonToTarget.Clear();
@@ -125,3 +159,4 @@ public class MovementHotpotato : MonoBehaviour
         Debug.Log($"Configured throw targets for {gameObject.name}");
     }
 }
+

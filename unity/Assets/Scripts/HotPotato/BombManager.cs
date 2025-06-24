@@ -4,6 +4,9 @@ using System.Linq;
 using UnityEngine.InputSystem;
 using UnityEditorInternal;
 
+/**
+ * @brief Manages the Hot Potato game logic, including player setup, bomb spawning, HUD events, and game end.
+ */
 public class BombManager : MonoBehaviour
 {
     public MinigameHUDController hudController; 
@@ -14,6 +17,10 @@ public class BombManager : MonoBehaviour
     private GameObject currentBomb;
     public List<GameObject> players = new List<GameObject>();
 
+    /**
+     * @brief Initializes the game, joins players, sets up HUD and starts countdown.
+     * @return void
+     */
     [System.Obsolete]
     void Start()
     {
@@ -38,7 +45,10 @@ public class BombManager : MonoBehaviour
         }
     }
 
-
+    /**
+     * @brief Sends each player's opponent stats to their client and configures throw targets.
+     * @return void
+     */
     void SendPlayerStatsToAllClients()
     {
         var availableButtons = new[] { "B", "D", "A", "C" }; 
@@ -99,7 +109,10 @@ public class BombManager : MonoBehaviour
         }
     }
 
-
+    /**
+     * @brief Joins all connected players and initializes their setup.
+     * @return void
+     */
     void JoinAllPlayers()
     {
         if (ServerManager.allControllers != null)
@@ -124,6 +137,11 @@ public class BombManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Initializes visual appearance and nameplate for a single player.
+     * @param playerInput The PlayerInput component of the player to initialize.
+     * @return void
+     */
     void initPlayer(PlayerInput playerInput)
     {
         InputDevice device = playerInput.devices[0];
@@ -152,10 +170,8 @@ public class BombManager : MonoBehaviour
         if (nameboardPrefab == null) return;
 
         GameObject nameboard = Instantiate(nameboardPrefab);
-        
         nameboard.transform.position = playerInput.transform.position + new Vector3(0, 2f, 0);
         nameboard.transform.localRotation = Quaternion.identity;
-        
 
         var text = nameboard.GetComponentInChildren<TMPro.TextMeshProUGUI>();
         if (text != null && PlayerManager.playerStats.TryGetValue(device, out var stats))
@@ -164,12 +180,20 @@ public class BombManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Called when countdown finishes. Starts game timer and spawns initial bomb.
+     * @return void
+     */
     void StartHotPotato()
     {
         hudController.StartGameTimer();
         SpawnBombOnRandomPlayer();
     }
 
+    /**
+     * @brief Updates the game state. Handles player elimination and bomb respawn logic.
+     * @return void
+     */
     void Update()
     {
         players.RemoveAll(p => p == null);
@@ -190,15 +214,22 @@ public class BombManager : MonoBehaviour
         {
             SpawnBombOnRandomPlayer();
         }
-
     }
+
+    /**
+     * @brief Waits for a short delay, then loads the win screen scene.
+     * @return IEnumerator
+     */
     private System.Collections.IEnumerator DelayedSceneSwitch()
     {
         yield return new WaitForSeconds(3f);
         switchScene.LoadNewScene("Winscreen");
     }
 
-
+    /**
+     * @brief Spawns the bomb and attaches it to a random player.
+     * @return void
+     */
     void SpawnBombOnRandomPlayer()
     {
         int index = Random.Range(0, players.Count);
@@ -210,12 +241,18 @@ public class BombManager : MonoBehaviour
         currentBomb.transform.localRotation = Quaternion.identity;
     }
 
+    /**
+     * @brief Returns the currently active bomb object.
+     * @return GameObject The current bomb.
+     */
     public GameObject GetCurrentBomb()
     {
         return currentBomb;
     }
 
-
+    /**
+     * @brief Holds player display data for clients (name, color, assigned button).
+     */
     [System.Serializable]
     public class PlayerConfig
     {
@@ -224,6 +261,9 @@ public class BombManager : MonoBehaviour
         public string button;
     }
 
+    /**
+     * @brief Message structure sent to clients containing controller type and opponent stats.
+     */
     [System.Serializable]
     public class HotPotatoMessage
     {

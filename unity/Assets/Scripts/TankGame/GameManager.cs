@@ -12,10 +12,7 @@ public class GameManager : MonoBehaviour
     public static bool gameActive = true;
     public static List<PlayerInput> gamePlayers = new List<PlayerInput>();
     private static List<InputDevice> deathOrder = new();
-
     private SwitchScene sceneSwitcher;
-
-
     public int countDownStartNumber;
     public TMP_Text countDownText;
     public int countDownCount;
