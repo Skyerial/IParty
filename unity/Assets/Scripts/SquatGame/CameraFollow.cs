@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/**
+ * @brief Follows a target's vertical position with clamped movement and smooth interpolation.
+ */
 public class CameraFollow : MonoBehaviour
 {
     private Transform target;
@@ -18,6 +21,10 @@ public class CameraFollow : MonoBehaviour
     [SerializeField]
     private float followSpeed = 100f;
 
+    /**
+     * @brief Sets the transform the camera should follow.
+     * @param newTarget The target to follow.
+     */
     public void SetTarget(Transform newTarget)
     {
         if (newTarget == null)
@@ -28,6 +35,10 @@ public class CameraFollow : MonoBehaviour
         target = newTarget;
     }
 
+    /**
+     * @brief Unity callback called after all Update() calls.
+     * Smoothly moves the camera to follow the target on the Y axis, within bounds.
+     */
     void LateUpdate()
     {
         if (target == null)

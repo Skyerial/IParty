@@ -1,7 +1,14 @@
 using UnityEngine;
 
+/**
+ * @brief Rotates a name tag so it always faces the main camera horizontally.
+ */
 public class NameTag : MonoBehaviour
 {
+    /**
+     * @brief Unity callback called after all Update() calls.
+     * Rotates the object to face the camera, ignoring vertical tilt.
+     */
     void LateUpdate()
     {
         if (Camera.main == null)

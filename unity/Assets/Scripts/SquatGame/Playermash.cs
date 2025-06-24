@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Handles mash input for a player, controlling squat animations and float effects.
+ */
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerMash : MonoBehaviour
 {
@@ -20,8 +23,14 @@ public class PlayerMash : MonoBehaviour
     private int pressesPerSpeedUp = 5;
     private bool isSquatting = false;
 
+    /**
+     * @brief True if float animation has finished playing.
+     */
     public bool IsFloatDone { get; private set; } = false;
 
+    /**
+     * @brief Unity callback. Gets the mash input action.
+     */
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
@@ -33,18 +42,29 @@ public class PlayerMash : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Subscribes to mash input on enable.
+     */
     void OnEnable()
     {
         if (mashAction != null)
             mashAction.performed += OnMashPerformed;
     }
 
+    /**
+     * @brief Unsubscribes from mash input on disable.
+     */
     void OnDisable()
     {
         if (mashAction != null)
             mashAction.performed -= OnMashPerformed;
     }
 
+    /**
+     * @brief Called when mash button is pressed.
+     * Increases animation speed and plays squat animation if needed.
+     * @param context Input context from Input System.
+     */
     private void OnMashPerformed(InputAction.CallbackContext context)
     {
         if (!SquatManager.inputEnabled)
@@ -60,6 +80,9 @@ public class PlayerMash : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Resets mash state and animation speed for a new round.
+     */
     public void StartNewRound()
     {
         mashCounter = 0;
@@ -68,13 +91,25 @@ public class PlayerMash : MonoBehaviour
         isSquatting = false;
     }
 
+    /**
+     * @brief Gets the current mash press count.
+     * @return Mash press count.
+     */
     public int GetMashCounter() => mashCounter;
 
+    /**
+     * @brief Starts the float animation coroutine with a given height.
+     * @param height Amount to float up.
+     */
     public void TriggerFloatAnimation(float height)
     {
         StartCoroutine(DoFinalSquatAndFloat(height));
     }
 
+    /**
+     * @brief Coroutine that plays a final squat then smoothly floats the player up.
+     * @param height Float height.
+     */
     private IEnumerator DoFinalSquatAndFloat(float height)
     {
         IsFloatDone = false;
