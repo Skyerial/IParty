@@ -1,0 +1,344 @@
+.controller-layout {
+    background-color: #222;
+    color: white;
+    font-family: sans-serif;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    touch-action: none;
+    gap: 20px;
+    flex-direction: column;
+}
+
+.controller-slot {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.controller-slot-list {
+  width: 100%;
+}
+
+.orientation-vertical {
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
+.orientation-horizontal {
+    transform: rotate(90deg);
+    transform-origin: center center;
+}
+
+.joystick-container {
+    width: 250px;
+    height: 250px;
+    background-color: #333;
+    border-radius: 50%;
+    position: relative;
+    touch-action: none;
+}
+
+.joystick-container .stick {
+    width: 100px;
+    height: 100px;
+    background-color: #555;
+    border-radius: 50%;
+    position: absolute;
+    left: 75px;
+    top: 75px;
+    transition: none;
+}
+
+.button-cluster {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    transform: rotate(90deg);
+}
+
+.button-cluster-two {
+  display: flex;
+  gap: 20px;
+  transform: none;
+  transform: rotate(90deg);
+}
+
+
+.button-cluster-two .game-button {
+  position: static;
+  top: auto;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  width: 100px;
+  height: 100px;
+  font-size: 28px;
+}
+
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-button {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    color: white;
+}
+
+.game-button.btn-d {
+    top: 0;
+    left: 60px;
+    background-color: #ffc107;
+    color: black;
+}
+
+.game-button.btn-a {
+    bottom: 0;
+    left: 60px;
+    background-color: #28a745;
+}
+
+.game-button.btn-c {
+    top: 60px;
+    left: 0;
+    background-color: #007bff;
+}
+
+.game-button.btn-b {
+    top: 60px;
+    right: 0;
+    background-color: #dc3545;
+}
+
+.dpad-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 200px;
+  height: 200px;
+  gap: 5px;
+  place-items: center;
+  background-color: #222;
+  border-radius: 16px;
+}
+
+.dpad-button {
+  width: 50px;
+  height: 50px;
+  background-color: #1f1f1f;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.dpad-left {
+  grid-column: 2;
+  grid-row: 1;
+}
+.dpad-down {
+  grid-column: 1;
+  grid-row: 2;
+}
+.dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: #333;
+  width: 40px;
+  height: 40px;
+}
+.dpad-up {
+  grid-column: 3;
+  grid-row: 2;
+}
+.dpad-right {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.big-button {
+  /* shape & size */
+  position: relative;
+  overflow: hidden;
+  width: 200px;
+  height: 200px;
+  border: 2px solid #333;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    #2a2a2a,
+    #0f0f0f 80%
+  );
+  box-shadow:
+    inset 0 8px 20px rgba(0, 0, 0, 0.8),
+    0 6px 12px rgba(0, 0, 0, 0.7),
+    0 0 6px rgba(255, 255, 255, 0.03);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 600;
+  user-select: none;
+  touch-action: none;
+
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.big-button:active {
+  transform: scale(0.94);
+  border-color: #222;
+  box-shadow:
+    inset 0 4px 12px rgba(0, 0, 0, 0.9),
+    0 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.big-button.green-ready {
+  background: radial-gradient(
+    circle at 30% 30%,
+    #2ecc71,
+    #27ae60 80%
+  );
+  border: 3px solid #58d68d;
+  box-shadow:
+    inset 0 8px 20px rgba(0, 0, 0, 0.4),
+    0 0 0 8px rgba(88, 214, 141, 0.5),
+    0 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+.big-button.green-ready:hover {
+  transform: scale(1.02);
+  box-shadow:
+    inset 0 8px 20px rgba(0, 0, 0, 0.4),
+    0 0 0 10px rgba(88, 214, 141, 0.6),
+    0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.big-button.green-ready:active {
+  transform: scale(0.96);
+  border-color: #2e8b57;
+  box-shadow:
+    inset 0 4px 12px rgba(0, 0, 0, 0.6),
+    0 0 0 6px rgba(88, 214, 141, 0.4),
+    0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.big-button-ring {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 50%;
+  background: rgb(77, 77, 77);
+}
+
+.player-button-list {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 20px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+
+.player-list-button {
+  width: 100%;
+  height: 90px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+
+.player-list-button:active {
+  transform: scale(0.94);
+}
+
+
+.player-list-button.red {
+  background-color: #dc3545;
+}
+
+.player-list-button.green {
+  background-color: #28a745;
+}
+
+.player-list-button.blue {
+  background-color: #007bff;
+}
+
+.gyro-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  gap: 20px;
+  text-align: center;
+}
+
+.gyro-play-view {
+  display: none;
+}
+
+.gyro-play-view img {
+  width: 200px;
+  max-width: 80%;
+}
+
+.gyro-play-view p {
+  color: white;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+#gyroData {
+  color: white;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.gyro-permission p {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+
+@media (max-height: 500px) {
+  .joystick-container,
+  .big-button,
+  .button-cluster,
+  .dpad-container {
+    transform: scale(0.8);
+  }
+}

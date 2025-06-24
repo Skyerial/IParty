@@ -1,0 +1,36 @@
+# iParty
+
+## Overview
+
+**iParty** is a Unity-based digital board game inspired by Jackbox and the Mario Party series, using your mobile
+phones as your controller! Player compete in minigames to gain an advantage in moving higher in the world and
+to win it all. This project was developed for the Project Software Engineering course at the University of Amsterdam.
+
+## Project Structure
+
+- `unity/`
+  Contains the Unity project, including all game assets, scripts, and scenes.
+- `testing/`
+  Contains scripts and tools for automated and manual testing, including `fourplayertest.py` and setup files.
+- `doxygen/`
+  Contains Doxygen configuration (`Doxyfile`) and generated documentation output.
+
+## Game
+
+The game is implemented in Unity (see [`unity/`](unity/)).
+Players move around a virtual board, triggering events and playing minigames. The codebase is organized into scripts for board logic, player control, minigames, and UI.
+
+## Tester
+
+The [`testing/`](testing/) folder contains tools for automated testing. See the header in fourplayertest.py for details.
+
+## doxygen
+
+Contains Doxyfile that automatically generates documentation site
+
+usage:
+sudo apt install doxygen
+sudo apt install graphviz
+
+requirements:
+doxygen Doxyfile
