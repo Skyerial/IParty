@@ -79,6 +79,8 @@ public class swipe_menu : MonoBehaviour {
             case "TankCard": selectedScene = "TankGame"; break;
             case "TurfCard": selectedScene = "Turf"; break;
             case "WhackCard": selectedScene = "GYRO"; break;
+            case "HotpotatoCard": selectedScene = "Hotpotato"; break;
+            case "SkyglutesCard": selectedScene = "Skyglutes"; break;
             default: selectedScene = "MainMenu"; break;
         }
 
