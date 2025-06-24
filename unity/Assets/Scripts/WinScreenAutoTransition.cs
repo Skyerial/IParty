@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class WinScreenAutoTransition : MonoBehaviour
 {
-    [SerializeField] private float delayBeforeTransition = 2.5f; // You can adjust this in Inspector
+    [SerializeField] private float delayBeforeTransition = 2.5f; 
 
     private void Start()
     {
