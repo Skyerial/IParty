@@ -10,7 +10,7 @@ using TMPro;
 
 public class PlayerSpawn : MonoBehaviour
 {
-    public GameObject nameboardPrefab; 
+    public GameObject nameboardPrefab;
     int i = 0;
 
     void Start()
@@ -45,8 +45,20 @@ public class PlayerSpawn : MonoBehaviour
             Transform face = playerInput.transform.Find("Face");
             if (face != null && face.TryGetComponent(out SkinnedMeshRenderer renderer_face))
             {
-                renderer_face.material = new Material(renderer_face.material);
-                renderer_face.material.mainTexture = PlayerManager.findFace(playerInput.devices[0]);
+                Material newMat = new Material(renderer_face.material);
+                InputDevice device = playerInput.devices.Count > 0 ? playerInput.devices[0] : null;
+                Texture2D faceTexture = (device != null) ? PlayerManager.findFace(device) : null;
+
+                if (faceTexture != null && faceTexture.width > 2)
+                {
+                    newMat.mainTexture = faceTexture;
+                }
+                else
+                {
+                    newMat.mainTexture = Texture2D.blackTexture;
+                }
+
+                renderer_face.material = newMat;
             }
 
             if (nameboardPrefab != null)
