@@ -35,6 +35,8 @@ public class GameMaster : MonoBehaviour
     {
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
         currentPlayerCam = players[current_player].GetComponentInChildren<Camera>(true);
+        AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
+        audioHandler.PlayRandomMiniGameTrack();
     }
 
     // Update is called once per frame

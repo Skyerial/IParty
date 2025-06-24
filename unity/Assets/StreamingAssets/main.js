@@ -1,9 +1,7 @@
-import { DpadController } from "./controllers/dpadController.js";
-import { JoystickController } from "./controllers/joystickController.js";
-import { Login } from "./login/login.js";
 import { ConnectPage } from "./pages/connectPage.js";
 import { SocketManager } from "./utils/socketManager.js";
-import { NavBar } from "./pages/navBar.js";
+import { NavBar } from "./pages/components/navBar.js";
+import { LoginPage } from "./pages/loginPage.js";
 
 export let socketManager = new SocketManager('iparty.duckdns.org');
 window.addEventListener("DOMContentLoaded", async () => {
@@ -19,7 +17,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (code && !socketManager.isConnected()) {
     socketManager.connect(code);
-    let l = new Login(root)
+    let l = new LoginPage(root)
     await l.init();
     // Automatically load the controller when QR is used
     // let js = new JoystickController(root);

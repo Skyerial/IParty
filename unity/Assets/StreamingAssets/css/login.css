@@ -1,0 +1,148 @@
+/* File: login.css */
+
+/* Container for the login view */
+.default-view.login-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Three.js canvas & hidden webcam sit behind the UI */
+.default-view.login-container video#webcam,
+.default-view.login-container canvas:not(#snapshot) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Snapshot canvas appears in the normal flow, inside the panel */
+.default-view.login-container #snapshot {
+  position: relative;
+  display: block;
+  margin: 1rem auto;
+  max-width: 100%;
+  z-index: 1;
+  border: 2px solid #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+
+/* The semi-transparent login panel */
+.default-view.login-container .login-wrap {
+  position: relative;
+  margin: auto;
+  margin-top: 35vh;
+  padding: 5vh 5vw;
+  width: 90vw;
+  max-width: 400px;
+  background: rgba(50, 50, 50, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-radius: 10px;
+  z-index: 2; /* above snapshot and background */
+}
+
+.default-view.login-container .button-18 {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1.25rem;
+  min-height: 2.5rem;
+  background-color: #004992;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.17s, box-shadow 0.17s;
+}
+
+.default-view.login-container .button-18:hover {
+  background-color: #16437e;
+}
+
+.default-view.login-container .button-18:active {
+  background-color: #09223b;
+}
+
+.default-view.login-container .button-18:disabled {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.3);
+  cursor: not-allowed;
+}
+
+/* Input label + field */
+.default-view.login-container .label-and-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.default-view.login-container .label-and-input .label {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.default-view.login-container .label-and-input .input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  background-color: #f9f9f9;
+  color: #000;
+  transition: border-color 0.2s ease;
+}
+
+.default-view.login-container .label-and-input .input:focus {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* Color picker grid */
+.default-view.login-container .color-picking-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.default-view.login-container .color-box {
+  flex: 1;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  touch-action: manipulation;
+}
+
+.default-view.login-container .color-box:hover,
+.default-view.login-container .color-box:active,
+.default-view.login-container .color-box:focus {
+  transform: scale(1.1);
+}
+
+.default-view.login-container .color-box.selected {
+  border: 3px solid #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.default-view.login-container #Blue   { background-color: #007bff; }
+.default-view.login-container #Yellow { background-color: #ffc107; }
+.default-view.login-container #Green  { background-color: #28a745; }
+.default-view.login-container #Red    { background-color: #dc3545; }
+
+.default-view.login-container #play-button {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.default-view.login-container #snapshot {
+  display: none;
+}

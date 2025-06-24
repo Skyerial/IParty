@@ -1,11 +1,7 @@
-import { JoystickController } from "../controllers/joystickController.js";
 import { ViewRenderer } from "../utils/viewRenderer.js";
 import { socketManager } from "../main.js";
-import { Login } from "../login/login.js";
-import { ListComponent } from "../controllers/components/listComponent.js";
-import { HotPotatoController } from "../controllers/hotPotatoController.js";
-import { OneButton } from "../controllers/oneButton.js";
-import { Reconnect } from "../reconnect/reconnect.js";
+import { ReconnectPage } from "./reconnectPage.js";
+import { LoginPage } from "./loginPage.js";
 
 
 export class ConnectPage extends ViewRenderer {
@@ -22,7 +18,7 @@ export class ConnectPage extends ViewRenderer {
             }
 
             // TEST: Init character login
-            const js = new Login(this.container)
+            const js = new LoginPage(this.container)
             await js.init()
 
             // Init joystick
@@ -35,7 +31,7 @@ export class ConnectPage extends ViewRenderer {
                 socketManager.connect(inputfield.value);
             }
 
-            const js = new Reconnect(this.container)
+            const js = new ReconnectPage(this.container)
             await js.init()
         });
     }
