@@ -16,10 +16,12 @@ public class SpleefDeathZone : MonoBehaviour
 
             if (deathIndicatorPrefab != null)
             {
+                var playerColor = SpleefGameManager.Instance.GetPlayerColor(pi);
+
                 var go = Instantiate(deathIndicatorPrefab);
                 var indicator = go.GetComponent<DeathIndicator>();
                 if (indicator != null)
-                    indicator.ShowAt(deathPos);
+                    indicator.ShowAt(deathPos, playerColor);
             }
 
             SpleefGameManager.Instance.OnPlayerEliminated(pi);

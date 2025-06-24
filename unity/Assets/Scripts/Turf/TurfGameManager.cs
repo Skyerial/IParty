@@ -1,4 +1,3 @@
-// TurfGameManager.cs
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,55 +12,47 @@ public class TurfGameManager : MonoBehaviour
     public static TurfGameManager Instance { get; private set; }
 
     [Header("UI Setup")]
-    public GameObject    playerUIPrefab;
+    public GameObject playerUIPrefab;
     public RectTransform uiParent;
-    public Vector2       uiOffset = new Vector2(10f, -10f);
+    public Vector2 uiOffset = new Vector2(10f, -10f);
 
     [Header("Pre-Game Countdown")]
-    public Canvas        countdownCanvas;
-    public TMP_Text      countdownText;
-    public int           countdownStart = 3;
+    public Canvas countdownCanvas;
+    public TMP_Text countdownText;
+    public int countdownStart = 3;
 
     [Header("Match Settings")]
     public float matchDuration = 60f;
     public string nextSceneName;
-    public Canvas   matchTimerCanvas;
+    public Canvas matchTimerCanvas;
     public TMP_Text matchTimerText;
 
     [Header("Finish Settings")]
-    public Canvas        finishCanvas;
-    public TMP_Text      finishText;
-    public float         finishDisplayTime = 3f;
+    public Canvas finishCanvas;
+    public TMP_Text finishText;
+    public float finishDisplayTime = 3f;
 
     class PlayerEntry
     {
-        public InputDevice device;
-        public Color       turfColor;
-        public Image       swatch;
-        public TMP_Text    percentText;
-        public float       percentage;
+        public InputDevice Device;
+        public Color TurfColor;
+        public Image Swatch;
+        public TMP_Text PercentText;
+        public float Percentage;
     }
+    private readonly Dictionary<PlayerInput, PlayerEntry> players = new Dictionary<PlayerInput, PlayerEntry>();
 
-    readonly List<PlayerEntry>  entries     = new();
-    readonly List<PlayerInput>  gamePlayers = new();
-    TurfPaintableSurface[]      allTiles    = null;
-    int                         totalTiles  = 0;
+    private TurfPaintableSurface[] allTiles;
+    private int totalTiles = 0;
     private SwitchScene sceneSwitcher;
 
     void Awake()
     {
         sceneSwitcher = GetComponent<SwitchScene>();
-        if (sceneSwitcher == null)
-            Debug.Log("No sceneswitcher");
-
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
 
     void Start()
@@ -87,17 +78,16 @@ public class TurfGameManager : MonoBehaviour
                      .First(r => r.name == "Body.008");
         body.material = mat;
 
-        Instance.gamePlayers.Add(pi);
         pi.DeactivateInput();
-
-        Instance.OnPlayerJoined(dev, mat.color);
+        Instance.AddPlayer(pi, dev, mat.color);
     }
 
-    void OnPlayerJoined(InputDevice dev, Color turfColor)
+    private void AddPlayer(PlayerInput pi, InputDevice dev, Color turfColor)
     {
+        // Instantiate UI
         var uiObj = Instantiate(playerUIPrefab, uiParent);
-        var rect  = uiObj.GetComponent<RectTransform>();
-        int idx   = entries.Count;
+        var rect = uiObj.GetComponent<RectTransform>();
+        int idx = players.Count;
         SetAnchor(rect, idx);
 
         Vector2 pos = uiOffset;
@@ -105,29 +95,30 @@ public class TurfGameManager : MonoBehaviour
         if ((idx & 2) != 0) pos.y = -pos.y;
         rect.anchoredPosition = pos;
 
-        var sw  = uiObj.transform.Find("Swatch").GetComponent<Image>();
+        var sw = uiObj.transform.Find("Swatch").GetComponent<Image>();
         var txt = uiObj.transform.Find("PercentText").GetComponent<TMP_Text>();
         sw.color = turfColor;
-        txt.text  = "0.0%";
+        txt.text = "0.0%";
 
-        entries.Add(new PlayerEntry
+        // Store entry
+        players[pi] = new PlayerEntry
         {
-            device      = dev,
-            turfColor   = turfColor,
-            swatch      = sw,
-            percentText = txt,
-            percentage  = 0f
-        });
+            Device = dev,
+            TurfColor = turfColor,
+            Swatch = sw,
+            PercentText = txt,
+            Percentage = 0f
+        };
     }
 
     void Update()
     {
-        foreach (var e in entries)
+        foreach (var entry in players.Values)
         {
-            int owned = allTiles.Count(t => t.CurrentColor == e.turfColor);
+            int owned = allTiles.Count(t => t.CurrentColor == entry.TurfColor);
             float pct = totalTiles > 0 ? (owned / (float)totalTiles) * 100f : 0f;
-            e.percentage = pct;
-            e.percentText.text = $"{pct:0.0}%";
+            entry.Percentage = pct;
+            entry.PercentText.text = $"{pct:0.0}%";
         }
     }
 
@@ -178,7 +169,7 @@ public class TurfGameManager : MonoBehaviour
         countdownCanvas?.gameObject.SetActive(false);
         Time.timeScale = 1f;
 
-        foreach (var pi in gamePlayers)
+        foreach (var pi in players.Keys)
             pi.ActivateInput();
 
         StartCoroutine(MatchTimer());
@@ -198,7 +189,7 @@ public class TurfGameManager : MonoBehaviour
 
         matchTimerCanvas?.gameObject.SetActive(false);
 
-        foreach (var pi in gamePlayers)
+        foreach (var pi in players.Keys)
             pi.DeactivateInput();
 
         finishCanvas?.gameObject.SetActive(true);
@@ -224,11 +215,19 @@ public class TurfGameManager : MonoBehaviour
         var pm = Object.FindFirstObjectByType<PlayerManager>();
         pm.tempRankClear();
 
-        var sorted = entries
-            .OrderBy(e => e.percentage)
-            .Select(e => e.device);
+        var sortedDevices = players
+            .OrderBy(kvp => kvp.Value.Percentage)
+            .Select(kvp => kvp.Value.Device);
 
-        foreach (var dev in sorted)
-            pm.tempRankAdd(dev);
+        foreach (var device in sortedDevices)
+            pm.tempRankAdd(device);
+    }
+    
+    public Color GetPlayerColor(PlayerInput pi)
+    {
+        if (players.TryGetValue(pi, out var entry))
+            return entry.TurfColor;
+        Debug.LogWarning($"No entry found for {pi}; defaulting to white.");
+        return Color.white;
     }
 }

@@ -64,8 +64,8 @@ public class TurfPlayerMover : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation;
 
         // look up this player’s color and paint-layer mask
-        var dev = GetComponent<PlayerInput>().devices[0];
-        playerColor = PlayerManager.findColor(dev).color;
+        var pi = GetComponent<PlayerInput>();
+        playerColor = TurfGameManager.Instance.GetPlayerColor(pi);
         paintMask   = LayerMask.GetMask("Paint");
     }
 
