@@ -236,6 +236,11 @@ public class BombManager : MonoBehaviour
 
         currentBomb = Instantiate(bombPrefab);
         currentBomb.transform.SetParent(selectedPlayer.transform);
+        // var mover = selectedPlayer.GetComponent<MovementHotpotato>();
+        // if (mover != null)
+        // {
+        //     mover.SetHoldingBombState(true); 
+        // }
         currentBomb.transform.localPosition = new Vector3(0, 2f, 0f);
         currentBomb.transform.localRotation = Quaternion.identity;
     }

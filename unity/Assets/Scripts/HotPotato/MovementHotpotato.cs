@@ -12,7 +12,9 @@ public class MovementHotpotato : MonoBehaviour
     private float cooldownTimer = 0f;
     private bool canThrow = true;
     private PlayerInput playerInput;
+    // public Animator animator;
     private Dictionary<string, GameObject> buttonToTarget = new();
+    private bool lastBombHoldingState = false;
 
     /**
      * @brief Initializes input actions for throw buttons and sets up event listeners.
@@ -32,7 +34,7 @@ public class MovementHotpotato : MonoBehaviour
                 InputAction action = playerInput.actions[btn];
                 if (action != null)
                 {
-                    string buttonName = btn.Replace("Button", ""); 
+                    string buttonName = btn.Replace("Button", "");
                     action.performed += ctx => OnThrowPressed(buttonName);
                     action.Enable();
                 }
@@ -54,6 +56,13 @@ public class MovementHotpotato : MonoBehaviour
                 canThrow = true;
                 cooldownTimer = 0f;
             }
+        }
+
+        bool isCurrentlyHolding = IsHoldingBomb();
+        if (isCurrentlyHolding != lastBombHoldingState)
+        {
+            // SetHoldingBombState(isCurrentlyHolding);
+            lastBombHoldingState = isCurrentlyHolding;
         }
     }
 
@@ -131,6 +140,7 @@ public class MovementHotpotato : MonoBehaviour
 
         canThrow = false;
         cooldownTimer = 0f;
+        // SetHoldingBombState(false);
     }
     /**
      * @brief Maps controller buttons to target players based on provided player config data.
@@ -157,5 +167,10 @@ public class MovementHotpotato : MonoBehaviour
 
         Debug.Log($"Configured throw targets for {gameObject.name}");
     }
+    
+    // public void SetHoldingBombState(bool isHolding)
+    // {
+    //     animator.SetBool("Throw", isHolding);
+    // }
 }
 
