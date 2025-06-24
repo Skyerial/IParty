@@ -44,7 +44,7 @@
   flex-direction: column;
   gap: 1.5rem;
   border-radius: 10px;
-  z-index: 2; /* above snapshot and background */
+  z-index: 2;
 }
 
 .default-view.login-container .button-18 {

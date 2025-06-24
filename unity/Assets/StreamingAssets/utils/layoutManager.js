@@ -8,7 +8,19 @@ import { ViewRenderer } from "./viewRenderer.js";
 import { ListComponent } from "../controllers/components/listComponent.js";
 import { GyroComponent } from "../controllers/components/gyroComponent.js";
 
+/**
+ * LayoutManager
+ *
+ * Builds a controller interface layout by adding input components into slots.
+ * Supports only one movement component (D-pad or joystick) at a time.
+ */
 export class LayoutManager extends ViewRenderer {
+    /**
+     * Create a LayoutManager
+     * 
+     * @param {HTMLElement} container - Element where controller slots will be added.
+     * @param {boolean} vertical - If true, arrange components vertically.
+     */
     constructor(container, vertical = false) {
         super("./views/controllerView.html", container);
         this.slots = [];
@@ -16,78 +28,110 @@ export class LayoutManager extends ViewRenderer {
         this.hasMovementComponent = false;
     }
 
+    /**
+     * Called after HTML loads: finds the layout element.
+     */
     bindEvents() {
-        const layout = this.container.querySelector('.controller-layout');
-        this.layout = layout;
+        this.layout = this.container.querySelector('.controller-layout');
     }
 
+    /**
+     * Adds a D-pad component if none exists.
+     */
     async addDpad() {
-        if (this.hasMovementComponent){
-            alert("Too many movement components");
-            return;
-        }
-
-        socketManager.changeMovementType("dpad");
+        if (!this._startMovement('dpad')) return;
         await this.addComponent(DpadComponent);
-        this.hasMovementComponent = true;
     }
 
+    /**
+     * Adds a joystick component if none exists.
+     */
     async addJoystick() {
-        if (this.hasMovementComponent){
-            alert("Too many movement components");
-            return;
-        }
-
-        socketManager.changeMovementType("analog");
+        if (!this._startMovement('analog')) return;
         await this.addComponent(JoystickComponent);
-        this.hasMovementComponent = true;
     }
 
+    /**
+     * Adds a text input component if none exists.
+     */
     async addText() {
-        socketManager.changeMovementType("text");
-        await this.addComponent(TextComponent)
+        if (!this._startMovement('text')) return;
+        await this.addComponent(TextComponent);
     }
 
+    /**
+     * Adds multiple buttons from an array of settings.
+     * @param {string[]} buttons
+     */
     async addButtons(buttons = []) {
         await this.addComponent(ButtonsComponent, buttons);
     }
 
+    /**
+     * Adds a single button with custom settings.
+     * @param {object} items
+     */
     async addButton(items = {}) {
         await this.addComponent(ButtonComponent, items);
     }
 
+    /**
+     * Adds a list view for stats or items.
+     * @param {Array<object>} items
+     */
     async addList(items = []) {
         await this.addComponent(ListComponent, items);
     }
 
+    /**
+     * Adds a gyroscope-based component.
+     */
     async addGyro() {
         await this.addComponent(GyroComponent);
     }
 
-    async addComponent(ComponentClass, param = null) {
-        const root = document.createElement("div");
-
-        let component;
-        if(param) {
-            component = new ComponentClass(root, this.vertical, param);
-        } else {
-            component = new ComponentClass(root, this.vertical);
+    /**
+     * Helper: ensures only one movement component, sets mode, and marks usage.
+     * @param {string} type - 'dpad' or 'analog'
+     * @returns {boolean} True if allowed, false if already used.
+     */
+    _startMovement(type) {
+        if (this.hasMovementComponent) {
+            alert('Only one movement component allowed');
+            return false;
         }
+        socketManager.changeMovementType(type);
+        this.hasMovementComponent = true;
+        return true;
+    }
+
+    /**
+     * Creates, initializes, and displays a component in a new slot.
+     * @param {Function} ComponentClass
+     * @param {*} [param]
+     */
+    async addComponent(ComponentClass, param = null) {
+        const root = document.createElement('div');
+        const component = param
+            ? new ComponentClass(root, this.vertical, param)
+            : new ComponentClass(root, this.vertical);
 
         if (component instanceof ListComponent) {
-            root.classList.add("controller-slot-list");
+            root.classList.add('controller-slot-list');
         }
 
         await component.init();
-        this.loadComponentView(component);
+        this._loadComponentView(component);
     }
 
-    loadComponentView(component) {
-        let container = component.getContainer();
+    /**
+     * Wraps a component in a slot and adds it to the layout.
+     * @param {object} component
+     */
+    _loadComponentView(component) {
         const slot = document.createElement('div');
         slot.className = 'controller-slot';
-
-        slot.appendChild(container);
+        slot.appendChild(component.getContainer());
         this.layout.appendChild(slot);
         this.slots.push(slot);
     }
