@@ -12,7 +12,6 @@ public class MovementHotpotato : MonoBehaviour
     private float cooldownTimer = 0f;
     private bool canThrow = true;
     private PlayerInput playerInput;
-    private bool lastBombHoldingState = false;
     private Dictionary<string, GameObject> buttonToTarget = new();
 
     /**
