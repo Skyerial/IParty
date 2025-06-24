@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 /**
  * @brief Manages player turns, dice rolling, and game state transitions.
@@ -24,6 +24,10 @@ public class GameMaster : MonoBehaviour
     public int press_random = 0;
     public Transform tileGroup;
     public GameObject Bird;
+
+    public GameObject minigameSelector;
+    private swipe_menu menu;
+
 
     public bool numberShown = false;
     private bool waitingForDice = false;
@@ -120,11 +124,16 @@ public class GameMaster : MonoBehaviour
 
     void LoadRandomMinigame()
     {
-        Debug.Log("Loading random minigame...");
-        // int index = Random.Range(5, 9);
-        // SceneManager.LoadScene("TankGame");
-    }
+        menu = minigameSelector.GetComponentInChildren<swipe_menu>();
 
+        if (menu == null)
+        {
+            Debug.LogError("Swipe menu script not found on minigameSelector!");
+            return;
+        }
+
+        minigameSelector.SetActive(true);
+    }
     void EnablePlayerCamera(int player)
     {
         diceCam.gameObject.SetActive(false);
