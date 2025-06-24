@@ -22,18 +22,27 @@ public class SwitchScene : MonoBehaviour
             string currentScene = SceneManager.GetActiveScene().name;
             Debug.Log("Current scene: " + currentScene);
 
-            if (currentScene == "MainMenu" && !hasLoadedMainMenuBefore)
+            if (currentScene == "MainMenu")
             {
-                hasLoadedMainMenuBefore = true;
-                fader.gameObject.SetActive(false);
-                return;
+                var serverManager = Object.FindFirstObjectByType<ServerManager>();
+                if (serverManager != null)
+                {
+                    Destroy(serverManager.gameObject);
+                }
+
+                if (!hasLoadedMainMenuBefore)
+                {
+                    hasLoadedMainMenuBefore = true;
+                    fader.gameObject.SetActive(false);
+                    return;
+                }
             }
 
-                fader.gameObject.SetActive(true);
-                LeanTween.scale(fader, Vector3.one, 0f);
-                LeanTween.scale(fader, Vector3.zero, fadeDuration)
-                    .setEase(LeanTweenType.easeInOutQuint)
-                    .setOnComplete(() => fader.gameObject.SetActive(false));
+            fader.gameObject.SetActive(true);
+            LeanTween.scale(fader, Vector3.one, 0f);
+            LeanTween.scale(fader, Vector3.zero, fadeDuration)
+                .setEase(LeanTweenType.easeInOutQuint)
+                .setOnComplete(() => fader.gameObject.SetActive(false));
         }
 
         if (autoTransitionOnStart)
@@ -41,6 +50,7 @@ public class SwitchScene : MonoBehaviour
             Invoke(nameof(AutoTransition), delayBeforeTransition);
         }
     }
+
 
     private void AutoTransition()
     {
@@ -54,7 +64,7 @@ public class SwitchScene : MonoBehaviour
         if (fader != null)
         {
             fader.gameObject.SetActive(true);
-            LeanTween.scale(fader, Vector3.zero, 0f); 
+            LeanTween.scale(fader, Vector3.zero, 0f);
             LeanTween.scale(fader, Vector3.one, fadeDuration)
                 .setEase(LeanTweenType.easeInOutQuint)
                 .setOnComplete(() => SceneManager.LoadScene(sceneName));
