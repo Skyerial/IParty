@@ -30,6 +30,8 @@ public class ServerManager : MonoBehaviour
     [Header("Mode Settings")]
     [Tooltip("Enable to use remote relay servers instead of local HTTP/WS servers.")]
     public bool useRemote = true;
+    public static bool useRemoteStatic = true;
+
 
     // Toggle secure websocket, insecure is used to connect testing script
     public bool useSecure = true;
@@ -80,6 +82,7 @@ public class ServerManager : MonoBehaviour
         hostId = SystemInfo.deviceUniqueIdentifier;
         InputSystem.RegisterLayout<VirtualController>();
 
+        useRemote = useRemoteStatic;
         if (useRemote)
             StartRemoteServers();
         else

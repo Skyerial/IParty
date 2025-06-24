@@ -14,11 +14,10 @@ public class SwitchScene : MonoBehaviour
 
         if (currentScene == "MainMenu")
         {
-            if (!hasLoadedMainMenuBefore)
+            var serverManager = Object.FindFirstObjectByType<ServerManager>();
+            if (serverManager != null)
             {
-                hasLoadedMainMenuBefore = true;
-                fader.gameObject.SetActive(false);
-                return;
+                Destroy(serverManager.gameObject);
             }
         }
 
@@ -35,8 +34,8 @@ public class SwitchScene : MonoBehaviour
     {
         Debug.Log("Loading scene: " + sceneName);
         fader.gameObject.SetActive(true);
-        LeanTween.scale(fader,Vector3.zero, 0f);
-        LeanTween.scale(fader, new Vector3(1, 1, 1), 0.5f).setEase (LeanTweenType.easeInOutQuint).setOnComplete(() =>
+        LeanTween.scale(fader, Vector3.zero, 0f);
+        LeanTween.scale(fader, new Vector3(1, 1, 1), 0.5f).setEase(LeanTweenType.easeInOutQuint).setOnComplete(() =>
        {
            SceneManager.LoadScene(sceneName);
        });
@@ -45,8 +44,8 @@ public class SwitchScene : MonoBehaviour
     public void LoadSceneAdditive(string sceneName)
     {
         fader.gameObject.SetActive(true);
-        LeanTween.scale(fader,Vector3.zero, 0f);
-        LeanTween.scale(fader, new Vector3(1, 1, 1), 0.5f).setEase (LeanTweenType.easeInOutQuint).setOnComplete(() =>
+        LeanTween.scale(fader, Vector3.zero, 0f);
+        LeanTween.scale(fader, new Vector3(1, 1, 1), 0.5f).setEase(LeanTweenType.easeInOutQuint).setOnComplete(() =>
        {
            SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
        });
