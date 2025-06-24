@@ -12,6 +12,6 @@ public class WinScreenAutoTransition : MonoBehaviour
 
     private void GoToGameBoard()
     {
-        SceneManager.LoadScene("MobileSandbox");
+        SceneManager.LoadScene("Game_Board");
     }
 }

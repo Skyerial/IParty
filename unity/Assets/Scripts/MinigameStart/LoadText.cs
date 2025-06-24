@@ -11,7 +11,7 @@ public class LoadText : MonoBehaviour
 
     void Start()
     {
-        string fileName = "TankGame";
+        string fileName = "TankGame" + "Description";
         string filePath = Path.Combine("Game Descriptions/", fileName);
 
         TextAsset mytxtData = Resources.Load<TextAsset>(filePath);

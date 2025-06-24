@@ -87,6 +87,8 @@ export class ButtonsComponent extends ViewRenderer {
         return "button-cluster";
       case 2:
         return "button-cluster-two";
+      case 1:
+        return "button-cluster-two";
       default:
         return "button-cluster";
     }

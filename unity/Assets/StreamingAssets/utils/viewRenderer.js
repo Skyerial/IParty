@@ -26,6 +26,7 @@ export class ViewRenderer {
         const html = await this.loadHTML(this.htmlFile);
         this.container.innerHTML = html;
         this.bindEvents();
+        this.reconnectEvent();
     }
 
     /**
@@ -57,6 +58,11 @@ export class ViewRenderer {
      *
      * @returns {HTMLElement} The container element.
      */
+    
+    reconnectEvent() {
+        // to be overridden in subclass
+    }
+
     getContainer() {
         return this.container;
     }

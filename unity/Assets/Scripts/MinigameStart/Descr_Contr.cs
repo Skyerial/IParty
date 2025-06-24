@@ -74,6 +74,7 @@ public class Descr_Contr : MonoBehaviour
         if (isSelected)
         {
             loadText(minigame);
+            SetImage(minigame);
         }
     }
     public void OnClick()

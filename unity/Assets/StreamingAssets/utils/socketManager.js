@@ -11,6 +11,7 @@ import { TextController } from "../controllers/textController.js";
 import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
 import { CustomJoystickController } from "../controllers/customJoystickController.js";
+import { TankJoystickController } from "../controllers/tankJoystickController.js";
 
 /**
  * @brief Mapping of controller types to their corresponding controller classes
@@ -24,7 +25,8 @@ const CONTROLLER_MAP = {
   "turf": CustomJoystickController,
   "spleef": CustomJoystickController,
   "ready": ReadyController,
-  "gyro": GyroController
+  "gyro": GyroController,
+  "tank": TankJoystickController
 };
 
 /**

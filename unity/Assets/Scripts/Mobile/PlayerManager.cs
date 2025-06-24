@@ -34,6 +34,8 @@ public class PlayerManager : MonoBehaviour
      */
     public static Dictionary<InputDevice, PlayerStats> playerStats = new();
 
+    public static string currentMinigame;
+
     /**
      * @brief Called when this object is initialized. Sets singleton instance and persists it across scenes.
      * @return void
@@ -161,5 +163,10 @@ public class PlayerManager : MonoBehaviour
         }
 
         return texture;
+    }
+
+    public static void changeCurrentMinigame(string name)
+    {
+        currentMinigame = name;
     }
 }

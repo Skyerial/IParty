@@ -2778,7 +2778,8 @@ MonoBehaviour:
   fadeDuration: 0.5
   autoTransitionOnStart: 1
   delayBeforeTransition: 2.5
-  autoTransitionScene: MobileSandbox
+  autoTransitionScene: Game_Board
+  skipNextStart: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

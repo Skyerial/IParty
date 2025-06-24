@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
 
         sceneSwitcher = GetComponent<SwitchScene>();
+        AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
+        audioHandler.PlayRandomMiniGameTrack();
+        ServerManager.SendtoAllSockets("tank");
     }
 
     public void StartCountDown()
