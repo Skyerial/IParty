@@ -5,6 +5,7 @@ public class tileHandler : MonoBehaviour
     public Transform[] markers; // Should have 4 markers assigned automatically
     public bool autoLink = true;
     public int marker_nr;
+    public int tileType;
     public GameObject player;
     private void OnValidate()
     {

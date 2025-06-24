@@ -23,6 +23,7 @@ public class GameMaster : MonoBehaviour
     public TextMeshProUGUI numberText;
     public int press_random = 0;
     public Transform tileGroup;
+    public GameObject Bird;
 
     public bool numberShown = false;
     private bool waitingForDice = false;
@@ -101,9 +102,9 @@ public class GameMaster : MonoBehaviour
 
         // Moving the player here
         // players[current_player].GetComponent<PlayerMovement>().increment = totalAmount;
-        StartCoroutine(MoveMultipleSteps(players[current_player], totalAmount));
         // Updating the players position in PlayerManager
         PlayerManager.AddPosition(device, totalAmount);
+        StartCoroutine(MoveMultipleSteps(players[current_player], totalAmount));
     }
 
     public void RegisterPlayer(PlayerInput playerInput)
@@ -188,5 +189,129 @@ public class GameMaster : MonoBehaviour
         }
         press_random = 2;
         waitingForDice = false;
+        landedTileHandler(player);
+    }
+    private void landedTileHandler(GameObject player)
+    {
+        var device = players[current_player].GetComponent<PlayerInput>().devices[0];
+        int tile_nr = PlayerManager.playerStats[device].position;
+        if (tile_nr >= tileGroup.childCount - 1)
+        {
+            List<int> positions = new List<int>();
+            List<int> players_list = new List<int>();
+            foreach (KeyValuePair<UnityEngine.InputSystem.InputDevice, PlayerManager.PlayerStats> pair in PlayerManager.playerStats)
+            {
+                players_list.Add(pair.Value.playerID);
+                positions.Add(pair.Value.position);
+            }
+            finishGame(players_list, positions);
+        }
+        int player_nr = PlayerManager.playerStats[device].playerID;
+        Transform tile = tileGroup.GetChild(tile_nr);
+        tileHandler tileScript = tile.GetComponent<tileHandler>();
+        if (tileScript.tileType == 2)
+        {
+            flyPlayer(player, player_nr);
+        }
+        // else if (tileScript.tileType == 1)
+        // {
+        //     scarePlayer(player, player_nr);
+        // }
+    }
+
+    private void flyPlayer(GameObject player, int playerNr)
+    {
+        Vector3 offset = new Vector3(0, 15, -20); // e.g., 2 units above the player
+
+        // Calculate spawn position relative to the player
+        Vector3 spawnPosition = player.transform.position + offset;
+        GameObject newBird = Instantiate(Bird, spawnPosition, Quaternion.identity, player.transform);
+        StartCoroutine(MoveAlongParabola(spawnPosition, player.transform.position, newBird, player, playerNr));
+        var device = players[current_player].GetComponent<PlayerInput>().devices[0];
+        PlayerManager.AddPosition(device, 5);
+
+    }
+
+    private Vector3 getTileMarkerPos(int tileNr, int marker_nr)
+    {
+        Transform tile = tileGroup.GetChild(tileNr);
+        tileHandler tileScript = tile.GetComponent<tileHandler>();
+
+        if (tileScript == null)
+        {
+            Debug.LogWarning("Tile at index " + tileNr + " has no Tile script.");
+            return Vector3.negativeInfinity;
+        }
+
+        Transform[] markers = tileScript.markers;
+
+        if (markers == null || markers.Length <= marker_nr || markers[marker_nr] == null)
+        {
+            Debug.LogWarning("Invalid marker index or unassigned marker.");
+            return Vector3.negativeInfinity;
+        }
+        return markers[marker_nr].position;
+    }
+
+    private IEnumerator MoveAlongParabola(Vector3 start, Vector3 end, GameObject bird, GameObject player, int playerNr)
+    {
+        float arcDuration = 1.5f;
+        float arcHeight = 5f;
+        var device = players[current_player].GetComponent<PlayerInput>().devices[0];
+        int tile_nr = PlayerManager.playerStats[device].position;
+
+        for (float t = 0; t < 1; t += Time.deltaTime / arcDuration)
+        {
+            Vector3 point = Vector3.Lerp(start, end, t);
+            point.y -= arcHeight * 4 * t * (1 - t); // Parabola: 4h * t(1 - t)
+
+            bird.transform.position = point;
+            yield return null;
+        }
+
+        transform.position = end;
+        Vector3 oldEnd = end;
+        if (tile_nr + 5 >= tileGroup.childCount)
+        {
+            tile_nr = tileGroup.childCount - 1;
+        }
+        else
+        {
+            tile_nr = tile_nr + 5;
+        }
+        end = getTileMarkerPos(tile_nr, playerNr);
+        end = new Vector3(end.x, end.y + 20, end.z);
+
+        float elapsed = 0f;
+
+        PlayerMovement playerScript = player.GetComponent<PlayerMovement>();
+        StartCoroutine(playerScript.LinearMovement(oldEnd, end, arcDuration));
+
+        while (elapsed < arcDuration)
+        {
+            float t = elapsed / arcDuration;
+            bird.transform.position = Vector3.Lerp(oldEnd, end, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure final position
+        transform.position = end;
+        Destroy(bird);
+        playerScript.makeFall();
+    }
+
+    private void finishGame(List<int> players, List<int> positions)
+    {
+        var paired = positions
+            .Select((value, index) => new { Key = value, Value = players[index] })
+            .OrderBy(pair => pair.Key) // sort by positions values
+            .ToList();
+
+        // Extract the sorted values back
+        positions = paired.Select(p => p.Key).ToList();
+        players = paired.Select(p => p.Value).ToList();
+        Debug.Log(positions);
+        Debug.Log(players);
     }
 }
