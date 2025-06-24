@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Represents a bomb object in the Hot Potato game mode. Handles countdown, flickering, scaling, explosion, and sound effects.
+ */
 public class Bomb : MonoBehaviour
 {
     private float countdownTime;
@@ -14,6 +17,10 @@ public class Bomb : MonoBehaviour
     AudioSource audioSource;
     private bool hasPlayedThrowSound = false;
 
+    /**
+     * @brief Initializes the bomb with a random countdown time and sets up initial properties.
+     * @return void
+     */
     void Start()
     {
         countdownTime = Random.Range(10f, 18f);
@@ -22,9 +29,12 @@ public class Bomb : MonoBehaviour
         originalColor = rend.material.color;
         flickerTimer = 0f;
         elapsedTime = 0f;
-
     }
 
+    /**
+     * @brief Updates the bomb state every frame. Handles timing, flickering, scaling, and explosion trigger.
+     * @return void
+     */
     void Update()
     {
         if (!isBeingThrown)
@@ -36,7 +46,6 @@ public class Bomb : MonoBehaviour
         {
             audioSource.Play();
             hasPlayedThrowSound = true;
-
         }
 
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);
@@ -44,7 +53,6 @@ public class Bomb : MonoBehaviour
 
         float scale = Mathf.Lerp(0.5f, 0.4f, Mathf.PingPong(flickerTimer * 4f, 1f));
         transform.localScale = new Vector3(scale, scale, scale);
-
 
         if (flickerTimer >= flickerInterval)
         {
@@ -59,6 +67,10 @@ public class Bomb : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Handles the bomb explosion. Triggers explosion effect, assigns player ranking, and destroys objects.
+     * @return void
+     */
     void Explode()
     {
         if (explosion != null)
@@ -73,22 +85,6 @@ public class Bomb : MonoBehaviour
             {
                 var device = playerInput.devices[0];
                 PlayerManager.instance.tempRankAdd(device);
-
-                // if (device is VirtualController vc)
-                // {
-
-                //     var message = new 
-                //     {
-                //         type = "hotpotato",
-                //         label = "deadupdate",
-                //         playerstats = null
-                //     };
-                //     string clientId = vc.remoteId;
-                //     Debug.Log("ClientID of the player who exploded: " + clientId);
-
-                //     string json = "{\"type\":\"eliminated\",\"message\":\"You exploded!\"}";
-                //     ServerManager.SendMessageToClient(clientId, json);
-                // }
             }
 
             Destroy(transform.parent.gameObject);
@@ -97,3 +93,4 @@ public class Bomb : MonoBehaviour
         Destroy(gameObject);
     }
 }
+

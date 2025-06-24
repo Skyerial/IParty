@@ -187,9 +187,9 @@ public class GameMaster : MonoBehaviour
         {
             yield return StartCoroutine(MovePlayerToTileMarker(player, 1));
         }
+        landedTileHandler(player);
         press_random = 2;
         waitingForDice = false;
-        landedTileHandler(player);
     }
     private void landedTileHandler(GameObject player)
     {
@@ -229,7 +229,7 @@ public class GameMaster : MonoBehaviour
         StartCoroutine(MoveAlongParabola(spawnPosition, player.transform.position, newBird, player, playerNr));
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
         PlayerManager.AddPosition(device, 5);
-
+        player.GetComponent<PlayerMovement>().current_pos += 5;
     }
 
     private Vector3 getTileMarkerPos(int tileNr, int marker_nr)
@@ -269,7 +269,7 @@ public class GameMaster : MonoBehaviour
             yield return null;
         }
 
-        transform.position = end;
+        bird.transform.position = end;
         Vector3 oldEnd = end;
         if (tile_nr + 5 >= tileGroup.childCount)
         {
@@ -296,7 +296,7 @@ public class GameMaster : MonoBehaviour
         }
 
         // Ensure final position
-        transform.position = end;
+        bird.transform.position = end;
         Destroy(bird);
         playerScript.makeFall();
     }
