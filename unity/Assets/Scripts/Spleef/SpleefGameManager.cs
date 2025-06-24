@@ -1,4 +1,3 @@
-// SpleefGameManager.cs
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,6 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using UnityEditor.ShaderGraph;
 
 public class SpleefGameManager : MonoBehaviour
 {
@@ -38,32 +36,25 @@ public class SpleefGameManager : MonoBehaviour
 
     class PlayerEntry
     {
-        public InputDevice device;
-        public Color color;
+        public InputDevice Device;
+        public Color Color;
     }
 
-    readonly List<PlayerEntry> entries = new();
-    readonly List<PlayerInput> gamePlayers = new();
-    readonly List<PlayerEntry> eliminationOrderEntries = new();
+    private readonly Dictionary<PlayerInput, PlayerEntry> players = new Dictionary<PlayerInput, PlayerEntry>();
+    private readonly List<PlayerInput> eliminationOrder = new List<PlayerInput>();
+
     private SwitchScene sceneSwitcher;
     public string nextSceneName;
 
     void Awake()
     {
         sceneSwitcher = GetComponent<SwitchScene>();
-
-        if (sceneSwitcher == null)
-            Debug.Log("No sceneswitcher");
-
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
+
     void Start()
     {
         tileDropCanvas?.gameObject.SetActive(false);
@@ -73,7 +64,7 @@ public class SpleefGameManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
-        
+
         if (preGameAmbient != null)
         {
             audioSource.clip = preGameAmbient;
@@ -92,19 +83,9 @@ public class SpleefGameManager : MonoBehaviour
                      .First(r => r.name == "Body.008");
         body.material = mat;
 
-        Instance.gamePlayers.Add(pi);
+        Instance.players[pi] = new PlayerEntry { Device = dev, Color = mat.color };
+
         pi.DeactivateInput();
-
-        Instance.OnPlayerJoined(dev, mat.color);
-    }
-
-    void OnPlayerJoined(InputDevice dev, Color playercolor)
-    {
-        entries.Add(new PlayerEntry
-        {
-            device = dev,
-            color = playercolor
-        });
     }
 
     public void StartGame()
@@ -113,11 +94,9 @@ public class SpleefGameManager : MonoBehaviour
     }
 
     IEnumerator PreGameCountdown()
-    {   
+    {
         if (preGameAmbient != null)
-        {
             yield return StartCoroutine(FadeOut(1f));
-        }
 
         if (mainMusic != null)
         {
@@ -146,7 +125,7 @@ public class SpleefGameManager : MonoBehaviour
         countdownCanvas?.gameObject.SetActive(false);
         Time.timeScale = 1f;
 
-        foreach (var pi in gamePlayers)
+        foreach (var pi in players.Keys)
             pi.ActivateInput();
 
         StartCoroutine(EnableTileDropsAfterDelay());
@@ -194,17 +173,14 @@ public class SpleefGameManager : MonoBehaviour
         while (elapsed < tileDropDelay)
         {
             if (elapsed > 2f)
-            {
                 tileDropText.color = Color.red;
-            }
-    
+
             elapsed += Time.deltaTime;
             UpdateMatchTimerText(tileDropDelay - elapsed);
             yield return null;
         }
 
-        tileDropText.text = $"Tiles Dropping!";
-
+        tileDropText.text = "Tiles Dropping!";
         yield return new WaitForSecondsRealtime(0.5f);
         tileDropCanvas?.gameObject.SetActive(false);
         tilesDroppingEnabled = true;
@@ -221,26 +197,21 @@ public class SpleefGameManager : MonoBehaviour
 
     public void OnPlayerEliminated(PlayerInput pi)
     {
-        var dev = pi.devices[0];
-        var entry = entries.First(e => e.device == dev);
-
-        if (!eliminationOrderEntries.Contains(entry))
+        if (!eliminationOrder.Contains(pi))
         {
-            eliminationOrderEntries.Add(entry);
-
+            eliminationOrder.Add(pi);
             pi.DeactivateInput();
             pi.gameObject.SetActive(false);
 
-            int aliveCount = gamePlayers.Count - eliminationOrderEntries.Count;
+            int aliveCount = players.Count - eliminationOrder.Count;
             if (aliveCount <= 1)
                 StartCoroutine(OnPlayerEliminatedRoutine());
         }
     }
 
-
     private IEnumerator OnPlayerEliminatedRoutine()
     {
-        foreach (var pi in gamePlayers)
+        foreach (var pi in players.Keys)
             pi.DeactivateInput();
 
         if (finishClip != null)
@@ -252,9 +223,7 @@ public class SpleefGameManager : MonoBehaviour
         FinalizeRanking();
 
         if (mainMusic != null)
-        {
             StartCoroutine(FadeOut(2f));
-        }
 
         yield return new WaitForSecondsRealtime(finishDisplayTime);
         sceneSwitcher.LoadNewScene(nextSceneName);
@@ -265,11 +234,19 @@ public class SpleefGameManager : MonoBehaviour
         var pm = Object.FindFirstObjectByType<PlayerManager>();
         pm.tempRankClear();
 
-        var sorted = entries
-            .OrderByDescending(e => eliminationOrderEntries.IndexOf(e))
-            .Select(e => e.device);
+        var sortedDevices = players
+            .OrderBy(kvp => eliminationOrder.IndexOf(kvp.Key))
+            .Select(kvp => kvp.Value.Device);
 
-        foreach (var dev in sorted)
-            pm.tempRankAdd(dev);
+        foreach (var device in sortedDevices)
+            pm.tempRankAdd(device);
+    }
+    
+    public Color GetPlayerColor(PlayerInput pi) 
+    {
+        if (players.TryGetValue(pi, out var entry))
+            return entry.Color;
+        Debug.LogWarning($"No entry found for {pi}; defaulting to white.");
+        return Color.white;
     }
 }

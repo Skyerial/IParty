@@ -401,6 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bombManager: {fileID: 0}
   throwCooldown: 1
+  animator: {fileID: 1818119658221334496}
 --- !u!95 &1818119658221334496
 Animator:
   serializedVersion: 7
@@ -410,7 +411,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2455976995599047907}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 1ae996a5ea4f6b143b553b8c4134c65b, type: 3}
   m_Controller: {fileID: 9100000, guid: 2d4ad86686be0bd4aacd7dfdef5e9db8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -423,7 +424,7 @@ Animator:
     by Humanoid clips.\n\tTransform 'metarig'\n\tTransform 'forearm.R'\n\tTransform
     'shoulder.R'\n\tTransform 'thigh.L'\n\tTransform 'upper_arm.L'\n\tTransform 'shin.R'\n\tTransform
     'metarig'\n\tTransform 'upper_arm.R'\n\tTransform 'hand.R'\n\tTransform 'foot.L'\n\tand
-    more ...\n\tFrom animation clip 'mixamo.com'"
+    more ...\n\tFrom animation clip 'Idle throw'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0

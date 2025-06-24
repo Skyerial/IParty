@@ -1,3 +1,8 @@
+/**
+ * @file SocketManager.js
+ * @brief WebSocket management and controller handling for game clients
+ */
+
 import { DpadController } from "../controllers/dpadController.js";
 import { GyroController } from "../controllers/gyroController.js";
 import { HotPotatoController } from "../controllers/hotPotatoController.js";
@@ -7,6 +12,10 @@ import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
 import { CustomJoystickController } from "../controllers/customJoystickController.js";
 
+/**
+ * @brief Mapping of controller types to their corresponding controller classes
+ * @details Maps string identifiers to controller constructors for dynamic controller instantiation
+ */
 const CONTROLLER_MAP = {
   "dpad-preset": DpadController,
   "joystick-preset": JoystickController,

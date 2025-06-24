@@ -55,8 +55,7 @@ public class TurfPlayerShooter : MonoBehaviour
         UpdateAmmoUI();
 
         // get this player’s color
-        var dev = pi.devices[0];
-        playerColor = PlayerManager.findColor(dev).color;
+        playerColor = TurfGameManager.Instance.GetPlayerColor(pi);
 
         // prepare audio source
         audioSrc = GetComponent<AudioSource>()

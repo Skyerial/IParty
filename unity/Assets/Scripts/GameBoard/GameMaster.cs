@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 /**
  * @brief Manages player turns, dice rolling, and game state transitions.
@@ -24,6 +24,10 @@ public class GameMaster : MonoBehaviour
     public int press_random = 0;
     public Transform tileGroup;
     public GameObject Bird;
+
+    public GameObject minigameSelector;
+    private swipe_menu menu;
+
 
     public bool numberShown = false;
     private bool waitingForDice = false;
@@ -120,11 +124,16 @@ public class GameMaster : MonoBehaviour
 
     void LoadRandomMinigame()
     {
-        Debug.Log("Loading random minigame...");
-        // int index = Random.Range(5, 9);
-        // SceneManager.LoadScene("TankGame");
-    }
+        menu = minigameSelector.GetComponentInChildren<swipe_menu>();
 
+        if (menu == null)
+        {
+            Debug.LogError("Swipe menu script not found on minigameSelector!");
+            return;
+        }
+
+        minigameSelector.SetActive(true);
+    }
     void EnablePlayerCamera(int player)
     {
         diceCam.gameObject.SetActive(false);
@@ -189,11 +198,11 @@ public class GameMaster : MonoBehaviour
         {
             yield return StartCoroutine(MovePlayerToTileMarker(player, 1));
         }
-        landedTileHandler(player);
+        yield return StartCoroutine(landedTileHandler(player));
         press_random = 2;
         waitingForDice = false;
     }
-    private void landedTileHandler(GameObject player)
+    private IEnumerator landedTileHandler(GameObject player)
     {
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
         int tile_nr = PlayerManager.playerStats[device].position;
@@ -213,7 +222,7 @@ public class GameMaster : MonoBehaviour
         tileHandler tileScript = tile.GetComponent<tileHandler>();
         if (tileScript.tileType == 2)
         {
-            flyPlayer(player, player_nr);
+            yield return StartCoroutine(flyPlayer(player, player_nr));
         }
         // else if (tileScript.tileType == 1)
         // {
@@ -221,14 +230,11 @@ public class GameMaster : MonoBehaviour
         // }
     }
 
-    private void flyPlayer(GameObject player, int playerNr)
+    private IEnumerator flyPlayer(GameObject player, int playerNr)
     {
-        Vector3 offset = new Vector3(0, 15, -20); // e.g., 2 units above the player
 
-        // Calculate spawn position relative to the player
-        Vector3 spawnPosition = player.transform.position + offset;
-        GameObject newBird = Instantiate(Bird, spawnPosition, Quaternion.identity, player.transform);
-        StartCoroutine(MoveAlongParabola(spawnPosition, player.transform.position, newBird, player, playerNr));
+        Transform child = player.transform.Find("Player - Image");
+        yield return StartCoroutine(MoveAlongParabola(child.position, player, playerNr));
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
         PlayerManager.AddPosition(device, 5);
         player.GetComponent<PlayerMovement>().current_pos += 5;
@@ -255,24 +261,14 @@ public class GameMaster : MonoBehaviour
         return markers[marker_nr].position;
     }
 
-    private IEnumerator MoveAlongParabola(Vector3 start, Vector3 end, GameObject bird, GameObject player, int playerNr)
+    private IEnumerator MoveAlongParabola(Vector3 middle, GameObject player, int playerNr)
     {
         float arcDuration = 1.5f;
         float arcHeight = 5f;
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
         int tile_nr = PlayerManager.playerStats[device].position;
 
-        for (float t = 0; t < 1; t += Time.deltaTime / arcDuration)
-        {
-            Vector3 point = Vector3.Lerp(start, end, t);
-            point.y -= arcHeight * 4 * t * (1 - t); // Parabola: 4h * t(1 - t)
-
-            bird.transform.position = point;
-            yield return null;
-        }
-
-        bird.transform.position = end;
-        Vector3 oldEnd = end;
+        Vector3 end;
         if (tile_nr + 5 >= tileGroup.childCount)
         {
             tile_nr = tileGroup.childCount - 1;
@@ -284,15 +280,31 @@ public class GameMaster : MonoBehaviour
         end = getTileMarkerPos(tile_nr, playerNr);
         end = new Vector3(end.x, end.y + 20, end.z);
 
-        float elapsed = 0f;
-
         PlayerMovement playerScript = player.GetComponent<PlayerMovement>();
-        StartCoroutine(playerScript.LinearMovement(oldEnd, end, arcDuration));
+        yield return StartCoroutine(playerScript.rotate(middle, end));
+
+        Vector3 offset = new Vector3(0, 15, -20); // e.g., 2 units above the player
+        Vector3 start = player.transform.position + offset;
+        GameObject bird = Instantiate(Bird, player.transform);
+        bird.transform.localPosition = new Vector3(0, 15, -20);  // local offset behind player
+        bird.transform.localRotation = player.transform.rotation;
+
+        for (float t = 0; t < 1; t += Time.deltaTime / arcDuration)
+        {
+            Vector3 point = Vector3.Lerp(start, middle, t);
+            point.y -= arcHeight * 4 * t * (1 - t); // Parabola: 4h * t(1 - t)
+
+            bird.transform.position = point;
+            yield return null;
+        }
+
+        float elapsed = 0f;
+        StartCoroutine(playerScript.LinearMovement(middle, end, arcDuration));
 
         while (elapsed < arcDuration)
         {
             float t = elapsed / arcDuration;
-            bird.transform.position = Vector3.Lerp(oldEnd, end, t);
+            bird.transform.position = Vector3.Lerp(middle, end, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -300,7 +312,9 @@ public class GameMaster : MonoBehaviour
         // Ensure final position
         bird.transform.position = end;
         Destroy(bird);
+        yield return null;
         playerScript.makeFall();
+        yield return new WaitForSeconds(3f);
     }
 
     private void finishGame(List<int> players, List<int> positions)
