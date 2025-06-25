@@ -34,7 +34,7 @@ public class MinigameRanking : MonoBehaviour
         for (int i = 0; i < PlayerManager.tempRanking.Count && i < children.Length; i++)
         {
             var player = PlayerManager.tempRanking[i];
-            player.winner = 2 - i < 0 ? 0 : 2 - i;
+            player.winner = 3 - i < 0 ? 0 : 3 - i;
             GameObject parentChild = children[i];
 
             Transform nameChild = parentChild.transform.Find("Name");

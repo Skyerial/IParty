@@ -30,6 +30,8 @@ export class BackgroundRenderer {
             metalness: 0.1,
             roughness: 0.5
         });
+
+        this.stream = null;
     }
 
     /**
@@ -121,6 +123,7 @@ export class BackgroundRenderer {
                 navigator.mediaDevices
                     .getUserMedia({ video: { width: { ideal: 480 }, height: { ideal: 640 } } })
                     .then(stream => {
+                        this.stream = stream;
                         this.video.srcObject = stream;
                         this.video.play();
                         this.videoTexture = new THREE.VideoTexture(this.video);
@@ -205,5 +208,23 @@ export class BackgroundRenderer {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    stop() {
+        if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+            this.stream = null;
+        }
+
+        if (this.video) {
+            this.video.srcObject = null;
+            this.video.remove();
+            this.video = null;
+        }
+
+        if (this.videoTexture) {
+            this.videoTexture.dispose();
+            this.videoTexture = null;
+        }
     }
 }

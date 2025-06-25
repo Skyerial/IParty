@@ -103,5 +103,6 @@ export class LoginPage extends ViewRenderer {
       : '';
 
     socketManager.send({ name, color: this.selectedColor, data });
+    this.bgRenderer.stop();
   }
 }
