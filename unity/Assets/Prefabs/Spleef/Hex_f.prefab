@@ -153,5 +153,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallDelay: 0.75
-  respawnDelay: 15
-  growDuration: 10
+  respawnDelay: 25
+  growDuration: 15

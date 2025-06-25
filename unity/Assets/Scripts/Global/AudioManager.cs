@@ -61,6 +61,27 @@ public class AudioManager : MonoBehaviour
         StartCoroutine(FadeToTrack(miniGameTracks[index], fadeDuration));
     }
 
+    public void PlaySelectedMiniGameTrack(int index, float fadeDuration = 1f)
+    {
+        if (miniGameTracks.Length == 0)
+        {
+            Debug.LogWarning("No mini-game tracks assigned.");
+            return;
+        }
+
+        StartCoroutine(FadeToTrack(miniGameTracks[index], fadeDuration));
+    }
+
+    public void StopMusic()
+    {
+        musicSource.Stop();
+    }
+
+    public void PlayMusic()
+    {
+        musicSource.Play();
+    }
+
     // Coroutine to fade out current track and fade in the new track
     private IEnumerator FadeToTrack(AudioClip newClip, float duration, float startTime = 0f)
     {
@@ -75,11 +96,11 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
 
-        musicSource.Stop();
+        StopMusic();
         musicSource.clip = newClip;
         musicSource.time = Mathf.Clamp(startTime, 0f, newClip.length);
         musicSource.loop = true;
-        musicSource.Play();
+        PlayMusic();
 
         // Fade in
         elapsed = 0f;

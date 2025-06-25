@@ -11,13 +11,14 @@ public class SpleefGameManager : MonoBehaviour
 {
     public static SpleefGameManager Instance { get; private set; }
 
-    private AudioSource audioSource;
-    public AudioClip preGameAmbient;
+    [Header("Player Labels")]
+    public float labelDisplayTime  = 5f;
 
     [Header("Pre-Game Countdown")]
     public Canvas countdownCanvas;
     public TMP_Text countdownText;
     public int countdownStart = 3;
+    public AudioClip preGameAmbient;
     public AudioClip fullCountdownClip;
 
     [Header("Tile Drop Settings")]
@@ -26,6 +27,7 @@ public class SpleefGameManager : MonoBehaviour
     public float tileDropDelay = 5f;
     private bool tilesDroppingEnabled = false;
     public bool TilesDroppingEnabled => tilesDroppingEnabled;
+    public string nextSceneName;
     public AudioClip mainMusic;
 
     [Header("Finish Settings")]
@@ -44,11 +46,14 @@ public class SpleefGameManager : MonoBehaviour
     private readonly List<PlayerInput> eliminationOrder = new List<PlayerInput>();
 
     private SwitchScene sceneSwitcher;
-    public string nextSceneName;
+    private AudioManager globalAudioManager;
+    private AudioSource audioSource;
 
     void Awake()
     {
+        globalAudioManager = FindAnyObjectByType<AudioManager>();
         sceneSwitcher = GetComponent<SwitchScene>();
+
         if (Instance == null)
             Instance = this;
         else
@@ -57,6 +62,8 @@ public class SpleefGameManager : MonoBehaviour
 
     void Start()
     {
+        globalAudioManager.StopMusic();
+
         tileDropCanvas?.gameObject.SetActive(false);
         countdownCanvas?.gameObject.SetActive(false);
         finishCanvas?.gameObject.SetActive(false);
@@ -78,10 +85,18 @@ public class SpleefGameManager : MonoBehaviour
     {
         var dev = pi.devices[0];
         var mat = PlayerManager.findColor(dev);
+        var matFace = PlayerManager.findFace(dev);
 
         var body = pi.GetComponentsInChildren<SkinnedMeshRenderer>()
                      .First(r => r.name == "Body.008");
         body.material = mat;
+
+        var face = pi.GetComponentsInChildren<SkinnedMeshRenderer>()
+                     .First(r => r.name == "Body.001");
+
+        Material newMat = new Material(face.material);
+        newMat.mainTexture = matFace;
+        face.material = newMat;
 
         Instance.players[pi] = new PlayerEntry { Device = dev, Color = mat.color };
 
@@ -90,7 +105,40 @@ public class SpleefGameManager : MonoBehaviour
 
     public void StartGame()
     {
+        StartCoroutine(ShowPlayerLabels());
         StartCoroutine(PreGameCountdown());
+    }
+
+    private IEnumerator ShowPlayerLabels()
+    {
+        // show
+        foreach (var kv in players)
+        {
+            var pi    = kv.Key;
+            var entry = kv.Value;
+
+            // find the pre-placed label under this player
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(true);
+
+            // tint the background
+            var img = labelGO.GetComponentInChildren<Image>();
+            img.color = entry.Color;
+
+            // set the name
+            var txt = labelGO.GetComponentInChildren<TMP_Text>();
+            txt.text = PlayerManager.playerStats[entry.Device].name;
+        }
+
+        // wait unscaled so it stays up during the countdown
+        yield return new WaitForSecondsRealtime(labelDisplayTime);
+
+        // hide
+        foreach (var kv in players)
+        {
+            var labelGO = kv.Key.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(false);
+        }
     }
 
     IEnumerator PreGameCountdown()
@@ -129,40 +177,6 @@ public class SpleefGameManager : MonoBehaviour
             pi.ActivateInput();
 
         StartCoroutine(EnableTileDropsAfterDelay());
-    }
-
-    private IEnumerator FadeOut(float duration)
-    {
-        float startVol = audioSource.volume;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            audioSource.volume = Mathf.Lerp(startVol, 0f, elapsed / duration);
-            yield return null;
-        }
-
-        audioSource.Stop();
-        audioSource.volume = startVol;
-    }
-
-    private IEnumerator FadeIn(float duration)
-    {
-        float targetVol = audioSource.volume;
-
-        audioSource.volume = 0f;
-        audioSource.Play();
-
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.unscaledDeltaTime;
-            audioSource.volume = Mathf.Lerp(0f, targetVol, elapsed / duration);
-            yield return null;
-        }
-
-        audioSource.volume = targetVol;
     }
 
     IEnumerator EnableTileDropsAfterDelay()
@@ -205,7 +219,11 @@ public class SpleefGameManager : MonoBehaviour
 
             int aliveCount = players.Count - eliminationOrder.Count;
             if (aliveCount <= 1)
+            {
+                tilesDroppingEnabled = false;
                 StartCoroutine(OnPlayerEliminatedRoutine());
+            }
+
         }
     }
 
@@ -226,6 +244,7 @@ public class SpleefGameManager : MonoBehaviour
             StartCoroutine(FadeOut(2f));
 
         yield return new WaitForSecondsRealtime(finishDisplayTime);
+        globalAudioManager.PlayMusic();
         sceneSwitcher.LoadNewScene(nextSceneName);
     }
 
@@ -248,5 +267,39 @@ public class SpleefGameManager : MonoBehaviour
             return entry.Color;
         Debug.LogWarning($"No entry found for {pi}; defaulting to white.");
         return Color.white;
+    }
+
+    private IEnumerator FadeOut(float duration)
+    {
+        float startVol = audioSource.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            audioSource.volume = Mathf.Lerp(startVol, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        audioSource.Stop();
+        audioSource.volume = startVol;
+    }
+
+    private IEnumerator FadeIn(float duration)
+    {
+        float targetVol = audioSource.volume;
+
+        audioSource.volume = 0f;
+        audioSource.Play();
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            audioSource.volume = Mathf.Lerp(0f, targetVol, elapsed / duration);
+            yield return null;
+        }
+
+        audioSource.volume = targetVol;
     }
 }
