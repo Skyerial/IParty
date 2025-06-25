@@ -40,9 +40,13 @@ public class FrameRateManager : MonoBehaviour
     {
         string name = scene.name;
 
-        if (name == "MainMenu" || name == "Lobby")
+        if (name == "MainMenu" || name == "WinScreen")
         {
             SetFrameRate(30);
+        }
+        else if (name == "Lobby" || name == "Game_Board" || name == "WinScreen3D")
+        {
+            SetFrameRate(60);
         }
         else
         {
