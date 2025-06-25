@@ -72,6 +72,7 @@ public class swipe_menu : MonoBehaviour {
 
         string cardName = transform.GetChild(chosenIndex).name.Replace(" clone", "").Trim();
         Debug.Log(cardName);
+        yield return new WaitForSeconds(2f);
         string selectedScene;
         switch (cardName)
         {
