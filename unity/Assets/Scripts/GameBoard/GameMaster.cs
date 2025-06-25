@@ -23,6 +23,8 @@ public class GameMaster : MonoBehaviour
     public List<GameObject> Slots = new List<GameObject>();
     public List<GameObject> Dice = new List<GameObject>();
     public TextMeshProUGUI numberText;
+    public TextMeshProUGUI turnText;
+
     public int press_random = 0;
     public Transform tileGroup;
     public GameObject Bird;
@@ -36,11 +38,12 @@ public class GameMaster : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        clearText();
+        clearDiceText();
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
         audioHandler.PlayRandomMiniGameTrack();
         EnablePlayerCamera(current_player);
+        updateTurnText();
     }
 
     // Update is called once per frame
@@ -49,6 +52,7 @@ public class GameMaster : MonoBehaviour
         if (current_player != change_player)
         {
             current_player = change_player;
+            updateTurnText();
             EnablePlayerCamera(current_player);
         }
 
@@ -56,11 +60,12 @@ public class GameMaster : MonoBehaviour
         {
             waitingForDice = true;
             EnableDiceCamera();
+            clearTurnText();
             StartCoroutine(RollDiceForPlayer()); // Replace random logic with dice roll
         }
         if (press_random == 2 && players[current_player].GetComponent<PlayerMovement>().increment == 0)
         {
-            clearText();
+            clearDiceText();
             change_player = (current_player + 1) % players.Count;
             EnablePlayerCamera(current_player);
             press_random = 0;
@@ -103,7 +108,7 @@ public class GameMaster : MonoBehaviour
             // Get the result and apply it
             int throwResult = dice.GetComponent<DiceThrow>().SideUp();
             totalAmount += throwResult;
-            updateText(throwResult.ToString());
+            updateDiceText(throwResult.ToString());
         }
 
         EnablePlayerCamera(current_player);
@@ -323,27 +328,20 @@ public class GameMaster : MonoBehaviour
         playerScript.makeFall();
         yield return new WaitForSeconds(3f);
     }
-
     private void finishGame(List<int> players, List<int> positions)
     {
         var paired = positions
             .Select((value, index) => new { Key = value, Value = players[index] })
-            .OrderByDescending(pair => pair.Key) // sort by positions values
+            .OrderBy(pair => pair.Key) // sort by positions values
             .ToList();
-
-        var ranking = positions
-        .Select((position, index) => new { Position = position, PlayerID = players[index] })
-        .OrderByDescending(pair => pair.Position) // Higher position = higher ranking
-        .ToList();
 
         // Extract the sorted values back
         positions = paired.Select(p => p.Key).ToList();
         players = paired.Select(p => p.Value).ToList();
-        List<int> rankedPlayerIDs = ranking.Select(p => p.PlayerID).ToList();
-        PlayerManager.instance.rankGameboard = rankedPlayerIDs;
         Debug.Log(positions);
         Debug.Log(players);
     }
+
     // Finds and stores the progressbars.
     private void activateProgressBar(InputDevice device)
     {
@@ -376,13 +374,24 @@ public class GameMaster : MonoBehaviour
         bar.value = position / (float)tileGroup.childCount;
     }
 
-    private void updateText(string result)
+    private void updateTurnText()
+    {
+        var device = players[current_player].GetComponent<PlayerInput>().devices[0];
+        turnText.text = PlayerManager.playerStats[device].name + "'s turn";
+    }
+
+    private void clearTurnText()
+    {
+        turnText.text = "";
+    }
+
+    private void updateDiceText(string result)
     {
         numberText.text += result;
         Slots[numberText.text.Count() - 1].gameObject.SetActive(true);
     }
 
-    private void clearText()
+    private void clearDiceText()
     {
         foreach (var slot in Slots) slot.gameObject.SetActive(false);
         numberText.text = "";
