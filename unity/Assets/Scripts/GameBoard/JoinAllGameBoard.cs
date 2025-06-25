@@ -21,7 +21,7 @@ public class JoinAllGameBoard : MonoBehaviour
                 if (playerInput != null)
                 {
                     gameMaster.RegisterPlayer(playerInput);
-                    // colorPlayer(playerInput);
+                    colorPlayer(playerInput);
                 }
                 else
                 {
@@ -31,21 +31,19 @@ public class JoinAllGameBoard : MonoBehaviour
         }
     }
 
-    // void colorPlayer(PlayerInput playerInput)
-    // {
-    //     Renderer[] renderers = playerInput.GetComponentsInChildren<Renderer>();
+    void colorPlayer(PlayerInput playerInput)
+    {
+        var body = playerInput.GetComponentsInChildren<SkinnedMeshRenderer>()
+                     .First(r => r.name == "Body");
+        
+        var face = playerInput.GetComponentsInChildren<SkinnedMeshRenderer>()
+                     .First(r => r.name == "Face");
+        
+        body.material = PlayerManager.findColor(playerInput.devices[0]);
 
-    //     foreach (Renderer renderer in renderers)
-    //     {
-    //         // Check each material in the renderer
-    //         foreach (Material mat in renderer.sharedMaterials)
-    //         {
-    //             if (mat == targetMaterial)
-    //             {
-    //                 InputDevice device = playerInput.devices[0];
-    //                 renderer.material = PlayerManager.findColor(device);
-    //             }
-    //         }
-    //     }
-    // }
+        Material newMat = new Material(face.material);
+        newMat.mainTexture = PlayerManager.findFace(playerInput.devices[0]);
+        face.material = newMat;
+    }
+
 }

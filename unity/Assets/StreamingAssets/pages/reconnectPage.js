@@ -15,24 +15,10 @@ export class ReconnectPage extends ViewRenderer {
     super("./views/reconnectView.html", container);
   }
 
-<<<<<<< Updated upstream
   /**
    * After the view loads, attaches a click handler to the reconnect button.
    * If the input is empty, shows an alert. Otherwise, sends a reconnect message.
    */
-  bindEvents() {
-    const inputField = document.querySelector(".reconnect-input");
-    document.querySelector(".reconnect").addEventListener("click", () => {
-      if (inputField.value.trim() === "") {
-        alert("Input field is empty!");
-        return;
-      }
-      const data = { type: "reconnect", code: inputField.value };
-      socketManager.send(data);
-    });
-  }
-}
-=======
     reconnectEvent() {
         let inputfield = document.querySelector(".reconnect-input");
         document.querySelector(".reconnect").addEventListener("click", async () => {
@@ -45,4 +31,3 @@ export class ReconnectPage extends ViewRenderer {
         });
     }
 }
->>>>>>> Stashed changes

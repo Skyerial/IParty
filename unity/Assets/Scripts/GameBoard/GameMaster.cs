@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
@@ -16,31 +17,30 @@ using UnityEngine.Rendering;
 
 public class GameMaster : MonoBehaviour
 {
-    public int current_player = -1;
-    public int change_player = 0;
-    public List<GameObject> players = new List<GameObject>();
+    public int current_player = 0;
+    public int change_player = 1;
+    private List<GameObject> players = new List<GameObject>();
+    public List<GameObject> Slots = new List<GameObject>();
     public List<GameObject> Dice = new List<GameObject>();
     public TextMeshProUGUI numberText;
     public int press_random = 0;
     public Transform tileGroup;
     public GameObject Bird;
-
     public GameObject minigameSelector;
+    public GameObject progressGroup;
     private swipe_menu menu;
-
-
     public bool numberShown = false;
     private bool waitingForDice = false;
     private Camera diceCam;
-    private Camera currentPlayerCam;
-
+    private Dictionary<int, Slider> progressBars = new Dictionary<int, Slider>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        clearText();
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
-        currentPlayerCam = players[current_player].GetComponentInChildren<Camera>(true);
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
         audioHandler.PlayRandomMiniGameTrack();
+        EnablePlayerCamera(current_player);
     }
 
     // Update is called once per frame
@@ -60,6 +60,7 @@ public class GameMaster : MonoBehaviour
         }
         if (press_random == 2 && players[current_player].GetComponent<PlayerMovement>().increment == 0)
         {
+            clearText();
             change_player = (current_player + 1) % players.Count;
             EnablePlayerCamera(current_player);
             press_random = 0;
@@ -67,7 +68,7 @@ public class GameMaster : MonoBehaviour
             // If the variabele = 0 after updating it means a full round has been played.
             if (change_player == 0)
             {
-                LoadRandomMinigame();
+                // LoadRandomMinigame();
             }
         }
     }
@@ -100,8 +101,9 @@ public class GameMaster : MonoBehaviour
             }
 
             // Get the result and apply it
-            totalAmount += dice.GetComponent<DiceThrow>().SideUp();
-            numberText.text = totalAmount.ToString();
+            int throwResult = dice.GetComponent<DiceThrow>().SideUp();
+            totalAmount += throwResult;
+            updateText(throwResult.ToString());
         }
 
         EnablePlayerCamera(current_player);
@@ -120,6 +122,7 @@ public class GameMaster : MonoBehaviour
         int index = PlayerManager.playerStats[device].playerID;
         Debug.Log(index);
         players.Insert(index, playerInput.gameObject);
+        activateProgressBar(device);
     }
 
     void LoadRandomMinigame()
@@ -197,11 +200,11 @@ public class GameMaster : MonoBehaviour
         for (int i = 0; i < steps; i++)
         {
             yield return StartCoroutine(MovePlayerToTileMarker(player, 1));
+            updateProgressBar();
         }
         yield return StartCoroutine(landedTileHandler(player));
-        press_random = 2;
-        waitingForDice = false;
     }
+
     private IEnumerator landedTileHandler(GameObject player)
     {
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
@@ -223,11 +226,15 @@ public class GameMaster : MonoBehaviour
         if (tileScript.tileType == 2)
         {
             yield return StartCoroutine(flyPlayer(player, player_nr));
+            updateProgressBar();
         }
         // else if (tileScript.tileType == 1)
         // {
         //     scarePlayer(player, player_nr);
         // }
+
+        press_random = 2;
+        waitingForDice = false;
     }
 
     private IEnumerator flyPlayer(GameObject player, int playerNr)
@@ -329,5 +336,49 @@ public class GameMaster : MonoBehaviour
         players = paired.Select(p => p.Value).ToList();
         Debug.Log(positions);
         Debug.Log(players);
+    }
+
+    // Finds and stores the progressbars.
+    private void activateProgressBar(InputDevice device)
+    {
+        int id = PlayerManager.playerStats[device].playerID;
+        int position = PlayerManager.playerStats[device].position;
+        Material playerColor = PlayerManager.findColor(device);
+        Transform barParent = progressGroup.transform.GetChild(id);
+
+        // Setting the player color
+        Debug.Log(barParent.name);
+        Slider bar = barParent.Find("Slider").GetComponent<Slider>();
+        Image handle = bar.transform.Find("Handle").GetComponent<Image>();
+        handle.color = playerColor.color;
+
+        // Adjusting the position
+        Debug.Log(position / (float)tileGroup.childCount);
+        bar.value = position / (float)tileGroup.childCount;
+
+        // Storing the bar for easier access
+        progressBars[id] = bar;
+        barParent.gameObject.SetActive(true);
+    }
+
+    // Uses the stored progress bars
+    private void updateProgressBar()
+    {
+        Slider bar = progressBars[current_player];
+        int position = players[current_player].GetComponent<PlayerMovement>().current_pos;
+        Debug.Log("The current position before updating is: " + position);
+        bar.value = position / (float)tileGroup.childCount;
+    }
+
+    private void updateText(string result)
+    {
+        numberText.text += result;
+        Slots[numberText.text.Count() - 1].gameObject.SetActive(true);
+    }
+
+    private void clearText()
+    {
+        foreach (var slot in Slots) slot.gameObject.SetActive(false);
+        numberText.text = "";
     }
 }
