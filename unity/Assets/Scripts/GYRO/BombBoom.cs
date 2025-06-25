@@ -53,6 +53,13 @@ public class BombGyro : MonoBehaviour
             Instantiate(boomTextEffect, effectSpawnPoint.position, Quaternion.identity);
 
         currentRoutine = StartCoroutine(MoveTo(downPosition));
+
+        ScoreDisplay score = transform.root.GetComponentInChildren<ScoreDisplay>();
+
+        if (score != null)
+        {
+            score.RemoveMoleHit();
+        }
     }
 
     private IEnumerator MoveTo(Vector3 target)

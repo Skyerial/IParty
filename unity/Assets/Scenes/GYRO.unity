@@ -2567,6 +2567,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 5301017381564912727, guid: d9dbabc3149e39c4aa4e3336e75f7575, type: 3}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!4 &1943609048 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1069750859216285700, guid: d10ec0a419c22f549a07836f3aacd289, type: 3}
