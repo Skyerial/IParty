@@ -16,6 +16,8 @@ public class PlayerManager : MonoBehaviour
      */
     public static List<PlayerStats> tempRanking = new();
 
+    public List<int> rankGameboard = new();
+
     /**
      * @brief Stores player-specific information.
      */

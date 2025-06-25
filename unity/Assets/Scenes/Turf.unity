@@ -634,7 +634,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 2
+  m_fontStyle: 3
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 2048
   m_textAlignment: 65535
@@ -1075,19 +1075,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6696bf950421d159d994c715523ccb85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  labelDisplayTime: 5
   playerUIPrefab: {fileID: 722224708655069218, guid: 8a891a02b0f9344ca9726bf3533c7050, type: 3}
   uiParent: {fileID: 1751397173}
   uiOffset: {x: 10, y: -10}
   countdownCanvas: {fileID: 131663174}
   countdownText: {fileID: 158986772}
   countdownStart: 3
-  matchDuration: 60
+  preGameAmbient: {fileID: 0}
+  fullCountdownClip: {fileID: 0}
+  matchDuration: 45
   nextSceneName: WinScreen
   matchTimerCanvas: {fileID: 1030505477}
   matchTimerText: {fileID: 1075431506}
+  mainMusic: {fileID: 8300000, guid: 82741f24e1188f846a458c8b076929e2, type: 3}
   finishCanvas: {fileID: 287564149}
   finishText: {fileID: 913695729}
   finishDisplayTime: 3
+  finishClip: {fileID: 0}
 --- !u!114 &450743376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1101,6 +1106,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 5301017381564912727, guid: d9dbabc3149e39c4aa4e3336e75f7575, type: 3}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!1001 &563624341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1675,7 +1685,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 2
+  m_fontStyle: 3
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 2048
   m_textAlignment: 65535
@@ -2285,7 +2295,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 2
+  m_fontStyle: 3
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 2048
   m_textAlignment: 65535

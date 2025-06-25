@@ -11,6 +11,9 @@ public class TurfGameManager : MonoBehaviour
 {
     public static TurfGameManager Instance { get; private set; }
 
+    [Header("Player Labels")]
+    public float labelDisplayTime  = 5f;
+
     [Header("UI Setup")]
     public GameObject playerUIPrefab;
     public RectTransform uiParent;
@@ -20,17 +23,21 @@ public class TurfGameManager : MonoBehaviour
     public Canvas countdownCanvas;
     public TMP_Text countdownText;
     public int countdownStart = 3;
+    public AudioClip preGameAmbient;
+    public AudioClip fullCountdownClip;
 
     [Header("Match Settings")]
     public float matchDuration = 60f;
     public string nextSceneName;
     public Canvas matchTimerCanvas;
     public TMP_Text matchTimerText;
+    public AudioClip mainMusic;
 
     [Header("Finish Settings")]
     public Canvas finishCanvas;
     public TMP_Text finishText;
     public float finishDisplayTime = 3f;
+    public AudioClip finishClip;
 
     class PlayerEntry
     {
@@ -42,13 +49,18 @@ public class TurfGameManager : MonoBehaviour
     }
     private readonly Dictionary<PlayerInput, PlayerEntry> players = new Dictionary<PlayerInput, PlayerEntry>();
 
+    private SwitchScene sceneSwitcher;
+    private AudioManager globalAudioManager;
+    private AudioSource audioSource;
+
     private TurfPaintableSurface[] allTiles;
     private int totalTiles = 0;
-    private SwitchScene sceneSwitcher;
 
     void Awake()
     {
+        globalAudioManager = FindAnyObjectByType<AudioManager>();
         sceneSwitcher = GetComponent<SwitchScene>();
+
         if (Instance == null)
             Instance = this;
         else
@@ -57,6 +69,8 @@ public class TurfGameManager : MonoBehaviour
 
     void Start()
     {
+        globalAudioManager?.StopMusic();
+
         allTiles = Object.FindObjectsByType<TurfPaintableSurface>(
             FindObjectsInactive.Exclude,
             FindObjectsSortMode.None
@@ -66,6 +80,17 @@ public class TurfGameManager : MonoBehaviour
         countdownCanvas?.gameObject.SetActive(false);
         matchTimerCanvas?.gameObject.SetActive(false);
         finishCanvas?.gameObject.SetActive(false);
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
+        if (preGameAmbient != null)
+        {
+            audioSource.clip = preGameAmbient;
+            audioSource.loop = true;
+            StartCoroutine(FadeIn(3f));
+        }
         ServerManager.SendtoAllSockets("turf");
     }
 
@@ -73,13 +98,59 @@ public class TurfGameManager : MonoBehaviour
     {
         var dev = pi.devices[0];
         var mat = PlayerManager.findColor(dev);
+        var matFace = PlayerManager.findFace(dev);
 
         var body = pi.GetComponentsInChildren<SkinnedMeshRenderer>()
                      .First(r => r.name == "Body.008");
         body.material = mat;
 
+        var face = pi.GetComponentsInChildren<SkinnedMeshRenderer>()
+                     .First(r => r.name == "Body.001");
+
+        Material newMat = new Material(face.material);
+        newMat.mainTexture = matFace;
+        face.material = newMat;
+
         pi.DeactivateInput();
         Instance.AddPlayer(pi, dev, mat.color);
+    }
+
+    public void StartGame()
+    {
+        StartCoroutine(ShowPlayerLabels());
+        StartCoroutine(PreGameCountdown());
+    }
+
+    private IEnumerator ShowPlayerLabels()
+    {
+        // show
+        foreach (var kv in players)
+        {
+            var pi    = kv.Key;
+            var entry = kv.Value;
+
+            // find the pre-placed label under this player
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(true);
+
+            // tint the background
+            var img = labelGO.GetComponentInChildren<Image>();
+            img.color = entry.TurfColor;
+
+            // set the name
+            var txt = labelGO.GetComponentInChildren<TMP_Text>();
+            txt.text = PlayerManager.playerStats[entry.Device].name;
+        }
+
+        // wait unscaled so it stays up during the countdown
+        yield return new WaitForSecondsRealtime(labelDisplayTime);
+
+        // hide
+        foreach (var kv in players)
+        {
+            var labelGO = kv.Key.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(false);
+        }
     }
 
     private void AddPlayer(PlayerInput pi, InputDevice dev, Color turfColor)
@@ -145,13 +216,21 @@ public class TurfGameManager : MonoBehaviour
         }
     }
 
-    public void StartGame()
-    {
-        StartCoroutine(PreGameCountdown());
-    }
-
     IEnumerator PreGameCountdown()
     {
+        if (preGameAmbient != null)
+            yield return StartCoroutine(FadeOut(1f));
+
+        if (mainMusic != null)
+        {
+            audioSource.clip = mainMusic;
+            audioSource.loop = true;
+            StartCoroutine(FadeIn(10f));
+        }
+
+        if (fullCountdownClip != null)
+            audioSource.PlayOneShot(fullCountdownClip);
+
         countdownCanvas?.gameObject.SetActive(true);
         Time.timeScale = 0f;
 
@@ -192,12 +271,19 @@ public class TurfGameManager : MonoBehaviour
         foreach (var pi in players.Keys)
             pi.DeactivateInput();
 
+        if (finishClip != null)
+            audioSource.PlayOneShot(finishClip);
+
         finishCanvas?.gameObject.SetActive(true);
         finishText.text = "Finish";
+
+        if (mainMusic != null)
+            StartCoroutine(FadeOut(2f));
 
         FinalizeRanking();
         yield return new WaitForSecondsRealtime(finishDisplayTime);
 
+        globalAudioManager?.PlayMusic();
         sceneSwitcher.LoadNewScene(nextSceneName);
     }
 
@@ -222,12 +308,46 @@ public class TurfGameManager : MonoBehaviour
         foreach (var device in sortedDevices)
             pm.tempRankAdd(device);
     }
-    
+
     public Color GetPlayerColor(PlayerInput pi)
     {
         if (players.TryGetValue(pi, out var entry))
             return entry.TurfColor;
         Debug.LogWarning($"No entry found for {pi}; defaulting to white.");
         return Color.white;
+    }
+
+    private IEnumerator FadeOut(float duration)
+    {
+        float startVol = audioSource.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            audioSource.volume = Mathf.Lerp(startVol, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        audioSource.Stop();
+        audioSource.volume = startVol;
+    }
+
+    private IEnumerator FadeIn(float duration)
+    {
+        float targetVol = audioSource.volume;
+
+        audioSource.volume = 0f;
+        audioSource.Play();
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            audioSource.volume = Mathf.Lerp(0f, targetVol, elapsed / duration);
+            yield return null;
+        }
+
+        audioSource.volume = targetVol;
     }
 }
