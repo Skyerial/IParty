@@ -1,8 +1,3 @@
-/**
- * @file SocketManager.js
- * @brief WebSocket management and controller handling for game clients
- */
-
 import { DpadController } from "../controllers/dpadController.js";
 import { GyroController } from "../controllers/gyroController.js";
 import { HotPotatoController } from "../controllers/hotPotatoController.js";
