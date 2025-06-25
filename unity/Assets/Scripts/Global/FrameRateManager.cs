@@ -44,7 +44,7 @@ public class FrameRateManager : MonoBehaviour
         {
             SetFrameRate(30);
         }
-        else if (name == "Lobby" || name == "Game_Board" || name == "WinScreen3D")
+        else if (name == "Lobby" || name == "WinScreen3D")
         {
             SetFrameRate(60);
         }
