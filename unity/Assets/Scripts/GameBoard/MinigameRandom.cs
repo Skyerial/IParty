@@ -85,7 +85,9 @@ public class swipe_menu : MonoBehaviour {
             default: selectedScene = "MainMenu"; break;
         }
 
-        SceneManager.LoadScene(selectedScene);
+        PlayerManager.changeCurrentMinigame(selectedScene);
+
+        SceneManager.LoadScene("MinigameStart");
 
         yield return new WaitForSeconds(2f);
         gameObject.SetActive(false);

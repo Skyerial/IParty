@@ -1,0 +1,8 @@
+Watch your step... or fall into the lava!
+Run around the arena, but be careful — every tile you step on falls away, leaving a trail behind you!
+Stay on solid ground while dodging holes, opponents and your own footsteps.
+Tiles respawn after a while, but don’t count on them being there when you need them!
+
+Below you: lava.
+Around you: chaos.
+Last player standing wins!
