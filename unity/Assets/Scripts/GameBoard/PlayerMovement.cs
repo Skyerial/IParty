@@ -82,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator jump(Vector3 start, Vector3 end)
     {
         animator.SetTrigger("Jump");
-        yield return StartCoroutine(JumpArc(transform, start, end, 1.0f, 3.0f));
+        yield return StartCoroutine(JumpArc(transform, start, end, 0.5f, 1.5f));
     }
 
     public IEnumerator RotateToTarget(Quaternion targetRotation, float duration)
