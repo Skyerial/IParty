@@ -5,8 +5,6 @@ public class TM_MusicController : MonoBehaviour
 {
     // AudioSources (game object with audio source component) 
     public AudioSource sfxSource;
-    public AudioSource bgmSource;
-    public AudioClip bgmTypingGame;
     public AudioClip correctWordSFX;
     public AudioClip finishSFX;
     public AudioClip endGameSFX;
@@ -24,48 +22,6 @@ public class TM_MusicController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    public void FadeInBGM(float duration)
-    {
-        StartCoroutine(FadeInBGMCoroutine(duration));
-    }
-
-    public void FadeOutBGM(float duration)
-    {
-        StartCoroutine(FadeOutBGMCoroutine(duration));
-    }
-
-    private IEnumerator FadeInBGMCoroutine(float duration)
-    {
-        bgmSource.volume = 0f;
-        bgmSource.clip = bgmTypingGame;
-        bgmSource.loop = true;
-        bgmSource.Play();
-
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            bgmSource.volume = Mathf.Clamp01(elapsed / duration);
-            yield return null;
-        }
-    }
-
-    private IEnumerator FadeOutBGMCoroutine(float duration)
-    {
-        float startVolume = bgmSource.volume;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            bgmSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
-            yield return null;
-        }
-
-        bgmSource.Stop();
-        bgmSource.volume = startVolume; // reset for next play
     }
 
     // Method to play SFX

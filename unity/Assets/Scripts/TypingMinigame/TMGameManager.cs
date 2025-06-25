@@ -48,11 +48,10 @@ public class TMGameManager : MonoBehaviour
         gameStarted = true;
         Debug.Log("Game started!");
 
+        AudioManager.Instance.PlayRandomMiniGameTrack();
         // playerControllers = new Dictionary<string, PlayerTypingController>();
         // playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
         // playerInputs = new List<PlayerInput>();
-
-        TM_MusicController.Instance.FadeInBGM(2f); // fade in over 2 seconds
 
         // AttachMobilePlayer();
     }
@@ -212,10 +211,7 @@ public class TMGameManager : MonoBehaviour
 
     private IEnumerator HandleEndGameSequence()
     {
-        TM_MusicController.Instance.FadeOutBGM(1f);
         yield return new WaitForSeconds(1f); // Wait for fade out to finish
-
-        TM_MusicController.Instance.PlayEndGameSFX();
 
         // TODO: Add win screen or restart logic
         PlayerManager pm = FindFirstObjectByType<PlayerManager>();
