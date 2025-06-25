@@ -305,11 +305,15 @@ public class GameMaster : MonoBehaviour
         PlayerMovement playerScript = player.GetComponent<PlayerMovement>();
         yield return StartCoroutine(playerScript.rotate(middle, end));
 
-        Vector3 offset = new Vector3(0, 15, -20); // e.g., 2 units above the player
-        Vector3 start = player.transform.position + offset;
-        GameObject bird = Instantiate(Bird, player.transform);
-        bird.transform.localPosition = new Vector3(0, 15, -20);  // local offset behind player
-        bird.transform.localRotation = player.transform.rotation;
+        Vector3 direction = end - middle;
+        direction.y = 0f;
+        Vector3 start = direction.normalized * -20f;
+        start.y = 15;
+        start = player.transform.position + start;
+        GameObject bird = Instantiate(Bird);
+        bird.transform.position = start;  // local offset behind player
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        bird.transform.localRotation = targetRotation;
 
         for (float t = 0; t < 1; t += Time.deltaTime / arcDuration)
         {

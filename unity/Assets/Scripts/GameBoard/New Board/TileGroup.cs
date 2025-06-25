@@ -6,7 +6,7 @@ public class TileGroupExample : MonoBehaviour
     public bool autoLink = true;
     public Material blue_rock;
     public Material basic_rock;
-    public Material red_rock;
+    public Material gold_rock;
     private void OnValidate()
     {
         if (autoLink)
@@ -26,9 +26,9 @@ public class TileGroupExample : MonoBehaviour
             {
                 child.GetComponent<Renderer>().material = blue_rock;
             }
-            else if (tileScript.tileType == 1)
+            else if (tileScript.tileType == 3)
             {
-                child.GetComponent<Renderer>().material = red_rock;
+                child.GetComponent<Renderer>().material = gold_rock;
             }
             else
             {
