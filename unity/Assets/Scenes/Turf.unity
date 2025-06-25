@@ -542,7 +542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPoint: {fileID: 1748799397}
   targetPoint: {fileID: 148290432}
-  moveDuration: 4
+  moveDuration: 7
   arcHeight: 3
 --- !u!1 &158986770
 GameObject:
@@ -1017,7 +1017,7 @@ MonoBehaviour:
   countdownCanvas: {fileID: 131663174}
   countdownText: {fileID: 158986772}
   countdownStart: 3
-  preGameAmbient: {fileID: 0}
+  preGameAmbient: {fileID: 8300000, guid: 30619ccb615a384378119d9392e46cfe, type: 3}
   fullCountdownClip: {fileID: 0}
   matchDuration: 45
   nextSceneName: WinScreen

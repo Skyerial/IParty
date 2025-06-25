@@ -552,7 +552,7 @@ public class ServerManager : MonoBehaviour
                 };
 
                 string json = JsonUtility.ToJson(messageObject);
-                socket.Send(json);
+                await socket.Send(json);
             }
             else
             {

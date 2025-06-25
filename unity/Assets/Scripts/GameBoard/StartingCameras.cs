@@ -13,7 +13,7 @@ public class StartingCameras : MonoBehaviour
     public Transform centerPoint; // The point to look at (e.g., player or scene center)
     public float duration = 10f;    // Time to complete one full circle
     // public float height = 500f;
-    public GameObject camera;
+    public new GameObject camera;
     public float startRadius = 100f;
     public float endRadius = 2f;
     public float startHeight = 50f;

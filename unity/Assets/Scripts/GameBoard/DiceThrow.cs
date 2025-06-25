@@ -40,8 +40,6 @@ public class DiceThrow : MonoBehaviour
      */
     public bool debug = false;
 
-    private bool done = false;
-
     private float throwTime;
 
     /**
@@ -93,7 +91,6 @@ public class DiceThrow : MonoBehaviour
         _rigidbody.AddTorque(torque, ForceMode.Impulse);
 
         throwTime = Time.time;
-        done = true;
     }
 
     /**

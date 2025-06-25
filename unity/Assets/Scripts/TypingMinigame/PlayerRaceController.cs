@@ -9,7 +9,6 @@ public class PlayerRaceController : MonoBehaviour
     private float stepDistance;
     private int wordsTyped = 0;
     private Animator animator;
-    private bool gameEnd = false;
 
     // private void Start()
     // {
