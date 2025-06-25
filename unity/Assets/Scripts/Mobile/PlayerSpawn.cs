@@ -52,12 +52,12 @@ public class PlayerSpawn : MonoBehaviour
 
         i++;
     }
-        /**
-     * @brief Initializes the player when they join the game. Assigns the appropriate body material, face texture,
-     *        and instantiates a nameboard displaying the player's name. Customizes appearance based on the player's input device.
-     * @param playerInput The PlayerInput component associated with the joined player.
-     * @return void
-     */
+    /**
+ * @brief Initializes the player when they join the game. Assigns the appropriate body material, face texture,
+ *        and instantiates a nameboard displaying the player's name. Customizes appearance based on the player's input device.
+ * @param playerInput The PlayerInput component associated with the joined player.
+ * @return void
+ */
     private void InitPlayer(PlayerInput playerInput)
     {
         InputDevice device = playerInput.devices.Count > 0 ? playerInput.devices[0] : null;
@@ -73,7 +73,8 @@ public class PlayerSpawn : MonoBehaviour
         Transform face = playerInput.transform.Find("Face");
         if (face != null && face.TryGetComponent(out SkinnedMeshRenderer renderer_face))
         {
-            Material newMat = new Material(renderer_face.material);
+            Material newMat = new Material(renderer_face.sharedMaterial);
+
             Texture2D faceTexture = (device != null) ? PlayerManager.findFace(device) : null;
 
             if (faceTexture != null && faceTexture.width > 2)
@@ -87,6 +88,7 @@ public class PlayerSpawn : MonoBehaviour
 
             renderer_face.material = newMat;
         }
+
 
         // Instantiate nameboard with player name
         if (nameboardPrefab != null && device != null && PlayerManager.playerStats.ContainsKey(device))
