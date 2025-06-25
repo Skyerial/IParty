@@ -101,12 +101,16 @@ public class SetGameManager : MonoBehaviour
 
         if (!playerSelection.ContainsKey(player)) playerSelection[player] = new List<CardData>();
 
-        GameObject selectorObj = Instantiate(selectorPrefab);
+        Canvas mainCanvas = FindObjectOfType<Canvas>();
+        GameObject selectorObj = Instantiate(selectorPrefab, mainCanvas.transform);
         SelectorScript selector = selectorObj.GetComponent<SelectorScript>();
         selector.playerInput = player;
+        var device = selector.playerInput.devices[0];
+        selector.SetColor(PlayerManager.findColor(device).color);
     }
 
     public static void EndGame() {
         Debug.Log("FINISHED GAME");
+
     }
 }

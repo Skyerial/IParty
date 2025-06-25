@@ -28,12 +28,14 @@ public class SelectorScript : MonoBehaviour
         selectAction = playerInput.actions.FindAction("Jump");
         selectAction.Enable();
 
-        var device = playerInput.devices[0];
-        img.color = PlayerManager.findColor(device).color;
-
         gridPos = Vector2Int.zero;
         Transform card = GridScript.gridScript.transform.GetChild(0);
         transform.position = card.position;
+    }
+
+    public void SetColor(Color c)
+    {
+        img.color = c;
     }
 
     void Update()

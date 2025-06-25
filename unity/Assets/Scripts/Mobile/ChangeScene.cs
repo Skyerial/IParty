@@ -42,6 +42,9 @@ public class ChangeScene : MonoBehaviour
             case 9:
                 level = "NewBoard";
                 break;
+            case 10:
+                level = "SetGame";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);
@@ -69,5 +72,5 @@ public class ChangeScene : MonoBehaviour
         Debug.Log("Test data send. SINGLE BUTTON");
         ServerManager.SendtoAllSockets("one-button");
     }
-    
+
 }

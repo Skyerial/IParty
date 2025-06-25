@@ -64,21 +64,27 @@ public class GridScript : MonoBehaviour {
     // adding a point to the score when it is valid, and removing the cards from the dealtCards.
     // It clears the selectedCard list whenever it reaches 3 elements.
     public static void CardSelected(SetCard selected, PlayerInput player) {
-        Debug.Log("Selected a Card");
         CardData selectedCard = selected.cardData;
         if (SetGameManager.playerSelection[player].Contains(selectedCard)) {
+            Debug.Log("Unselected a Card");
             SetGameManager.playerSelection[player].Remove(selectedCard);
         } else {
+            Debug.Log("Selected a Card");
             SetGameManager.playerSelection[player].Add(selectedCard);
             if (SetGameManager.playerSelection[player].Count == 3) {
                 if (SetGameManager.isSet(SetGameManager.playerSelection[player][0],
                                          SetGameManager.playerSelection[player][1],
                                          SetGameManager.playerSelection[player][2]))
                 {
+                    Debug.Log("YOU FOUND A SET!!!");
                     SetGameManager.scores[player]++;
                     SetGameManager.dealtCards.Remove(SetGameManager.playerSelection[player][0]);
                     SetGameManager.dealtCards.Remove(SetGameManager.playerSelection[player][1]);
                     SetGameManager.dealtCards.Remove(SetGameManager.playerSelection[player][2]);
+                }
+                else
+                {
+                    Debug.Log("You didn't find a set.");
                 }
 
                 foreach (PlayerInput p in SetGameManager.gamePlayers) {
