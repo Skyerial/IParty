@@ -79,20 +79,20 @@ public class PlayerSpawn : MonoBehaviour
         Transform face = playerInput.transform.Find("Face");
         if (face != null && face.TryGetComponent(out SkinnedMeshRenderer renderer_face))
         {
-            Material newMat = new Material(renderer_face.sharedMaterial);
-
             Texture2D faceTexture = (device != null) ? PlayerManager.findFace(device) : null;
 
             if (faceTexture != null && faceTexture.width > 2)
             {
+                // Only replace material if a valid custom face texture is found
+                Material newMat = new Material(renderer_face.sharedMaterial);
                 newMat.mainTexture = faceTexture;
+                renderer_face.material = newMat;
             }
             else
             {
-                newMat.mainTexture = Texture2D.blackTexture;
+                // Keep existing material (don't overwrite)
+                Debug.Log("[Face Debug] No valid face texture found; keeping default material.");
             }
-
-            renderer_face.material = newMat;
         }
 
 
