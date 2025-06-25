@@ -450,6 +450,27 @@ public class ServerManager : MonoBehaviour
         SendMessages(json);
     }
 
+    public void CloseConnections()
+    {
+        Debug.Log("[ServerManager] Closing WebSocket connections and clearing state...");
+
+        if (useRemote)
+        {
+            httpTunnel?.Close();
+            wsTunnel?.Close();
+        }
+        else
+        {
+            wsServer?.Dispose();
+            httpsThread?.Abort();
+            tcpListener?.Stop();
+        }
+
+        allControllers.Clear();
+        allSockets.Clear();
+        takenColors.Clear();
+    }
+
     public static void SendMessages(string json)
     {
         if (instance.useRemote)

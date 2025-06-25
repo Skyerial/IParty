@@ -42,22 +42,28 @@ public class PlayerSpawn : MonoBehaviour
         Debug.Log($"Spawning player at: {spawnPoints[spawnIndex].name}");
 
         string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "Lobby" || currentScene == "Winscreen3d")
+        if (currentScene == "Lobby" || currentScene == "WinScreen3D")
         {
-            spawnPoints[spawnIndex].GetChild(0).GetChild(0).gameObject.SetActive(false);
             InitPlayer(playerInput);
-            playerInput.transform.localScale = Vector3.one * 2f;
             playerInput.DeactivateInput();
+            if (currentScene == "WinScreen3D")
+            {
+                playerInput.transform.localScale = Vector3.one * 1.5f;
+            }
+            else
+            {
+                spawnPoints[spawnIndex].GetChild(0).GetChild(0).gameObject.SetActive(false);
+                playerInput.transform.localScale = Vector3.one * 2f;
+            }
         }
-
         i++;
     }
     /**
- * @brief Initializes the player when they join the game. Assigns the appropriate body material, face texture,
- *        and instantiates a nameboard displaying the player's name. Customizes appearance based on the player's input device.
- * @param playerInput The PlayerInput component associated with the joined player.
- * @return void
- */
+     * @brief Initializes the player when they join the game. Assigns the appropriate body material, face texture,
+     *        and instantiates a nameboard displaying the player's name. Customizes appearance based on the player's input device.
+     * @param playerInput The PlayerInput component associated with the joined player.
+     * @return void
+     */
     private void InitPlayer(PlayerInput playerInput)
     {
         InputDevice device = playerInput.devices.Count > 0 ? playerInput.devices[0] : null;
@@ -73,20 +79,20 @@ public class PlayerSpawn : MonoBehaviour
         Transform face = playerInput.transform.Find("Face");
         if (face != null && face.TryGetComponent(out SkinnedMeshRenderer renderer_face))
         {
-            Material newMat = new Material(renderer_face.sharedMaterial);
-
             Texture2D faceTexture = (device != null) ? PlayerManager.findFace(device) : null;
 
             if (faceTexture != null && faceTexture.width > 2)
             {
+                // Only replace material if a valid custom face texture is found
+                Material newMat = new Material(renderer_face.sharedMaterial);
                 newMat.mainTexture = faceTexture;
+                renderer_face.material = newMat;
             }
             else
             {
-                newMat.mainTexture = Texture2D.blackTexture;
+                // Keep existing material (don't overwrite)
+                Debug.Log("[Face Debug] No valid face texture found; keeping default material.");
             }
-
-            renderer_face.material = newMat;
         }
 
 

@@ -75,6 +75,7 @@ public class PlayerManager : MonoBehaviour
             face = face
         };
 
+        // instance.rankGameboard.Add(playerStats[device].playerID);
         currentPlayers++;
     }
 
