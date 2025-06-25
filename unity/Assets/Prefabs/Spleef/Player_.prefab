@@ -921,7 +921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40b17153888c653cda0f76f559904b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 6
   sprintMultiplier: 1.5
   sprintRampUpTime: 2
   jumpForce: 7
@@ -934,9 +934,9 @@ MonoBehaviour:
   dashDuration: 0.2
   upwardDashFactor: 0.3
   maxStamina: 100
-  staminaDrainRate: 25
+  staminaDrainRate: 15
   staminaRegenRate: 30
-  dashStaminaCost: 20
+  dashStaminaCost: 40
   staminaRegenDelay: 1
   staminaBarFillImage: {fileID: 4892418078010521625}
 --- !u!95 &6817065335139332429

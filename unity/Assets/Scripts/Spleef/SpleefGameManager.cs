@@ -105,35 +105,28 @@ public class SpleefGameManager : MonoBehaviour
 
     public void StartGame()
     {
-        StartCoroutine(ShowPlayerLabels());
         StartCoroutine(PreGameCountdown());
     }
 
-    private IEnumerator ShowPlayerLabels()
+    public IEnumerator ShowPlayerLabels()
     {
-        // show
         foreach (var kv in players)
         {
             var pi    = kv.Key;
             var entry = kv.Value;
 
-            // find the pre-placed label under this player
             var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
             labelGO.SetActive(true);
 
-            // tint the background
             var img = labelGO.GetComponentInChildren<Image>();
             img.color = entry.Color;
 
-            // set the name
             var txt = labelGO.GetComponentInChildren<TMP_Text>();
             txt.text = PlayerManager.playerStats[entry.Device].name;
         }
 
-        // wait unscaled so it stays up during the countdown
         yield return new WaitForSecondsRealtime(labelDisplayTime);
 
-        // hide
         foreach (var kv in players)
         {
             var labelGO = kv.Key.transform.Find("PlayerLabelCanvas").gameObject;

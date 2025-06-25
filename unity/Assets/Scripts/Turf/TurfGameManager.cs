@@ -115,44 +115,6 @@ public class TurfGameManager : MonoBehaviour
         Instance.AddPlayer(pi, dev, mat.color);
     }
 
-    public void StartGame()
-    {
-        StartCoroutine(ShowPlayerLabels());
-        StartCoroutine(PreGameCountdown());
-    }
-
-    private IEnumerator ShowPlayerLabels()
-    {
-        // show
-        foreach (var kv in players)
-        {
-            var pi    = kv.Key;
-            var entry = kv.Value;
-
-            // find the pre-placed label under this player
-            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
-            labelGO.SetActive(true);
-
-            // tint the background
-            var img = labelGO.GetComponentInChildren<Image>();
-            img.color = entry.TurfColor;
-
-            // set the name
-            var txt = labelGO.GetComponentInChildren<TMP_Text>();
-            txt.text = PlayerManager.playerStats[entry.Device].name;
-        }
-
-        // wait unscaled so it stays up during the countdown
-        yield return new WaitForSecondsRealtime(labelDisplayTime);
-
-        // hide
-        foreach (var kv in players)
-        {
-            var labelGO = kv.Key.transform.Find("PlayerLabelCanvas").gameObject;
-            labelGO.SetActive(false);
-        }
-    }
-
     private void AddPlayer(PlayerInput pi, InputDevice dev, Color turfColor)
     {
         // Instantiate UI
@@ -180,6 +142,37 @@ public class TurfGameManager : MonoBehaviour
             PercentText = txt,
             Percentage = 0f
         };
+    }
+
+    public void StartGame()
+    {
+        StartCoroutine(PreGameCountdown());
+    }
+
+    public IEnumerator ShowPlayerLabels()
+    {
+        foreach (var kv in players)
+        {
+            var pi    = kv.Key;
+            var entry = kv.Value;
+
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(true);
+
+            var img = labelGO.GetComponentInChildren<Image>();
+            img.color = entry.TurfColor;
+
+            var txt = labelGO.GetComponentInChildren<TMP_Text>();
+            txt.text = PlayerManager.playerStats[entry.Device].name;
+        }
+
+        yield return new WaitForSecondsRealtime(labelDisplayTime);
+
+        foreach (var kv in players)
+        {
+            var labelGO = kv.Key.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(false);
+        }
     }
 
     void Update()

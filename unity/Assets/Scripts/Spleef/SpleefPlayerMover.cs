@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;    // Needed for the stamina UI Image
-using UnityEngine.InputSystem;  // Added for PlayerInput and InputAction
+using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
@@ -65,7 +65,6 @@ public class SpleefPlayerMover : MonoBehaviour
     private Rigidbody rb;
     private CapsuleCollider capsule;
 
-    // INPUT via PlayerInput:
     private PlayerInput    playerInput;
     private InputAction    moveAction;
     private InputAction    jumpAction;
@@ -75,19 +74,16 @@ public class SpleefPlayerMover : MonoBehaviour
     private bool    jumpPressed   = false;
     private bool    sprintPressed = false;
 
-    // Dash state:
     private bool    isDashing     = false;
     private float   dashTimeLeft  = 0f;
     private Vector3 dashDirection = Vector3.zero;
     private bool    hasDashed     = false;
 
-    // Stamina state:
     private float currentStamina;
     private float regenDelayTimer = 0f;
     private bool  isSprintingAllowed => currentStamina > 0f;
     private bool  canDash          => currentStamina >= dashStaminaCost;
 
-    // Sprint acceleration state:
     private float currentSprintMultiplier = 1f;
     private float sprintAccelerationRate;
 
