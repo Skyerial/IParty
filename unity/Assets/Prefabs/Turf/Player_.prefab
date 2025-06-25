@@ -389,6 +389,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerLabelCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8127902135261528898, guid: b375dc519f80781d6b4182921c614a15, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -417,7 +421,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 10.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -425,7 +429,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalRotation.x
@@ -433,7 +437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalRotation.z
@@ -445,7 +449,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -553,7 +557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5ef94e446c7d5541e84714c2858eeb0f, type: 3}
       propertyPath: m_TagString
@@ -856,8 +860,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e591bb047f6a4493b8a6b19a2d687f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6
-  jumpForce: 12
+  moveSpeed: 8
+  jumpForce: 8
   rotationSpeed: 360
   groundLayerMask:
     serializedVersion: 2
@@ -890,6 +894,6 @@ MonoBehaviour:
   turfCheckDistance: 1
   shootSound: {fileID: 0}
   maxAmmo: 100
-  ammoRegenRate: 60
+  ammoRegenRate: 40
   turfRegenPenalty: 0.4
   ammoBarFill: {fileID: 4425303499918052300}
