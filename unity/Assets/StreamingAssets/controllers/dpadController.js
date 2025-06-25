@@ -12,7 +12,6 @@ export class DpadController {
    * @param {HTMLElement} container - The DOM element to host the D-pad and buttons.
    */
   constructor(container) {
-    /** @private @type {HTMLElement} */
     this.container = container;
   }
 

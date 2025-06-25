@@ -7,6 +7,7 @@ import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
 import { CustomJoystickController } from "../controllers/customJoystickController.js";
 import { TankJoystickController } from "../controllers/tankJoystickController.js";
+import { initializeController } from "../main.js";
 
 /**
  * @brief Mapping of controller types to their corresponding controller classes
@@ -15,7 +16,6 @@ import { TankJoystickController } from "../controllers/tankJoystickController.js
 const CONTROLLER_MAP = {
   "dpad-preset": DpadController,
   "joystick-preset": JoystickController,
-  "text-preset": TextController,
   "one-button": OneButton,
   "turf": CustomJoystickController,
   "spleef": CustomJoystickController,
@@ -129,9 +129,11 @@ export class SocketManager {
         jsonButton: button,
       }));
 
-      new HotPotatoController(root, list).init();
+      initializeController(HotPotatoController, root, list);
+    } else if (controller == "text-preset") {
+      initializeController(TextController, root, data.words);
     } else if (CONTROLLER_MAP[controller]) {
-      new CONTROLLER_MAP[controller](root).init();
+      initializeController(CONTROLLER_MAP[controller], root);
     } else {
       console.warn(`Unknown controller type: ${controller}`);
     }
@@ -153,13 +155,13 @@ export class SocketManager {
         break;
       case "reconnect-status":
         data.approved
-          ? new JoystickController(root).init()
+          ? initializeController(JoystickController, root)
           : alert("Player not found, check the code.");
         break;
       case "character-status":
         if (data.approved) {
           this.setClientName(data.name);
-          new JoystickController(root).init();
+          initializeController(JoystickController, root);
         } else {
           alert("Color taken, choose another.");
         }

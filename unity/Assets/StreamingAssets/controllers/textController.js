@@ -10,8 +10,9 @@ export class TextController {
   /**
    * @param {HTMLElement} container - The element where the controller view will be rendered.
    */
-  constructor(container) {
+  constructor(container, words) {
     this.container = container;
+    this.words = words;
   }
 
   /**
@@ -21,6 +22,6 @@ export class TextController {
   async init() {
     const layout = new LayoutManager(this.container, false);
     await layout.init();
-    await layout.addText();
+    await layout.addText(this.words);
   }
 }

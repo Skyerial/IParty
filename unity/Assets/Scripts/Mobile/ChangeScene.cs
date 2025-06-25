@@ -22,7 +22,6 @@ public class ChangeScene : MonoBehaviour
                 break;
             case 3:
                 level = "TypingMinigame";
-                SendTextBox();
                 break;
             case 4:
                 level = "Game_Board";
@@ -69,5 +68,5 @@ public class ChangeScene : MonoBehaviour
         Debug.Log("Test data send. SINGLE BUTTON");
         ServerManager.SendtoAllSockets("one-button");
     }
-    
+
 }
