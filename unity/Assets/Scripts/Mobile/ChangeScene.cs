@@ -42,6 +42,9 @@ public class ChangeScene : MonoBehaviour
             case 9:
                 level = "NewBoard";
                 break;
+            case 10:
+                level = "Winscreen3D";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);

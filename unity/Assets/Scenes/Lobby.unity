@@ -1601,7 +1601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37e466b8d1311219a54e9485367e8d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDebugButton: 0
+  enableDebugButton: 1
   buttonPosition: {x: -100, y: -50}
   buttonSize: {x: 180, y: 40}
   sandboxSceneName: MobileSandbox
