@@ -332,12 +332,19 @@ public class GameMaster : MonoBehaviour
     {
         var paired = positions
             .Select((value, index) => new { Key = value, Value = players[index] })
-            .OrderBy(pair => pair.Key) // sort by positions values
+            .OrderByDescending(pair => pair.Key) 
             .ToList();
+
+        var ranking = positions
+        .Select((position, index) => new { Position = position, PlayerID = players[index] })
+        .OrderByDescending(pair => pair.Position) 
+        .ToList();
 
         // Extract the sorted values back
         positions = paired.Select(p => p.Key).ToList();
         players = paired.Select(p => p.Value).ToList();
+        List<int> rankedPlayerIDs = ranking.Select(p => p.PlayerID).ToList();
+        PlayerManager.instance.rankGameboard = rankedPlayerIDs;
         Debug.Log(positions);
         Debug.Log(players);
     }
