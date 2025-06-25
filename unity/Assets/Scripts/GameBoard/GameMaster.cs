@@ -32,6 +32,7 @@ public class GameMaster : MonoBehaviour
     public GameObject progressGroup;
     private swipe_menu menu;
     public bool numberShown = false;
+    public GameObject startingCam;
     private bool waitingForDice = false;
     private Camera diceCam;
     private Dictionary<int, Slider> progressBars = new Dictionary<int, Slider>();
@@ -40,8 +41,15 @@ public class GameMaster : MonoBehaviour
     {
         clearDiceText();
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
+        GameObject.Find("DiceCamera").SetActive(false);
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
         audioHandler.PlayRandomMiniGameTrack();
+        StartingCameras sc = startingCam.GetComponent<StartingCameras>();
+        StartCoroutine(sc.SpiralCamera(afterCamera));
+    }
+
+    void afterCamera()
+    {
         EnablePlayerCamera(current_player);
         updateTurnText();
     }
@@ -332,12 +340,12 @@ public class GameMaster : MonoBehaviour
     {
         var paired = positions
             .Select((value, index) => new { Key = value, Value = players[index] })
-            .OrderByDescending(pair => pair.Key) 
+            .OrderByDescending(pair => pair.Key)
             .ToList();
 
         var ranking = positions
         .Select((position, index) => new { Position = position, PlayerID = players[index] })
-        .OrderByDescending(pair => pair.Position) 
+        .OrderByDescending(pair => pair.Position)
         .ToList();
 
         // Extract the sorted values back
