@@ -73,7 +73,7 @@ public class Descr_Contr : MonoBehaviour
     {
         if (isSelected)
         {
-            // loadText(minigame);
+            loadText(minigame);
             SetImage(minigame);
         }
     }
