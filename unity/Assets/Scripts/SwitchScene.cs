@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using UnityEngine.InputSystem;
+using System.Linq;
 
 public class SwitchScene : MonoBehaviour
 {
@@ -61,6 +64,30 @@ public class SwitchScene : MonoBehaviour
     {
         Debug.Log("Loading scene: " + sceneName);
 
+        if (sceneName == "MainMenu")
+        {
+            // --- Disconnect networking ---
+            var serverManager = Object.FindFirstObjectByType<ServerManager>();
+            if (serverManager != null)
+            {
+                serverManager.CloseConnections();
+                Destroy(serverManager.gameObject);
+            }
+
+            // --- Clean up players ---
+            var inputManager = Object.FindFirstObjectByType<PlayerInputManager>();
+            if (inputManager != null)
+            {
+                inputManager.DisableJoining();
+            }
+
+            foreach (var player in PlayerInput.all.ToList()) // Make a copy to safely remove
+            {
+                Destroy(player.gameObject);
+            }
+        }
+
+        // --- Do the scene transition ---
         if (fader != null)
         {
             fader.gameObject.SetActive(true);
@@ -74,6 +101,7 @@ public class SwitchScene : MonoBehaviour
             SceneManager.LoadScene(sceneName);
         }
     }
+
 
     public void LoadSceneAdditive(string sceneName)
     {
