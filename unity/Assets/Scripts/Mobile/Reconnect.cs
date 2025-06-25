@@ -15,6 +15,11 @@ public class Reconnect : MonoBehaviour
     public Queue<(string, string)> disconnectedPlayers = new Queue<(string, string)>();
     public string connectionId;
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     public void DisconnectEvent(string id, string code)
     {
         Debug.Log("Current disconnected players: " + disconnectedPlayers.Count);

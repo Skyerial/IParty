@@ -86,6 +86,13 @@ public class SwitchScene : MonoBehaviour
             {
                 Destroy(player.gameObject);
             }
+
+            // Remove the reconnect canvas
+            var reconnectCanvas = FindFirstObjectByType<Reconnect>();
+            if (reconnectCanvas != null)
+            {
+                inputManager.DisableJoining();
+            }
         }
 
         // --- Do the scene transition ---
