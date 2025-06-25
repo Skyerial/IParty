@@ -38,6 +38,7 @@ public class GameMaster : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        ServerManager.SendtoAllSockets("gyro");
         clearDiceText();
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
@@ -73,7 +74,7 @@ public class GameMaster : MonoBehaviour
             // If the variabele = 0 after updating it means a full round has been played.
             if (change_player == 0)
             {
-                // LoadRandomMinigame();
+                LoadRandomMinigame();
             }
         }
     }

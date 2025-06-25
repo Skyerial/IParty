@@ -27,6 +27,7 @@ public class SwitchScene : MonoBehaviour
                 var serverManager = Object.FindFirstObjectByType<ServerManager>();
                 if (serverManager != null)
                 {
+                    ServerManager.takenColors.Clear();
                     Destroy(serverManager.gameObject);
                 }
 

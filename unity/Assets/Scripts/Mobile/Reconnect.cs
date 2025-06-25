@@ -12,8 +12,8 @@ public class Reconnect : MonoBehaviour
     public TMP_Text Name;
     public RawImage face;
     public TMP_Text reconnectCode;
-    private Queue<(string, string)> disconnectedPlayers = new Queue<(string, string)>();
-    private string connectionId;
+    public Queue<(string, string)> disconnectedPlayers = new Queue<(string, string)>();
+    public string connectionId;
 
     public void DisconnectEvent(string id, string code)
     {
@@ -27,6 +27,7 @@ public class Reconnect : MonoBehaviour
         }
         else
         {
+            Debug.Log("QUEING");
             disconnectedPlayers.Enqueue((id, code));
         }
     }
@@ -37,7 +38,10 @@ public class Reconnect : MonoBehaviour
         {
             // Removing the handled client
             // disconnectedPlayers.Dequeue();
-
+            foreach (var (player, abc) in disconnectedPlayers)
+            {
+                Debug.Log(player);
+            }
             var (id, code) = disconnectedPlayers.Dequeue();
             connectionId = id;
             MessageUpdate(id, code);
