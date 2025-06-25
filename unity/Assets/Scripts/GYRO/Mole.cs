@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Mole : MonoBehaviour
 {
@@ -54,10 +55,17 @@ public class Mole : MonoBehaviour
         }
 
 
-    if (audioSource && hitSound)
-        audioSource.PlayOneShot(hitSound);
+        if (audioSource && hitSound)
+            audioSource.PlayOneShot(hitSound);
 
         currentRoutine = StartCoroutine(MoveTo(downPosition));
+
+        ScoreDisplay score = transform.root.GetComponentInChildren<ScoreDisplay>();
+
+        if (score != null)
+        {
+            score.AddMoleHit();
+        }
     }
 
     private IEnumerator MoveTo(Vector3 target)
