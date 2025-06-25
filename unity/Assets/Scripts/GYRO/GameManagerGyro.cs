@@ -37,6 +37,9 @@ public class GameManagerGyro : MonoBehaviour
         else Destroy(gameObject);
         sceneSwitcher = GetComponent<SwitchScene>();
         ServerManager.SendtoAllSockets("gyro");
+        AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
+        audioHandler.PlayRandomMiniGameTrack();
+
     }
 
     public void RegisterPlayer(PlayerInput player)
@@ -49,7 +52,6 @@ public class GameManagerGyro : MonoBehaviour
 
             InputDevice dev = player.devices[0];
 
-            // Baton kleuren
             var baton = player.GetComponentsInChildren<Renderer>()
                             .FirstOrDefault(r => r.name == "Cilindro.013");
             if (baton != null && PlayerManager.playerStats.ContainsKey(dev))
