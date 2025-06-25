@@ -19,20 +19,9 @@ public class StartingCameras : MonoBehaviour
     public float startHeight = 50f;
     public float endHeight = 10f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public IEnumerator SpiralCamera(System.Action onComplete)
     {
-        startRadius = Vector3.Distance(centerPoint.position, camera.transform.position);
-        StartCoroutine(SpiralCamera());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    IEnumerator SpiralCamera()
-    {
+        Debug.LogWarning("started");
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -58,6 +47,25 @@ public class StartingCameras : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+        // yield return StartCoroutine(RotateToAngle(new Vector3(20f, 0f, 0f), 0.5f));
+        camera.SetActive(false);
+        onComplete?.Invoke();
+    }
+
+    private IEnumerator RotateToAngle(Vector3 targetEuler, float rotationDuration)
+    {
+        Quaternion startRotation = camera.transform.rotation;
+        Quaternion targetRotation = Quaternion.Euler(targetEuler);
+        float elapsed = 0f;
+
+        while (elapsed < rotationDuration)
+        {
+            camera.transform.rotation = Quaternion.Slerp(startRotation, targetRotation, elapsed / rotationDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        camera.transform.rotation = targetRotation; // Ensure exact final rotation
     }
 }
 

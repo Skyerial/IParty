@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -29,6 +30,14 @@ public class TMGameManager : MonoBehaviour
     public GameObject spawn;
     public string WinScreen;
     private SwitchScene sceneSwitcher;
+
+    [Serializable]
+    private class AllWordsMessage
+    {
+        public string type = "controller";
+        public string controller = "text-preset";
+        public List<string> words;
+    }
 
     private void Awake()
     {
@@ -92,6 +101,7 @@ public class TMGameManager : MonoBehaviour
         typingController.Initialize();
         typingController.inputField.interactable = true;
         typingController.inputField.text = "";
+        SendAllWordsToClient(typingController);
 
         TextMeshProUGUI name = players[playerIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         name.text = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == playerIndex).name;
@@ -167,11 +177,21 @@ public class TMGameManager : MonoBehaviour
         }
     }
 
-    public void SendClearCommandtoClient(PlayerTypingController player)
+    public void SendAllWordsToClient(PlayerTypingController player)
     {
-        Debug.Log("recieved clear command");
-        var controller = playerVirtualControllers[player];
-        ServerManager.SendtoSocket(controller);
+        // lookup their VirtualController
+        if (!playerVirtualControllers.TryGetValue(player, out var vc))
+        {
+            Debug.LogWarning($"[TMGameManager] No controller for {player.name}");
+            return;
+        }
+        string clientId = vc.remoteId;
+
+        var words = player.textSpawner.spawnedWords;
+        var msgObj = new AllWordsMessage { words = words };
+
+        string json = JsonUtility.ToJson(msgObj);
+        ServerManager.SendMessageToClient(clientId, json);
     }
 
     private string FinishPositionIntToString(int position)

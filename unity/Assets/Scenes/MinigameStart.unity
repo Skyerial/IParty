@@ -1773,6 +1773,7 @@ GameObject:
   - component: {fileID: 2020356242}
   - component: {fileID: 2020356241}
   - component: {fileID: 2020356240}
+  - component: {fileID: 2020356243}
   m_Layer: 5
   m_Name: Start
   m_TagString: Untagged
@@ -1843,7 +1844,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2020356241}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2020356243}
+        m_TargetAssemblyTypeName: StartMinigameButton, Assembly-CSharp
+        m_MethodName: LoadSelectedMinigame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: LoadSelectedMinigame
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2020356241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1882,6 +1895,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2020356238}
   m_CullTransparentMesh: 1
+--- !u!114 &2020356243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2020356238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c9f55da0cd04702391ed8be065d3371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

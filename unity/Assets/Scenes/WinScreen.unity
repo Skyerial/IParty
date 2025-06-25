@@ -2821,7 +2821,7 @@ MonoBehaviour:
   fader: {fileID: 1084478527}
   fadeDuration: 0.5
   autoTransitionOnStart: 1
-  delayBeforeTransition: 2.5
+  delayBeforeTransition: 3
   autoTransitionScene: Game_Board
   skipNextStart: 0
 --- !u!1660057539 &9223372036854775807

@@ -222,7 +222,8 @@ public class ServerManager : MonoBehaviour
                     Debug.LogError("[Local][HTTP] " + ex.Message);
                 }
             }
-        }) { IsBackground = true };
+        })
+        { IsBackground = true };
         httpThread.Start();
 
         Debug.Log("[Local][HTTP] Server started.");
@@ -294,7 +295,7 @@ public class ServerManager : MonoBehaviour
                             PlayerManager.RemovePlayer(allControllers[connectionId]);
                             allSockets.Remove(allControllers[connectionId]);
                             allControllers.Remove(connectionId);
-                        }   
+                        }
                     }
                 });
             };
@@ -467,6 +468,27 @@ public class ServerManager : MonoBehaviour
         SendMessages(json);
     }
 
+    public void CloseConnections()
+    {
+        Debug.Log("[ServerManager] Closing WebSocket connections and clearing state...");
+
+        if (useRemote)
+        {
+            httpTunnel?.Close();
+            wsTunnel?.Close();
+        }
+        else
+        {
+            wsServer?.Dispose();
+            httpsThread?.Abort();
+            tcpListener?.Stop();
+        }
+
+        allControllers.Clear();
+        allSockets.Clear();
+        takenColors.Clear();
+    }
+
     public static void SendMessages(string json)
     {
         if (instance.useRemote)
@@ -592,7 +614,6 @@ public class ServerManager : MonoBehaviour
             return;
         }
 
-
         allSockets[reconnectingDevice] = socket;
         allSockets.Remove(oldDevice);
         InputSystem.RemoveDevice(oldDevice);
@@ -642,108 +663,108 @@ public class ServerManager : MonoBehaviour
     {
         // try
         // {
-            var controller = allControllers[sender];
-            if (PlayerManager.playerStats.ContainsKey(controller))
+        var controller = allControllers[sender];
+        if (PlayerManager.playerStats.ContainsKey(controller))
+        {
+            var cmd = JsonUtility.FromJson<CommandMessage>(json);
+            var state = new GamepadState();
+            Debug.Log(cmd.type);
+            switch (cmd.type)
             {
-                var cmd = JsonUtility.FromJson<CommandMessage>(json);
-                var state = new GamepadState();
-                Debug.Log(cmd.type);
-                switch (cmd.type)
-                {
-                    case "analog":
-                        state = new GamepadState
-                        {
-                            leftStick = new Vector2(cmd.x, cmd.y),
-                            buttons =
-                                (ushort)(
-                                    (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
-                                    (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
-                                    (cmd.B ? (1 << (int)GamepadButton.East)  : 0) |
-                                    (cmd.C ? (1 << (int)GamepadButton.West)  : 0) |
-                                    (cmd.button ? (1 << (int)GamepadButton.LeftShoulder) : 0)
-                                )
-                        };
-                        break;
-                    case "dpad":
-                        break;
-                    case "text":
-                        Debug.Log("received text input");
-                        Debug.Log(cmd.T);
-                        // PlayerTypingController.HandleInput(cmd.T);
-                        TMGameManager gameManager = FindAnyObjectByType<TMGameManager>();
-                        gameManager.HandleMobileInput(controller, cmd.T);
-                        break;
-                }
-                InputSystem.QueueStateEvent(controller, state);
-                InputSystem.Update();
+                case "analog":
+                    state = new GamepadState
+                    {
+                        leftStick = new Vector2(cmd.x, cmd.y),
+                        buttons =
+                            (ushort)(
+                                (cmd.A ? (1 << (int)GamepadButton.South) : 0) |
+                                (cmd.D ? (1 << (int)GamepadButton.North) : 0) |
+                                (cmd.B ? (1 << (int)GamepadButton.East) : 0) |
+                                (cmd.C ? (1 << (int)GamepadButton.West) : 0) |
+                                (cmd.button ? (1 << (int)GamepadButton.LeftShoulder) : 0)
+                            )
+                    };
+                    break;
+                case "dpad":
+                    break;
+                case "text":
+                    Debug.Log("received text input");
+                    Debug.Log(cmd.T);
+                    // PlayerTypingController.HandleInput(cmd.T);
+                    TMGameManager gameManager = FindAnyObjectByType<TMGameManager>();
+                    gameManager.HandleMobileInput(controller, cmd.T);
+                    break;
             }
-            else
+            InputSystem.QueueStateEvent(controller, state);
+            InputSystem.Update();
+        }
+        else
+        {
+            var cmd = JsonUtility.FromJson<PlayerConfig>(json);
+            if (cmd.type == "reconnect")
             {
-                var cmd = JsonUtility.FromJson<PlayerConfig>(json);
-                if (cmd.type == "reconnect")
+                string ip = sender.Split(":")[0];
+                string port = sender.Split(":")[1];
+                if (allControllers.ContainsKey($"{ip}:{cmd.code}"))
                 {
-                    string ip = sender.Split(":")[0];
-                    string port = sender.Split(":")[1];
-                    if (allControllers.ContainsKey($"{ip}:{cmd.code}"))
+                    HandleReconnect(sender, ip, cmd.code);
+                    var messageObject = new ReconnectJSON
                     {
-                        HandleReconnect(sender, ip, cmd.code);
-                        var messageObject = new ReconnectJSON
-                        {
-                            type = "reconnect-status",
-                            approved = true
-                        };
+                        type = "reconnect-status",
+                        approved = true
+                    };
 
-                        var data = JsonUtility.ToJson(messageObject);
-                        SendMessageToClient(sender, data);
-                    }
-                    else
-                    {
-                        var messageObject = new ReconnectJSON
-                        {
-                            type = "reconnect-status",
-                            approved = false
-                        };
-
-                        var data = JsonUtility.ToJson(messageObject);
-                        SendMessageToClient(sender, data);
-                    }
+                    var data = JsonUtility.ToJson(messageObject);
+                    SendMessageToClient(sender, data);
                 }
                 else
                 {
-                    Debug.Log("Current color: " + cmd.color);
-                    Debug.Log(takenColors.Contains(cmd.color));
-                    if (takenColors.Contains(cmd.color))
+                    var messageObject = new ReconnectJSON
                     {
-                        var messageObject = new CreatorJSON
-                        {
-                            type = "character-status",
-                            approved = false,
-                            name = cmd.name
-                        };
+                        type = "reconnect-status",
+                        approved = false
+                    };
 
-                        var data = JsonUtility.ToJson(messageObject);
-                        SendMessageToClient(sender, data);
-                    } 
-                    else
-                    {
-                        takenColors.Add(cmd.color);
-                        byte[] face = Convert.FromBase64String(cmd.data);
-                        PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
-                        PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller); 
-                        
-                        var messageObject = new CreatorJSON
-                            {
-                                type = "character-status",
-                                approved = true,
-                                name = cmd.name
-                            };
-
-                        var data = JsonUtility.ToJson(messageObject);   
-                        SendMessageToClient(sender, data);
-                    }
-                        
+                    var data = JsonUtility.ToJson(messageObject);
+                    SendMessageToClient(sender, data);
                 }
             }
+            else
+            {
+                Debug.Log("Current color: " + cmd.color);
+                Debug.Log(takenColors.Contains(cmd.color));
+                if (takenColors.Contains(cmd.color))
+                {
+                    var messageObject = new CreatorJSON
+                    {
+                        type = "character-status",
+                        approved = false,
+                        name = cmd.name
+                    };
+
+                    var data = JsonUtility.ToJson(messageObject);
+                    SendMessageToClient(sender, data);
+                }
+                else
+                {
+                    takenColors.Add(cmd.color);
+                    byte[] face = Convert.FromBase64String(cmd.data);
+                    PlayerManager.RegisterPlayer(controller, cmd.color, cmd.name, face);
+                    PlayerInputManager.instance.JoinPlayer(-1, -1, null, controller);
+
+                    var messageObject = new CreatorJSON
+                    {
+                        type = "character-status",
+                        approved = true,
+                        name = cmd.name
+                    };
+
+                    var data = JsonUtility.ToJson(messageObject);
+                    SendMessageToClient(sender, data);
+                }
+
+            }
+        }
         // }
         // catch (Exception e)
         // {
@@ -808,10 +829,10 @@ public class ServerManager : MonoBehaviour
     public class PlayerConfig { public string type; public string code; public string name; public string color; public string data; }
 
     [Serializable]
-    public class MessagePlayers { public string type;  public string controller;/* public List<PlayerConfig> playerstats; */ }
+    public class MessagePlayers { public string type; public string controller;/* public List<PlayerConfig> playerstats; */ }
 
     [Serializable]
-    public class ReconnectJSON { public string type; public bool approved;}
+    public class ReconnectJSON { public string type; public bool approved; }
     [Serializable]
     public class CreatorJSON { public string type; public bool approved; public string name; }
     [Serializable]

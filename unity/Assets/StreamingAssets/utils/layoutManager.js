@@ -54,9 +54,9 @@ export class LayoutManager extends ViewRenderer {
     /**
      * Adds a text input component if none exists.
      */
-    async addText() {
+    async addText(words) {
         if (!this._startMovement('text')) return;
-        await this.addComponent(TextComponent);
+        await this.addComponent(TextComponent, words);
     }
 
     /**

@@ -1,0 +1,12 @@
+They pop up... you slam down!
+In this chaotic reflex-fest, your goal is simple: WHACK the moles before they disappear.
+But beware!
+
+    Moles = +1 point
+
+    Bombs = -1 point
+
+    Oil Barrels = screen SPLAT!
+
+React fast, aim true and don’t get blinded by the mess.
+Can you out whack your rivals and become the mole-slaying champ?

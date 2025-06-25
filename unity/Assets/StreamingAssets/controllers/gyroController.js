@@ -12,7 +12,6 @@ export class GyroController {
    * @param {HTMLElement} container - The DOM element to host the gyroscopic control.
    */
   constructor(container) {
-    /** @private @type {HTMLElement} */
     this.container = container;
   }
 

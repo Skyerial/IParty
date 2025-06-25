@@ -3,7 +3,9 @@ import { SocketManager } from "./utils/socketManager.js";
 import { NavBar } from "./pages/components/navBar.js";
 import { LoginPage } from "./pages/loginPage.js";
 
-export let socketManager = new SocketManager('iparty.duckdns.org');
+export let socketManager = new SocketManager("iparty.duckdns.org");
+let currController = null;
+
 window.addEventListener("DOMContentLoaded", async () => {
   let root = document.querySelector(".view-container");
   let navContainer = document.querySelector(".nav-container");
@@ -17,7 +19,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   if (code && !socketManager.isConnected()) {
     socketManager.connect(code);
-    let l = new LoginPage(root)
+    let l = new LoginPage(root);
     await l.init();
     // Automatically load the controller when QR is used
     // let js = new JoystickController(root);
@@ -27,3 +29,20 @@ window.addEventListener("DOMContentLoaded", async () => {
     await cp.init();
   }
 });
+
+export function initializeController(Controller, container, param = null) {
+  const c = param
+    ? new Controller(container, param)
+    : new Controller(container);
+
+  c.init();
+  setController(c);
+}
+
+function setController(controller) {
+  currController = controller;
+}
+
+export function getController() {
+  return currController;
+}

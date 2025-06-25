@@ -14,10 +14,12 @@ export class TextComponent extends ViewRenderer {
    * @param {HTMLElement} container - The DOM element to render the text input into.
    * @param {boolean} [vertical=false] - If true, adjusts behavior for vertical layout (unused currently).
    */
-  constructor(container, vertical = false) {
+  constructor(container, vertical = false, words) {
     super("./views/components/textComponentView.html", container, "textInput");
     this.vertical = vertical;
     this.origin = { x: 0, y: 0 };
+    this.words = words;
+    this.currentIndex = 0;
   }
 
   /**
@@ -28,7 +30,17 @@ export class TextComponent extends ViewRenderer {
     const text = this.container.querySelector('#myText');
 
     text.addEventListener('input', (event) => {
-      socketManager.updateText(event.target.value);
+      const value = event.target.value;
+      socketManager.updateText(value);
+
+      const target = (this.words[this.currentIndex] || "").toLowerCase();
+      console.log(target);
+      if (value === target) {
+        console.log("GOT IT");
+        text.value = "";
+        text.focus();
+        this.currentIndex++;
+      }
     });
   }
 }

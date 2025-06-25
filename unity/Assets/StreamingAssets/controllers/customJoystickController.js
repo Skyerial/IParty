@@ -11,7 +11,6 @@ export class CustomJoystickController {
    * @param {HTMLElement} container - The DOM element to host the joystick and buttons.
    */
   constructor(container) {
-    /** @private @type {HTMLElement} */
     this.container = container;
   }
 
