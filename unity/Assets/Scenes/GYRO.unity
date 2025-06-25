@@ -1132,7 +1132,7 @@ MonoBehaviour:
   countdownCanvas: {fileID: 760081222}
   countdownText: {fileID: 15912348}
   countdownStart: 3
-  matchDuration: 15
+  matchDuration: 50
   timerCanvas: {fileID: 760081222}
   timerText: {fileID: 1415314616}
   finishCanvas: {fileID: 760081222}
@@ -1182,6 +1182,10 @@ PrefabInstance:
     - target: {fileID: 1609451131938463693, guid: ca6b60d1fde302fdfb79f39807d0bb63, type: 3}
       propertyPath: m_Name
       value: Playzone 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1609451131938463693, guid: ca6b60d1fde302fdfb79f39807d0bb63, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7255498945831161387, guid: ca6b60d1fde302fdfb79f39807d0bb63, type: 3}
       propertyPath: m_LocalPosition.x

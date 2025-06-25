@@ -20,6 +20,7 @@ public class SwitchScene : MonoBehaviour
 
     private void Start()
     {
+        autoTransitionOnStart = false;
         if (fader != null)
         {
             string currentScene = SceneManager.GetActiveScene().name;
