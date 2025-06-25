@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Collections;
 
 public class SetCard : MonoBehaviour{
-    private GridScript gridScript;
-    private CardData cardData;
+    public CardData cardData;
 
-    public Button button;
     public Image img;
     public GameObject symbolPrefab;
     public Transform symbolParent;
@@ -21,7 +19,6 @@ public class SetCard : MonoBehaviour{
         Image cardImage = symbolParent.GetComponent<Image>();
 
         cardData = data;
-        button.onClick.AddListener(OnCardSelect);
 
         int index = 3*data.number + 9*data.filling + data.shape;
         Color cardColor = GetColor(data.color);
@@ -34,14 +31,6 @@ public class SetCard : MonoBehaviour{
         cardImage.color = cardColor;
     }
 
-    public void SetGridScript(GridScript script) {
-        gridScript = script;
-    }
-
-    void OnCardSelect() {
-        gridScript.CardSelected(cardData);
-    }
-
     Color GetColor(int color) {
         return color switch {
             0 => new Color(1f, 0, 0),       // red
@@ -49,5 +38,20 @@ public class SetCard : MonoBehaviour{
             2 => new Color(0.5f, 0, 1f),    // purple
             _ => new Color(0, 0, 0)         // black
         };
+    }
+}
+
+public struct CardData {
+    public int number;
+    public int filling;
+    public int shape;
+    public int color;
+
+    public CardData(int number, int filling, int shape, int color)
+    {
+        this.number = number;
+        this.filling = filling;
+        this.shape = shape;
+        this.color = color;
     }
 }
