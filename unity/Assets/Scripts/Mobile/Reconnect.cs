@@ -12,80 +12,28 @@ public class Reconnect : MonoBehaviour
     public TMP_Text Name;
     public RawImage face;
     public TMP_Text reconnectCode;
-    public Queue<(string, string)> disconnectedPlayers = new Queue<(string, string)>();
-    public string connectionId;
+    // public Queue<(string, string)> disconnectedPlayers = new Queue<(string, string)>();
+    public bool disconnected;
 
     void Awake()
     {
+        disconnected = false;
         DontDestroyOnLoad(gameObject);
     }
 
     public void DisconnectEvent(string id, string code)
     {
-        Debug.Log("Current disconnected players: " + disconnectedPlayers.Count);
-        if (!ReconnectPanel.activeSelf)
-        {
-            ReconnectPanel.SetActive(true);
-            Time.timeScale = 0;
-            connectionId = id;
-            MessageUpdate(id, code);
-        }
-        else
-        {
-            Debug.Log("QUEING");
-            disconnectedPlayers.Enqueue((id, code));
-        }
+        disconnected = true;
+        ReconnectPanel.SetActive(true);
+        Time.timeScale = 0;
+        MessageUpdate(id, code);
     }
 
     public void ReconnectEvent()
-    {   
-        if (disconnectedPlayers.Count >= 1)
-        {
-            // Removing the handled client
-            // disconnectedPlayers.Dequeue();
-            foreach (var (player, abc) in disconnectedPlayers)
-            {
-                Debug.Log(player);
-            }
-            var (id, code) = disconnectedPlayers.Dequeue();
-            connectionId = id;
-            MessageUpdate(id, code);
-        }
-        else
-        {
-            ReconnectPanel.SetActive(false);
-            Time.timeScale = 1;
-        }
-    }
-
-    public void Continue()
     {
-        if (ServerManager.allControllers.TryGetValue(connectionId, out var dev))
-        {
-            foreach (var p in PlayerInput.all)
-            {
-                if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
-            }
-            PlayerManager.RemovePlayer(ServerManager.allControllers[connectionId]);
-            ServerManager.allSockets.Remove(ServerManager.allControllers[connectionId]);
-            ServerManager.allControllers.Remove(connectionId);
-        }
-
-
-        if (disconnectedPlayers.Count >= 1)
-        {
-            // Removing the handled client
-            // disconnectedPlayers.Dequeue();
-
-            var (id, code) = disconnectedPlayers.Dequeue();
-            connectionId = id;
-            MessageUpdate(id, code);
-        }
-        else
-        {
-            ReconnectPanel.SetActive(false);
-            Time.timeScale = 1;
-        }
+        ReconnectPanel.SetActive(false);
+        Time.timeScale = 1;
+        disconnected = false;
     }
 
     void MessageUpdate(string id, string code)

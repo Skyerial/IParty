@@ -219,7 +219,7 @@ public class TMGameManager : MonoBehaviour
         TM_MusicController.Instance.PlayFinishSFX();
 
         int activePlayerCount = playerControllers.Count;
-        if (finishCount == activePlayerCount)
+        if (finishCount == activePlayerCount || finishCount == activePlayerCount - 1)
         {
             Debug.Log("Game over!");
             StartCoroutine(HandleEndGameSequence());

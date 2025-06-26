@@ -278,7 +278,7 @@ public class ServerManager : MonoBehaviour
                     Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
                     if (reconnectFunction)
                     {
-                        if (reconnectFunction.connectionId != connectionId)
+                        if (!reconnectFunction.disconnected)
                         {
                             reconnectFunction.DisconnectEvent(connectionId, socket.ConnectionInfo.ClientPort.ToString());
                         }
@@ -318,7 +318,7 @@ public class ServerManager : MonoBehaviour
         {
             while (true)
             {
-                await PingAllAsync();
+                PingAllAsync();
                 await Task.Delay(10000); // Ping every 10 seconds
             }
         });
@@ -534,36 +534,22 @@ public class ServerManager : MonoBehaviour
         string json = JsonUtility.ToJson(messageObject);
         sock.Send(json);
     }
-    public async Task PingAllAsync()
-    {
-        awaitingPongs.Clear();
 
+    public void CheckAllSockets()
+    {
         foreach (var socket in allSockets.Values.ToArray())
         {
-            Debug.Log($"Trying to ping {socket.ConnectionInfo.ClientIpAddress}");
-            if (socket.IsAvailable)
+            if (!socket.IsAvailable)
             {
-                // Might remove it
-                awaitingPongs[socket] = true;
-
-                var messageObject = new Ping
+                MainThreadDispatcher.Enqueue(async() =>
                 {
-                    type = "ping",
-                };
-
-                string json = JsonUtility.ToJson(messageObject);
-                await socket.Send(json);
-            }
-            else
-            {
-                MainThreadDispatcher.Enqueue(() =>
-                {
+                    await Task.Yield();
                     Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
                     string ip = socket.ConnectionInfo.ClientIpAddress;
                     int port = socket.ConnectionInfo.ClientPort;
                     string connectionId = $"{ip}:{port}";
 
-                    if (reconnectFunction && (reconnectFunction.connectionId != connectionId))
+                    if (reconnectFunction && !reconnectFunction.disconnected)
                     {
                         reconnectFunction.DisconnectEvent(connectionId, socket.ConnectionInfo.ClientPort.ToString());
                     }
@@ -571,28 +557,12 @@ public class ServerManager : MonoBehaviour
                 Debug.Log($"The socket {socket.ConnectionInfo.ClientIpAddress} isn't available");
             }
         }
-
-        await Task.Delay(5000);
-
-        foreach (var kvp in awaitingPongs)
-        {
-            Debug.Log($"{kvp.Key.ConnectionInfo.ClientIpAddress}:{kvp.Value}");
-            if (kvp.Value) // still waiting for pong
-            {
-                awaitingPongs.TryRemove(kvp.Key, out _);
-                MainThreadDispatcher.Enqueue(() =>
-                {
-                    Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
-                    string ip = kvp.Key.ConnectionInfo.ClientIpAddress;
-                    int port = kvp.Key.ConnectionInfo.ClientPort;
-                    string connectionId = $"{ip}:{port}";
-                    if (reconnectFunction && (reconnectFunction.connectionId != connectionId))
-                    {
-                        reconnectFunction.DisconnectEvent(connectionId, kvp.Key.ConnectionInfo.ClientPort.ToString());
-                    }
-                });
-            }
-        }
+    }
+    public void PingAllAsync()
+    {
+        Debug.Log("Ping...");
+        awaitingPongs.Clear();
+        CheckAllSockets();
     }
 
     public void HandleReconnect(string key, string ip, string port)
@@ -626,6 +596,7 @@ public class ServerManager : MonoBehaviour
 
         var reconnectFunction = FindAnyObjectByType<Reconnect>();
         reconnectFunction?.ReconnectEvent();
+        CheckAllSockets();
     }
     public static void SendMessageToClient(string clientId, string json)
     {

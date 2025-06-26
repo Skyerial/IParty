@@ -91,6 +91,7 @@ export class LayoutManager extends ViewRenderer {
      */
     async addGyro(displayText) {
         await this.addComponent(GyroComponent, displayText);
+        socketManager.changeMovementType('analog');
     }
 
     /**
