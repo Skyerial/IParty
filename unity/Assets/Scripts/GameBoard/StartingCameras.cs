@@ -81,8 +81,13 @@ public class StartingCameras : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-        camera.SetActive(false);
+        activateCamera(false);
         onComplete?.Invoke();
+    }
+
+    public void activateCamera(bool activity)
+    {
+        camera.SetActive(activity);
     }
 }
 

@@ -7,8 +7,11 @@ using UnityEngine.InputSystem;
  * @brief Manages player data, colors, faces, rankings, and persistence between scenes.
  */
 public class PlayerManager : MonoBehaviour
-{   
+{
     private const int MaxPlayers = 4;
+    /**
+    * @brief Boolean keeping track if the board has been loaded already before
+    */
     private static HashSet<int> currentPlayers = new HashSet<int>();
     public static PlayerManager instance;
 
@@ -38,6 +41,7 @@ public class PlayerManager : MonoBehaviour
     public static Dictionary<InputDevice, PlayerStats> playerStats = new();
 
     public static string currentMinigame;
+    public static bool firstTimeBoard = true;
 
     /**
      * @brief Called when this object is initialized. Sets singleton instance and persists it across scenes.
@@ -123,7 +127,7 @@ public class PlayerManager : MonoBehaviour
      * @return void
      */
     public static void RemovePlayer(InputDevice device)
-    {   
+    {
         currentPlayers.Remove(playerStats[device].playerID);
         playerStats.Remove(device);
         // currentPlayers--;

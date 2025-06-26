@@ -64,16 +64,28 @@ public class GameMaster : MonoBehaviour
         GameObject.Find("DiceCamera").SetActive(false);
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
         audioHandler.PlayRandomMiniGameTrack();
-        StartingCameras sc = startingCam.GetComponent<StartingCameras>();
-        StartCoroutine(sc.SpiralCamera(afterCamera));
+        if (PlayerManager.firstTimeBoard)
+        {
+            Debug.LogWarning("FIrst time board");
+            StartingCameras sc = startingCam.GetComponent<StartingCameras>();
+            sc.activateCamera(true);
+            StartCoroutine(sc.SpiralCamera(afterCamera));
+            PlayerManager.firstTimeBoard = false;
+        }
+        else
+        {
+            Debug.LogWarning("Second time board");
+            afterCamera();
+        }
     }
 
     /**
     * @brief This function runs after the spiralcamera in StartingCameras.cs
-    is called, it is called as a callback function.
+    * is called, it is called as a callback function.
     */
     void afterCamera()
     {
+        Debug.LogWarning("afterCam");
         EnablePlayerCamera(current_player);
         updateTurnText();
     }
