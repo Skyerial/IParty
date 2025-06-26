@@ -24,6 +24,7 @@ public class GameMaster : MonoBehaviour
     public List<GameObject> Dice = new List<GameObject>();
     public TextMeshProUGUI numberText;
     public TextMeshProUGUI turnText;
+    public SwitchScene switchScene;
 
     public int press_random = 0;
     public Transform tileGroup;
@@ -83,7 +84,7 @@ public class GameMaster : MonoBehaviour
             // If the variabele = 0 after updating it means a full round has been played.
             if (change_player == 0)
             {
-                LoadRandomMinigame();
+                // LoadRandomMinigame();
             }
         }
     }
@@ -215,6 +216,10 @@ public class GameMaster : MonoBehaviour
         for (int i = 0; i < steps; i++)
         {
             yield return StartCoroutine(MovePlayerToTileMarker(player, 1));
+            if (player.GetComponent<PlayerMovement>().current_pos >= tileGroup.childCount - 1)
+            {
+                break;
+            }
             updateProgressBar();
         }
         yield return StartCoroutine(landedTileHandler(player));
@@ -359,8 +364,21 @@ public class GameMaster : MonoBehaviour
         players = paired.Select(p => p.Value).ToList();
         List<int> rankedPlayerIDs = ranking.Select(p => p.PlayerID).ToList();
         PlayerManager.instance.rankGameboard = rankedPlayerIDs;
-        Debug.Log(positions);
-        Debug.Log(players);
+        Debug.LogWarning("positions");
+        printList(positions);
+        Debug.LogWarning("players");
+        printList(players);
+        Debug.LogWarning("rankedplayerids");
+        printList(rankedPlayerIDs);
+        switchScene.LoadNewScene("WinScreen3D");
+
+    }
+
+    private void printList(List<int> list) {
+        foreach (int name in list)
+        {
+            Debug.LogWarning(name);
+        }
     }
 
     // Finds and stores the progressbars.
