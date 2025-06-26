@@ -35,7 +35,7 @@ export class TextComponent extends ViewRenderer {
 
       const target = (this.words[this.currentIndex] || "").toLowerCase();
       console.log(target);
-      if (value === target) {
+      if (value.toLowerCase() === target) {
         console.log("GOT IT");
         text.value = "";
         text.focus();

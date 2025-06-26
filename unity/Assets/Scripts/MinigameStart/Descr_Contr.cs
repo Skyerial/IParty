@@ -88,6 +88,9 @@ public class Descr_Contr : MonoBehaviour
             otherTargetImage.color = isSelected ? unselectedColor : selectedColor;
             loadText(minigame);
             SetImage(minigame);
+
+            Vector2 originalSize = explanationImage.rectTransform.sizeDelta;
+            explanationImage.rectTransform.sizeDelta = new Vector2(originalSize.y, originalSize.x);
         }
     }
 

@@ -3,10 +3,11 @@ using UnityEngine;
 /**
  * @brief Handles dice throwing mechanics including physics and face detection.
  */
-
 public class DiceThrow : MonoBehaviour
 {
     private Rigidbody _rigidbody;
+    private Vector3 startPosition;
+    private bool _firstThrow = true;
 
     private Vector3[] diceFaceNormals = {
         Vector3.forward, // Face 1
@@ -16,6 +17,10 @@ public class DiceThrow : MonoBehaviour
         Vector3.down,    // Face 5
         Vector3.back     // Face 6
     };
+
+    [SerializeField]
+    [Tooltip("Horizontal force magnitude on the XZ plane.")]
+    public float horizontalForce = 5f;
 
     [SerializeField]
     public float forceUp = 2f;
@@ -54,6 +59,8 @@ public class DiceThrow : MonoBehaviour
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        // Record the starting position for aiming
+        startPosition = transform.position;
     }
 
     /**
@@ -85,9 +92,39 @@ public class DiceThrow : MonoBehaviour
     {
         _rigidbody.isKinematic = false;
 
-        Vector3 force = new Vector3(0f, forceUp, 0f);
-        Vector3 torque = new Vector3(Random.Range(-10f, 10f), Random.Range(-10f, 10f), Random.Range(-10f, 10f));
+        Vector3 horizontalDir;
+        if (_firstThrow)
+        {
+            // Random horizontal direction on XZ plane
+            Vector2 rand2D = Random.insideUnitCircle.normalized;
+            horizontalDir = new Vector3(rand2D.x, 0f, rand2D.y);
+            _firstThrow = false;
+        }
+        else
+        {
+            // Aim back at the recorded start position on the horizontal plane
+            Vector3 toTarget = startPosition - transform.position;
+            toTarget.y = 0f;
+            horizontalDir = toTarget.normalized;
+            // Add some horizontal noise
+            Vector3 noise = new Vector3(
+                Random.Range(-0.2f, 0.2f),
+                0f,
+                Random.Range(-0.2f, 0.2f)
+            );
+            horizontalDir = (horizontalDir + noise).normalized;
+        }
+
+        // Compose total force with adjustable upward component
+        Vector3 force = horizontalDir * horizontalForce + Vector3.up * forceUp;
         _rigidbody.AddForce(force, ForceMode.Impulse);
+
+        // Apply random spin around all three axes for realistic tumbling
+        Vector3 torque = new Vector3(
+            Random.Range(-10f, 10f),
+            Random.Range(-10f, 10f),
+            Random.Range(-10f, 10f)
+        );
         _rigidbody.AddTorque(torque, ForceMode.Impulse);
 
         throwTime = Time.time;
@@ -126,7 +163,7 @@ public class DiceThrow : MonoBehaviour
     public bool DiceSettled()
     {
         Debug.Log("Current remaining: " + (Time.time - throwTime));
-        if (Time.time - throwTime >= 2)
+        if (Time.time - throwTime >= 2f)
         {
             float timeSinceThrow = Time.time - throwTime;
             float currentVelocity = _rigidbody.linearVelocity.magnitude;
