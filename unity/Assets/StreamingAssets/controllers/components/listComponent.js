@@ -73,7 +73,7 @@ export class ListComponent extends ViewRenderer {
   removeItem(itemName) {
     const item = this.container.querySelector(`.${itemName}`);
 
-    if (!player) return;
+    if (!item) return;
     item.style.display = "none";
   }
 
