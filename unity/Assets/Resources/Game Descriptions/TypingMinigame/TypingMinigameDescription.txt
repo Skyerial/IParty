@@ -1,2 +1,4 @@
-Type the words on the screen as fast as possible.
-First to type all the words wins.
+Race across the river by typing as fast as you can!
+Words appear on your screen — type each one correctly 
+to build a bridge and cross to the other side. The faster you type, 
+the quicker you move! But watch out: typos will slow you down!
