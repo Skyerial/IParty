@@ -144,7 +144,6 @@ public class ServerManager : MonoBehaviour
         using var ssl = new SslStream(stream, false);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
         Debug.Log("Looking for cert at:" + certPath);
-
         var cert = new X509Certificate2(certPath, "unity");
         ssl.AuthenticateAsServer(cert, false, SslProtocols.Tls12, false);
 
@@ -661,11 +660,14 @@ public class ServerManager : MonoBehaviour
                 case "dpad":
                     break;
                 case "text":
-                    Debug.Log("received text input");
-                    Debug.Log(cmd.T);
-                    // PlayerTypingController.HandleInput(cmd.T);
-                    TMGameManager gameManager = FindAnyObjectByType<TMGameManager>();
-                    gameManager.HandleMobileInput(controller, cmd.T);
+                    cmd.T = new string(cmd.T.Where(c =>
+                        char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)).ToArray());
+                    if (cmd.T.Length < 200)
+                    {
+                        Debug.Log("received text input");
+                        TMGameManager gameManager = FindAnyObjectByType<TMGameManager>();
+                        gameManager.HandleMobileInput(controller, cmd.T);
+                    }
                     break;
             }
             InputSystem.QueueStateEvent(controller, state);
@@ -706,6 +708,17 @@ public class ServerManager : MonoBehaviour
             {
                 Debug.Log("Current color: " + cmd.color);
                 Debug.Log(takenColors.Contains(cmd.color));
+
+                if (!string.IsNullOrEmpty(cmd.name) && cmd.name.Length < 24)
+                {
+                    cmd.name = new string(cmd.name.Where(c => char.IsLetterOrDigit(c) || c == ' ' || c == '_').ToArray());
+                }
+                else
+                {
+                    cmd.name = "Player";
+                }
+
+
                 if (takenColors.Contains(cmd.color))
                 {
                     var messageObject = new CreatorJSON

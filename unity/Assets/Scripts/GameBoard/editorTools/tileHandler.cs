@@ -1,12 +1,33 @@
 using UnityEngine;
 
+/**
+ * @brief handles a single tile. This means the different markers on the tile
+ * as well as the tile type.
+ */
 public class tileHandler : MonoBehaviour
 {
-    public Transform[] markers; // Should have 4 markers assigned automatically
+
+    /**
+    * @brief public list containing all markers on the tile
+    */
+    public Transform[] markers; // Should have x markers assigned automatically
+
+    /**
+    * @brief boolean that can be switched off and on again to reload the
+    * tile handler (it will reassigns markers)
+    */
     public bool autoLink = true;
-    public int marker_nr;
+
+    /**
+    * @brief public variable that can be used by tilegroup.cs to give material
+    * accordingly
+    */
     public int tileType;
-    public GameObject player;
+
+    /**
+    * @brief function called upon inspector changes in edit mode. This function
+    * causes tiles to have proper markers
+    */
     private void OnValidate()
     {
         if (autoLink)
@@ -15,6 +36,10 @@ public class tileHandler : MonoBehaviour
         }
     }
 
+    /**
+    * @brief This function renames the markers on the object and adds them
+    * to a script datastructure
+    */
     private void assignMarkers()
     {
         // Auto-assign markers if not manually set
@@ -34,23 +59,6 @@ public class tileHandler : MonoBehaviour
                     Debug.LogWarning($"Marker{i + 1} not found on tile: {gameObject.name}");
                 }
             }
-        }
-    }
-
-    public void MovePlayerToMarker(GameObject player, int markerIndex = 0)
-    {
-        // Debug.Log(PlayerManager)
-        if (markers != null && markers.Length > markerIndex && markers[markerIndex] != null)
-        {
-            Vector3 playerPosition = player.transform.position;
-            float targetX = markers[markerIndex].position.x;
-            float targetZ = markers[markerIndex].position.z;
-
-            player.transform.position = new Vector3(targetX, playerPosition.y, targetZ);
-        }
-        else
-        {
-            Debug.LogWarning("Invalid marker index or unassigned marker.");
         }
     }
 }
