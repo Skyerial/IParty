@@ -10,7 +10,6 @@ public class TurfCameraMovement : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(TurfGameManager.Instance.ShowPlayerLabels());
         StartCoroutine(MoveAlongArc());
     }
 

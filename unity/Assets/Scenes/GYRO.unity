@@ -1129,6 +1129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69108cc69685931f3bab21dd811c6961, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  labelDisplayTime: 8
   countdownCanvas: {fileID: 760081222}
   countdownText: {fileID: 15912348}
   countdownStart: 3

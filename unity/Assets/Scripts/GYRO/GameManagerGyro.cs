@@ -5,11 +5,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class GameManagerGyro : MonoBehaviour
 {
     public static GameManagerGyro Instance { get; private set; }
+
+    [Header("Player Labels")]
+    public float labelDisplayTime  = 5f;
 
     [Header("Countdown UI")]
     public Canvas countdownCanvas;
@@ -62,6 +66,31 @@ public class GameManagerGyro : MonoBehaviour
             {
                 Debug.LogWarning($"Baton niet gevonden of speler niet geregistreerd: {dev}");
             }
+
+            StartCoroutine(ShowPlayerLabels());
+        }
+    }
+
+    private IEnumerator ShowPlayerLabels()
+    {
+        foreach (var pi in allPlayers)
+        {
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(true);
+
+            var img = labelGO.GetComponentInChildren<Image>();
+            img.color = PlayerManager.findColor(pi.devices[0]).color;
+
+            var txt = labelGO.GetComponentInChildren<TMP_Text>();
+            txt.text = PlayerManager.playerStats[pi.devices[0]].name;
+        }
+
+        yield return new WaitForSecondsRealtime(labelDisplayTime);
+
+        foreach (var pi in allPlayers)
+        {
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(false);
         }
     }
 
