@@ -54,6 +54,13 @@ public class PlayerSpawn : MonoBehaviour
             {
                 spawnPoints[spawnIndex].GetChild(0).GetChild(0).gameObject.SetActive(false);
                 playerInput.transform.localScale = Vector3.one * 2f;
+
+                if (spawnPoints[spawnIndex].name == "L1")
+                {
+                     GameObject crown = Resources.FindObjectsOfTypeAll<GameObject>()
+                                .FirstOrDefault(go => go.name == "crown");
+                    crown.SetActive(true);
+                }
             }
         }
         i++;
@@ -95,7 +102,6 @@ public class PlayerSpawn : MonoBehaviour
             }
         }
 
-
         // Instantiate nameboard with player name
         if (nameboardPrefab != null && device != null && PlayerManager.playerStats.ContainsKey(device))
         {
@@ -108,6 +114,7 @@ public class PlayerSpawn : MonoBehaviour
             {
                 text.text = PlayerManager.playerStats[device].name;
             }
+
         }
     }
 
