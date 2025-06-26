@@ -10,8 +10,11 @@ using TMPro;
 public class PlayerSpawn : MonoBehaviour
 {
     public GameObject nameboardPrefab;
+<<<<<<< Updated upstream
     int i = 0;
     public GameObject crown;
+=======
+>>>>>>> Stashed changes
     /**
      * @brief Called at the start of the scene. Clears controller list if in Lobby.
      * @return void
@@ -35,7 +38,7 @@ public class PlayerSpawn : MonoBehaviour
                                             .Where(t => t.parent == spawnParent.transform)
                                             .ToArray();
 
-        int spawnIndex = i % spawnPoints.Length;
+        int spawnIndex = PlayerManager.playerStats[playerInput.devices[0]].playerID;
         playerInput.transform.position = spawnPoints[spawnIndex].position;
         playerInput.transform.rotation = spawnPoints[spawnIndex].rotation;
 
@@ -61,8 +64,25 @@ public class PlayerSpawn : MonoBehaviour
                 }
             }
         }
-        i++;
     }
+
+    public void RemoveFromLobby(InputDevice device)
+    {   
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "Lobby")
+        {
+            GameObject spawnParent = GameObject.Find("Spawn");
+            Transform[] spawnPoints = spawnParent.transform.Cast<Transform>()
+                                                .Where(t => t.parent == spawnParent.transform)
+                                                .ToArray();
+
+            int spawnIndex = PlayerManager.playerStats[device].playerID;
+            Debug.Log($"Despawning player at: {spawnPoints[spawnIndex].name}");
+
+            spawnPoints[spawnIndex].GetChild(0).GetChild(0).gameObject.SetActive(true);
+        }
+    }
+
     /**
      * @brief Initializes the player when they join the game. Assigns the appropriate body material, face texture,
      *        and instantiates a nameboard displaying the player's name. Customizes appearance based on the player's input device.
