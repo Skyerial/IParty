@@ -6,13 +6,16 @@ using UnityEngine.InputSystem;
 
 public class SetGameManager : MonoBehaviour
 {
-    public static GameObject selectorPrefab;
+    // public GameObject    playerUIPrefab;
+    // public RectTransform uiParent;
+    // public Vector2       uiOffset = new Vector2(10f, -10f);
+
     public static List<CardData> allCards = new List<CardData>();
     public static List<CardData> dealtCards = new List<CardData>();
 
     public static List<PlayerInput> gamePlayers = new List<PlayerInput>();
     public static Dictionary<PlayerInput, int> scores = new Dictionary<PlayerInput, int>();
-    public static Dictionary<PlayerInput, List<CardData>> playerSelection = new Dictionary<PlayerInput, List<CardData>>();
+    public static Dictionary<PlayerInput, List<SetCard>> playerSelection = new Dictionary<PlayerInput, List<SetCard>>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {
@@ -99,14 +102,16 @@ public class SetGameManager : MonoBehaviour
 
         if (!scores.ContainsKey(player)) scores[player] = 0;
 
-        if (!playerSelection.ContainsKey(player)) playerSelection[player] = new List<CardData>();
+        if (!playerSelection.ContainsKey(player)) playerSelection[player] = new List<SetCard>();
 
-        Canvas mainCanvas = FindObjectOfType<Canvas>();
-        GameObject selectorObj = Instantiate(selectorPrefab, mainCanvas.transform);
-        SelectorScript selector = selectorObj.GetComponent<SelectorScript>();
-        selector.playerInput = player;
+        SelectorScript selector = player.GetComponent<SelectorScript>();
+        Transform selectorTransform = selector.transform;
+
+        selectorTransform.SetParent(GridScript.gridScript.transform.parent, false);
+
         var device = selector.playerInput.devices[0];
-        selector.SetColor(PlayerManager.findColor(device).color);
+        var mat = PlayerManager.findColor(device);
+        selector.SetColor(mat.color);
     }
 
     public static void EndGame() {

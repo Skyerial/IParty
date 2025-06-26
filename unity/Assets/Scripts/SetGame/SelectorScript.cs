@@ -40,6 +40,11 @@ public class SelectorScript : MonoBehaviour
 
     void Update()
     {
+        if (GridScript.cardObjects.Count < 3) gridWidth = GridScript.cardObjects.Count;
+        else gridWidth = 3;
+
+        gridHeight = GridScript.cardObjects.Count / gridWidth;
+
         Vector2 move = moveAction.ReadValue<Vector2>();
         if (Time.time - lastMoveTime >= moveDelay)
         {
@@ -56,15 +61,12 @@ public class SelectorScript : MonoBehaviour
             }
         }
 
-        if (GridScript.cardObjects.Count < 3) gridWidth = GridScript.cardObjects.Count;
-        else gridWidth = 3;
-
-        gridHeight =  GridScript.cardObjects.Count / gridWidth;
-
         if (selectAction.WasPressedThisFrame())
         {
             Debug.Log("Selector pressed");
             int index = gridPos.y * gridWidth + gridPos.x;
+            Debug.Log("Card " + gridPos);
+            Debug.Log("Index " + index);
             if (index >= 0 && index < GridScript.cardObjects.Count)
             {
                 SetCard selected = GridScript.cardObjects[index];
@@ -75,10 +77,9 @@ public class SelectorScript : MonoBehaviour
 
     void TryMove(Vector2Int delta)
     {
-        Debug.Log("Moving Cursor");
-        gridPos += delta;
-        gridPos.x = Mathf.Clamp(gridPos.x, 0, gridWidth - 1);
-        gridPos.y = Mathf.Clamp(gridPos.y, 0, gridHeight - 1);
+        gridPos.x = (gridPos.x + gridWidth + delta.x) % gridWidth;
+        gridPos.y = (gridPos.y + gridHeight + delta.y) % gridHeight;
+        Debug.Log("Moving Cursor to " + gridPos);
         UpdateSelectorPosition();
     }
 
