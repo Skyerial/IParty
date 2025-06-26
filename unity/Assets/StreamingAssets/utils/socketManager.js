@@ -96,8 +96,8 @@ export class SocketManager {
     if (this.socket) return;
     const isRemote = location.hostname === this.relayHost;
     const url = !isRemote
-      ? `wss://${location.hostname}:8181`
-      : `wss://${this.relayHost}:5001/host/${code}/ws`;
+      ? `ws://${location.hostname}:8181`
+      : `ws://${this.relayHost}:5001/host/${code}/ws`;
 
     console.log(url);
 
@@ -138,7 +138,7 @@ export class SocketManager {
     } else if (controller == "whackamole") {
       initializeController(GyroController, root, "Shake your phone to whack a mole");
     } else if (controller == "mainboard") {
-      initializeController(GyroController, root, "Shake your phone to throw the dice");
+      initializeController(JoystickController, root);
     } else if (controller == "waitingpage") {
       loadPage(WaitingPage, root);
     } else if (CONTROLLER_MAP[controller]) {
@@ -150,8 +150,8 @@ export class SocketManager {
 
   /**
    * Handles incoming update, about a players death, from hotpotato minigame.
-   * 
-   * @param {object} data 
+   *
+   * @param {object} data
    */
   handleDeadUpdate(data) {
     const hController = getController();

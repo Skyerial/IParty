@@ -88,9 +88,9 @@ public class ServerManager : MonoBehaviour
         else
         {
             // HTTP
-            // StartHttpServer();
+            StartHttpServer();
 
-            StartHttpsServer();
+            // StartHttpsServer();
             StartWebSocketServer(); // Uses WSS now
         }
     }

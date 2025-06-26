@@ -75,6 +75,7 @@ public class GameMaster : MonoBehaviour
     void afterCamera()
     {
         EnablePlayerCamera(current_player);
+        press_random = 0;
         updateTurnText();
     }
 

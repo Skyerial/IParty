@@ -36,7 +36,7 @@ class MobileClientSimulator:
         self.player_config = {
             "name": f"player{client_id}",
             "color": colors[int(client_id) - 1],
-            "data": b""
+            "data": ""
         }
 
         # Simulate button state
@@ -84,14 +84,15 @@ class MobileClientSimulator:
             "B": self.button_state.get("B", False),
             "C": self.button_state.get("C", False),
             "D": self.button_state.get("D", False),
-            "button": self.button_state.get("button", False)
+            "button": self.button_state.get("button", False),
+            "T": ""
         }
 
         try:
             message = json.dumps(command)
             await self.websocket.send(message)
             # Log input occasionally
-            if self.verbose and random.random() < 0.01:
+            if self.verbose and random.random() < 0.05:
                 print(f"[Client {self.client_id}] Input: x={x:.2f}, y={y:.2f}, buttons={self.button_state}")
 
         except Exception as e:
@@ -105,7 +106,8 @@ class MobileClientSimulator:
                 try:
                     response = await asyncio.wait_for(self.websocket.recv(), timeout=1.0)
                     if "controller" not in response:
-                        print(f"[Client {self.client_id}] Received: {response}")
+                        # print(f"[Client {self.client_id}] Received: {response}")
+                        pass
                 except asyncio.TimeoutError:
                     continue  # Keep listening
         except websockets.exceptions.ConnectionClosed:
@@ -160,7 +162,7 @@ class MobileClientSimulator:
 
     async def _random_movement(self):
         """Simulate random movement with occasional button presses"""
-        for _ in range(200):
+        while True:
             if not self.running:
                 break
             x = random.uniform(-1.0, 1.0)
@@ -168,35 +170,35 @@ class MobileClientSimulator:
 
             # Random button presses
             buttons = {
-                "A": random.random() < 0.15,
-                "B": random.random() < 0.10,
-                "C": random.random() < 0.08,
-                "D": random.random() < 0.05,
-                "button": random.random() < 0.1
+                "A": random.random() < 0.25,
+                "B": random.random() < 0.30,
+                "C": random.random() < 0.38,
+                "D": random.random() < 0.35,
+                "button": random.random() < 0.2
             }
 
             await self.send_analog_input(x, y, buttons)
-            await asyncio.sleep(random.uniform(0.03, 0.2))
+            await asyncio.sleep(.07)
 
     async def _button_mashing(self):
         """Simulate button mashing with minimal stick movement"""
-        for _ in range(100):
+        while True:
             if not self.running:
                 break
 
             buttons = {
-                "A": random.random() < 0.8,
-                "B": random.random() < 0.6,
+                "A": random.random() < 0.3,
+                "B": random.random() < 0.3,
                 "C": random.random() < 0.4,
                 "D": random.random() < 0.3,
                 "button": random.random() < 0.5
             }
 
-            x = random.uniform(-0.3, 0.3)
-            y = random.uniform(-0.3, 0.3)
+            x = random.uniform(-1, 1)
+            y = random.uniform(-1, 1)
 
             await self.send_analog_input(x, y, buttons)
-            await asyncio.sleep(0.08)
+            await asyncio.sleep(0.15)
 
     async def disconnect(self):
         """Disconnect from the server"""

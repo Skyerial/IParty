@@ -929,11 +929,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5343225522179311335, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
       propertyPath: useRemote
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5343225522179311335, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
       propertyPath: useSecure
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5343225522179311335, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
       propertyPath: targetRenderer
@@ -7024,7 +7024,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -170.00024, y: 0}
+  m_AnchoredPosition: {x: -170.00018, y: 0}
   m_SizeDelta: {x: -340, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2089460170
