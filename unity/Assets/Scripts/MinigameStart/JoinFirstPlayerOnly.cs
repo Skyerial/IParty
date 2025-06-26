@@ -9,15 +9,22 @@ public class JoinPartyLeader : MonoBehaviour
 
     private void Start()
     {
-        ServerManager.SendtoAllSockets("spleef");
-
         var controllers = ServerManager.allControllers?.Values.ToList();
         if (controllers != null && controllers.Count > 0)
         {
-            var partyLeaderDevice = controllers[0];
+            // Assign first player as party leader
+            var partyLeader = controllers[0];
 
+            ServerManager.SendToSpecificSocket(partyLeader, "spleef");
+
+            foreach (var device in controllers.Skip(1))
+            {
+                ServerManager.SendToSpecificSocket(device, "mainboard");
+            }
+
+            // Join party leader into the scene
             PlayerInputManager.instance.playerPrefab = prefab;
-            PlayerInputManager.instance.JoinPlayer(-1, -1, null, partyLeaderDevice);
+            PlayerInputManager.instance.JoinPlayer(-1, -1, null, partyLeader);
         }
         else
         {
