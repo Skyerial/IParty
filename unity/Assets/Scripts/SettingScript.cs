@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class SettingScript : MonoBehaviour
 {
     public GameObject settingsPanel;
+    [SerializeField]
+    public Button settingsButton;
 
     [SerializeField]
     private AudioSource audioSource;
@@ -21,6 +23,7 @@ public class SettingScript : MonoBehaviour
     void Start()
     {
         settingsPanel.SetActive(false);
+        settingsButton.onClick.Invoke();
         if (musicVolumeSlider != null)
         {
             musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
