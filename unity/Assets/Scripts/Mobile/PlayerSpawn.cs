@@ -10,7 +10,6 @@ using TMPro;
 public class PlayerSpawn : MonoBehaviour
 {
     public GameObject nameboardPrefab;
-    int i = 0;
     public GameObject crown;
     /**
      * @brief Called at the start of the scene. Clears controller list if in Lobby.
