@@ -7,8 +7,9 @@ using UnityEngine.InputSystem;
  * @brief Manages player data, colors, faces, rankings, and persistence between scenes.
  */
 public class PlayerManager : MonoBehaviour
-{
-    private static int currentPlayers = 0;
+{   
+    private const int MaxPlayers = 4;
+    private static HashSet<int> currentPlayers = new HashSet<int>();
     public static PlayerManager instance;
 
     /**
@@ -67,7 +68,7 @@ public class PlayerManager : MonoBehaviour
     {
         playerStats[device] = new PlayerStats
         {
-            playerID = currentPlayers,
+            playerID = AssignID(),
             position = 0,
             color = color,
             winner = 0,
@@ -76,7 +77,21 @@ public class PlayerManager : MonoBehaviour
         };
 
         // instance.rankGameboard.Add(playerStats[device].playerID);
-        currentPlayers++;
+        // currentPlayers++;
+    }
+
+    public static int AssignID()
+    {
+        for (int id = 0; id < MaxPlayers; id++)
+        {
+            if (!currentPlayers.Contains(id))
+            {
+                currentPlayers.Add(id);
+                return id;
+            }
+        }
+
+        return 5;
     }
 
     /**
@@ -108,9 +123,10 @@ public class PlayerManager : MonoBehaviour
      * @return void
      */
     public static void RemovePlayer(InputDevice device)
-    {
+    {   
+        currentPlayers.Remove(playerStats[device].playerID);
         playerStats.Remove(device);
-        currentPlayers--;
+        // currentPlayers--;
     }
 
     /**

@@ -14,6 +14,7 @@ using NativeWebSocket;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Linq;
 
 // Newly added:
@@ -274,9 +275,12 @@ public class ServerManager : MonoBehaviour
                 Debug.Log($"[Local][WS] Disconnected: {connectionId}");
                 MainThreadDispatcher.Enqueue(() =>
                 {
-                    // RECONNECT EVENT SLOT
                     Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
-                    if (reconnectFunction)
+                    if (SceneManager.GetActiveScene().name == "Lobby")
+                    {
+                        CleanupController(connectionId);
+                    }
+                    else if (reconnectFunction)
                     {
                         if (!reconnectFunction.disconnected)
                         {
@@ -302,12 +306,6 @@ public class ServerManager : MonoBehaviour
 
             socket.OnMessage = msg =>
             {
-                if (msg.Contains("pong"))
-                {
-                    awaitingPongs[socket] = false;
-                    Debug.Log($"Received pong from {socket.ConnectionInfo.ClientIpAddress}");
-                    return;
-                }
                 string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
                 Debug.Log($"[Local][WS] Msg from {connectionId}");
                 commandQueue.Enqueue((msg, connectionId));
@@ -569,7 +567,11 @@ public class ServerManager : MonoBehaviour
                     int port = socket.ConnectionInfo.ClientPort;
                     string connectionId = $"{ip}:{port}";
 
-                    if (reconnectFunction && !reconnectFunction.disconnected)
+                    if (SceneManager.GetActiveScene().name == "Lobby")
+                    {
+                        CleanupController(connectionId);
+                    }
+                    else if (reconnectFunction && !reconnectFunction.disconnected)
                     {
                         reconnectFunction.DisconnectEvent(connectionId, socket.ConnectionInfo.ClientPort.ToString());
                     }
@@ -779,8 +781,17 @@ public class ServerManager : MonoBehaviour
         {
             foreach (var p in PlayerInput.all)
                 if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
+
             // Removing Player from PlayerManager.
+            takenColors.Remove(PlayerManager.playerStats[allControllers[clientId]].color);
+            foreach (string color in takenColors)
+            {
+                Debug.Log("The remaining color:" + color);
+            }
+            PlayerSpawn playerSpawn = FindAnyObjectByType<PlayerSpawn>();
+            playerSpawn.RemoveFromLobby(allControllers[clientId]);
             PlayerManager.RemovePlayer(allControllers[clientId]);
+            allSockets.Remove(allControllers[clientId]);
             allControllers.Remove(clientId);
         }
     }

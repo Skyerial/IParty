@@ -5,6 +5,12 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using NUnit.Framework.Interfaces;
 
+
+/**
+* @brief Attached to a player and controls the text that the player needs to type,
+* removing it on a correctly typed word, updating the words left counter
+* and updating the cursor appropriately
+*/
 public class PlayerTypingController : MonoBehaviour
 {
     public TMP_InputField inputField;
@@ -12,30 +18,15 @@ public class PlayerTypingController : MonoBehaviour
     public TextMeshProUGUI wordsLeftText;
     public PlayerRaceController raceController;
     public TextSpawner textSpawner;
+    public int playerInputIndex;
+    public int finishPostion;
+    
     private string currentTargetWord = null;
     private string cursor = $"<color=yellow>|</color>";
     private int inputCounter = 0;
     private int cleanupCounter = 0;
     private int wordsLeft = 0;
-    public int playerInputIndex;
-    public int finishPostion;
 
-
-    // private void Start()
-    // {
-    //     StartCoroutine(Prepare());
-    // }
-
-    // private IEnumerator Prepare()
-    // {
-    //     yield return new WaitUntil(() => spawner.transform.childCount >= 10);
-
-    //     textSpawner = spawner.GetComponent<TextSpawner>();
-    //     wordsLeft = textSpawner.spawnedWords.Count;
-    //     inputField.onValueChanged.AddListener(HandleInput);
-    //     UpdateWordsLeftText();
-    //     UpdateCursorPosition(0);
-    // }
 
     public void Initialize()
     {
