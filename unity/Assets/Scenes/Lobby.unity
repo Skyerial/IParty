@@ -942,7 +942,7 @@ PrefabInstance:
     - target: {fileID: 5982044762484705939, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
       propertyPath: crown
       value: 
-      objectReference: {fileID: 919132149155446097, guid: 67ec4b44e54e4aa428f1e6f26986ad2c, type: 3}
+      objectReference: {fileID: 1979965578}
     - target: {fileID: 5982044762484705939, guid: f4f72b0c3b532e14bab2870d0d926e16, type: 3}
       propertyPath: nameboardPrefab
       value: 

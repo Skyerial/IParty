@@ -55,7 +55,7 @@ public class PlayerSpawn : MonoBehaviour
                 spawnPoints[spawnIndex].GetChild(0).GetChild(0).gameObject.SetActive(false);
                 playerInput.transform.localScale = Vector3.one * 2f;
 
-                if (spawnPoints[spawnIndex].name == "L1")
+                if (spawnPoints[spawnIndex].name == "L1" || crown != null)
                 {
                     crown.SetActive(true);
                 }
