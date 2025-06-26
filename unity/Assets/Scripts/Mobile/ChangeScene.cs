@@ -44,6 +44,9 @@ public class ChangeScene : MonoBehaviour
             case 10:
                 level = "Winscreen3D";
                 break;
+            case 11:
+                level = "SetGame";
+                break;
         }
         Debug.Log(level);
         SceneManager.LoadScene(level);
