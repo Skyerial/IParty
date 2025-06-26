@@ -1285,7 +1285,7 @@ MonoBehaviour:
   raceController: {fileID: 0}
   textSpawner: {fileID: 1505018047}
   playerInputIndex: 0
-  finishPostion: 0
+  finishPostion: 5
 --- !u!1 &248097043
 GameObject:
   m_ObjectHideFlags: 0
@@ -4289,7 +4289,7 @@ MonoBehaviour:
   raceController: {fileID: 0}
   textSpawner: {fileID: 687351486}
   playerInputIndex: 0
-  finishPostion: 0
+  finishPostion: 5
 --- !u!4 &780661168 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a5c64582a41ac2a43bb4dc79969e3dbc, type: 3}
@@ -5216,7 +5216,7 @@ MonoBehaviour:
   raceController: {fileID: 0}
   textSpawner: {fileID: 1312680058}
   playerInputIndex: 0
-  finishPostion: 0
+  finishPostion: 5
 --- !u!4 &1031902053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 57d3eed6d2253d24994d5ad37e00aedc, type: 3}
@@ -8881,12 +8881,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wordsPerPlayer: 5
-  players:
+  rows:
   - {fileID: 232139156}
   - {fileID: 776138614}
   - {fileID: 988811997}
   - {fileID: 2058010041}
-  spawns: []
+  spawns:
+  - {fileID: 399466856}
   finishCount: 0
   playerInputs: []
   spawn: {fileID: 399466856}
@@ -10586,7 +10587,7 @@ MonoBehaviour:
   raceController: {fileID: 0}
   textSpawner: {fileID: 678055378}
   playerInputIndex: 0
-  finishPostion: 0
+  finishPostion: 5
 --- !u!1001 &2062745384
 PrefabInstance:
   m_ObjectHideFlags: 0

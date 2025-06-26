@@ -19,7 +19,7 @@ public class PlayerTypingController : MonoBehaviour
     public PlayerRaceController raceController;
     public TextSpawner textSpawner;
     public int playerInputIndex;
-    public int finishPostion;
+    public int finishPostion = 5;
     
     private string currentTargetWord = null;
     private string cursor = $"<color=yellow>|</color>";

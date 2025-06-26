@@ -205,8 +205,13 @@ public class TMGameManager : MonoBehaviour
             .OrderBy(controller => controller.finishPostion)
             .ToList();
 
+        sortedControllers.Reverse();
+
         foreach (var controller in sortedControllers)
         {
+            // TextMeshProUGUI name = rows[controller.playerInputIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            var name = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == controller.playerInputIndex).name;
+            Debug.Log($"finish position: {controller.finishPostion} index: {controller.playerInputIndex} name: {name}");
             InputDevice id = playerInputs[controller.playerInputIndex].devices[0];
             pm.tempRankAdd(id);
         }
