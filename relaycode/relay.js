@@ -6,6 +6,7 @@ const express = require('express');
 const WebSocket = require('ws');
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
 
 // SSL CERTIFICATES (Let’s Encrypt / DuckDNS)
 const CERT_PATH = '/etc/letsencrypt/live/iparty.duckdns.org';
@@ -17,6 +18,15 @@ const sslOptions = {
 // SERVER SETUP
 const app = express();
 app.use(bodyParser.raw({ type: '*/*', limit: '50mb' }));
+
+// Rate limiter middleware for external HTTP requests
+const httpLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute window
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later.'
+});
+app.use('/host/:hostId/http/', httpLimiter);
+
 const server = https.createServer(sslOptions, app);
 const wss = new WebSocket.Server({ noServer: true });
 
