@@ -1010,7 +1010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6696bf950421d159d994c715523ccb85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  labelDisplayTime: 5
+  labelDisplayTime: 10
   playerUIPrefab: {fileID: 722224708655069218, guid: 8a891a02b0f9344ca9726bf3533c7050, type: 3}
   uiParent: {fileID: 1751397173}
   uiOffset: {x: 10, y: -10}

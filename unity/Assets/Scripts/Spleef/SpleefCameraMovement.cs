@@ -10,7 +10,6 @@ public class SpleefCameraMovement : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(SpleefGameManager.Instance.ShowPlayerLabels());
         StartCoroutine(MoveAlongArc());
     }
 

@@ -98,9 +98,14 @@ public class SpleefGameManager : MonoBehaviour
         newMat.mainTexture = matFace;
         face.material = newMat;
 
-        Instance.players[pi] = new PlayerEntry { Device = dev, Color = mat.color };
-
         pi.DeactivateInput();
+        Instance.AddPlayer(pi, dev, mat.color);
+    }
+    private void AddPlayer(PlayerInput pi, InputDevice dev, Color color)
+    {
+        Instance.players[pi] = new PlayerEntry { Device = dev, Color = color };
+
+        StartCoroutine(ShowPlayerLabels());
     }
 
     public void StartGame()
@@ -108,7 +113,7 @@ public class SpleefGameManager : MonoBehaviour
         StartCoroutine(PreGameCountdown());
     }
 
-    public IEnumerator ShowPlayerLabels()
+    private IEnumerator ShowPlayerLabels()
     {
         foreach (var kv in players)
         {

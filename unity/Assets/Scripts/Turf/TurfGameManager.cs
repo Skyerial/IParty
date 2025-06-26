@@ -142,6 +142,8 @@ public class TurfGameManager : MonoBehaviour
             PercentText = txt,
             Percentage = 0f
         };
+
+        StartCoroutine(ShowPlayerLabels());
     }
 
     public void StartGame()
@@ -149,7 +151,7 @@ public class TurfGameManager : MonoBehaviour
         StartCoroutine(PreGameCountdown());
     }
 
-    public IEnumerator ShowPlayerLabels()
+    private IEnumerator ShowPlayerLabels()
     {
         foreach (var kv in players)
         {
