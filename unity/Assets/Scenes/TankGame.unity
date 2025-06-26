@@ -2822,6 +2822,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3471f201fd2ccc746bc0c9c2abdab106, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  labelDisplayTime: 8
   countDownStartNumber: 3
   countDownText: {fileID: 1398193358}
   countDownCount: 0
@@ -2854,6 +2855,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fader: {fileID: 5301017381564912727, guid: d9dbabc3149e39c4aa4e3336e75f7575, type: 3}
+  fadeDuration: 0.5
+  autoTransitionOnStart: 0
+  delayBeforeTransition: 3
+  autoTransitionScene: MobileSandbox
+  skipNextStart: 0
 --- !u!1 &776592490 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1722419425054912748, guid: bd7dd49d94435334fb6885a5236c07ad, type: 3}
@@ -3219,7 +3225,7 @@ GameObject:
   - component: {fileID: 806611777}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
