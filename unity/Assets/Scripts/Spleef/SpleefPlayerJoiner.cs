@@ -3,11 +3,20 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+ /**
+  * @brief Joins all connected input devices as players at game start using the PlayerInputManager.
+  */
 public class SpleefPlayerJoiner : MonoBehaviour
 {
+     /**
+      * @brief Prefab used to instantiate new PlayerInput instances.
+      */
     [Tooltip("Assign your player prefab here")]
     public GameObject prefab;
 
+     /**
+      * @brief Unity event called on Start; iterates connected controllers, joins them as players, and registers them.
+      */
     void Start()
     {
         if (ServerManager.allControllers == null) return;

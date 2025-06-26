@@ -1,18 +1,43 @@
 using UnityEngine;
 using System.Collections;
 
+ /**
+  * @brief Moves the camera along a parabolic arc from a start to a target point, then signals game start.
+  */
 public class TurfCameraMovement : MonoBehaviour
 {
+    /**
+     * @brief Transform representing the start position of the camera.
+     */
     public Transform startPoint;
+
+    /**
+     * @brief Transform representing the target position of the camera.
+     */
     public Transform targetPoint;
+
+    /**
+     * @brief Duration (in seconds) for the camera to move along the arc.
+     */
     public float moveDuration = 3f;
+
+    /**
+     * @brief Maximum height of the arc above the straight line between start and target.
+     */
     public float arcHeight = 3f;
 
+    /**
+     * @brief Unity event called on Start; begins the MoveAlongArc coroutine.
+     */
     void Start()
     {
         StartCoroutine(MoveAlongArc());
     }
 
+    /**
+     * @brief Coroutine that interpolates camera position and rotation along a quadratic Bézier curve, then starts the game.
+     * @return IEnumerator for coroutine control.
+     */
     IEnumerator MoveAlongArc()
     {
         float elapsed = 0f;
@@ -36,7 +61,6 @@ public class TurfCameraMovement : MonoBehaviour
                                Mathf.Pow(t, 2) * p2;
 
             transform.position = position;
-
             transform.rotation = Quaternion.Slerp(startRot, endRot, t);
 
             elapsed += Time.deltaTime;
@@ -49,4 +73,3 @@ public class TurfCameraMovement : MonoBehaviour
         gm.StartGame();
     }
 }
-
