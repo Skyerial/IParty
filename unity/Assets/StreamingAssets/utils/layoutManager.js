@@ -86,9 +86,11 @@ export class LayoutManager extends ViewRenderer {
 
     /**
      * Adds a gyroscope-based component.
+     * 
+     * @param {string} displayText - The text to be displayed.
      */
-    async addGyro() {
-        await this.addComponent(GyroComponent);
+    async addGyro(displayText) {
+        await this.addComponent(GyroComponent, displayText);
     }
 
     /**

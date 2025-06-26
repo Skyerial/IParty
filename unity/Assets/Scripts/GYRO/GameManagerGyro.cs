@@ -36,7 +36,7 @@ public class GameManagerGyro : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
         sceneSwitcher = GetComponent<SwitchScene>();
-        ServerManager.SendtoAllSockets("gyro");
+        ServerManager.SendtoAllSockets("whackamole");
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
         audioHandler.PlayRandomMiniGameTrack();
 

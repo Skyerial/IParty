@@ -21,7 +21,6 @@ const CONTROLLER_MAP = {
   "turf": CustomJoystickController,
   "spleef": CustomJoystickController,
   "ready": ReadyController,
-  "gyro": GyroController,
   "tank": TankJoystickController
 };
 
@@ -133,6 +132,10 @@ export class SocketManager {
       initializeController(HotPotatoController, root, list);
     } else if (controller == "text-preset") {
       initializeController(TextController, root, data.words);
+    } else if (controller == "whackamole") {
+      initializeController(GyroController, root, "Shake your phone to whack a mole");
+    } else if (controller == "mainboard") {
+      initializeController(GyroController, root, "Shake your phone to throw the dice");
     } else if (CONTROLLER_MAP[controller]) {
       initializeController(CONTROLLER_MAP[controller], root);
     } else {

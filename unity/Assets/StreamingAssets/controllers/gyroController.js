@@ -11,8 +11,9 @@ export class GyroController {
    *
    * @param {HTMLElement} container - The DOM element to host the gyroscopic control.
    */
-  constructor(container) {
+  constructor(container, displayText) {
     this.container = container;
+    this.displayText = displayText;
   }
 
   /**
@@ -24,6 +25,6 @@ export class GyroController {
     await layout.init();
 
     // Add gyroscopic input control to the layout
-    await layout.addGyro();
+    await layout.addGyro(this.displayText);
   }
 }

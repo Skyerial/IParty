@@ -13,8 +13,10 @@ export class GyroComponent extends ViewRenderer {
    * 
    * @param {HTMLElement} container - Element where the gyro view will be rendered.
    */
-  constructor(container) {
+  constructor(container, vertical, displayText) {
     super("./views/components/gyroComponentView.html", container);
+    this.vertical = vertical;
+    this.displayText = displayText;
   }
 
   /**
@@ -27,6 +29,9 @@ export class GyroComponent extends ViewRenderer {
     this.permissionPrompt = this.container.querySelector("#permissionPrompt");
     this.playView = this.container.querySelector("#playView");
     this.enableButton = this.container.querySelector("#enableButton");
+
+    const text = this.container.querySelector("#displayText");
+    text.innerHTML = (this.displayText);
 
     this.requestMotionPermission();
   }
