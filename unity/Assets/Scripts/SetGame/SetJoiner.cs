@@ -21,7 +21,7 @@ public class SetJoiner : MonoBehaviour
                 Debug.LogError($"JoinPlayer failed for {device}");
                 continue;
             }
-            SetGameManager.RegisterPlayerGame(pi);
+            SetGameManager.setGameManager.RegisterPlayerGame(pi);
         }
     }
 }

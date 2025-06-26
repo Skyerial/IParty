@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 
-public class SetCard : MonoBehaviour{
+public class SetCard : MonoBehaviour
+{
     public CardData cardData;
 
     public Image img;
@@ -11,8 +12,10 @@ public class SetCard : MonoBehaviour{
     public Transform symbolParent;
     public Sprite[] shapeSprites;
 
-    public void Initialize(CardData data) {
-        foreach (Transform child in symbolParent) {
+    public void Initialize(CardData data)
+    {
+        foreach (Transform child in symbolParent)
+        {
             Destroy(child.gameObject);
         }
 
@@ -24,15 +27,18 @@ public class SetCard : MonoBehaviour{
         Color cardColor = GetColor(data.color);
         Sprite shapeSprite = shapeSprites[index];
 
-        if (cardImage != null) {
+        if (cardImage != null)
+        {
             cardImage.sprite = shapeSprite;
         }
 
         cardImage.color = cardColor;
     }
 
-    Color GetColor(int color) {
-        return color switch {
+    Color GetColor(int color)
+    {
+        return color switch
+        {
             0 => new Color(1f, 0, 0),       // red
             1 => new Color(0, 1f, 0),       // green
             2 => new Color(0.5f, 0, 1f),    // purple
@@ -41,7 +47,8 @@ public class SetCard : MonoBehaviour{
     }
 }
 
-public struct CardData {
+public struct CardData
+{
     public int number;
     public int filling;
     public int shape;
