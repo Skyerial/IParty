@@ -75,14 +75,14 @@ public class PlayerMovement : MonoBehaviour
             {
                 Debug.Log("Player image found not");
             }
-            yield return StartCoroutine(RotateToTarget(targetRotation, 0.5f));
+            yield return StartCoroutine(RotateToTarget(targetRotation, 0.2f));
         }
     }
 
     public IEnumerator jump(Vector3 start, Vector3 end)
     {
         animator.SetTrigger("Jump");
-        yield return StartCoroutine(JumpArc(transform, start, end, 0.5f, 1.5f));
+        yield return StartCoroutine(JumpArc(transform, start, end, 0.4f, 1f));
     }
 
     public IEnumerator RotateToTarget(Quaternion targetRotation, float duration)
