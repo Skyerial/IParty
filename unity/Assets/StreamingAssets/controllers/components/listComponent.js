@@ -14,9 +14,9 @@ export class ListComponent extends ViewRenderer {
    * @param {boolean} vertical - If true, layout the list vertically; otherwise horizontally.
    * @param {Array<Object>} [items=[]] - Initial list of players.
    *   Each item should be an object with the following properties:
-   *   @param {string} items.label - Text label displayed on the button.
-   *   @param {string} items.color - Background color of the button (CSS color string).
-   *   @param {string} items.jsonButton - Button sent on button events.
+   *   @param {string} items.itemName - Text label displayed on the button.
+   *   @param {string} items.itemColor - Background color of the button (CSS color string).
+   *   @param {string} items.connectedBtn - Button sent on button events.
    */
   constructor(container, vertical, items = []) {
     super("./views/components/listComponentView.html", container);
@@ -75,5 +75,42 @@ export class ListComponent extends ViewRenderer {
 
     if (!player) return;
     item.style.display = "none";
+  }
+
+  /**
+   * Attach an event listener to a specific item’s button.
+   *
+   * @param {string} itemName        - The name of the item (must match the CSS class you passed into bindEvents).
+   * @param {string} eventType       - The DOM event type (e.g. 'click', 'pointerdown').
+   * @param {Function} handler       - The listener function (receives the Event object).
+   * @returns {boolean}              - True if the button was found & listener attached; false otherwise.
+   */
+  addItemListener(itemName, eventType, handler) {
+    const btn = this.container.querySelector(`.player-list-button.${itemName}`);
+    if (!btn) return false;
+    btn.addEventListener(eventType, handler);
+    return true;
+  }
+  
+  /**
+   * Change the label (and identifying CSS class) of one of your buttons.
+   *
+   * @param {string} oldName  - the existing itemName
+   * @param {string} newName  - the new itemName to replace it with
+   * @returns {boolean}       - true if the button was found & renamed
+   */
+  changeItemName(oldName, newName) {
+    const btn = this.container.querySelector(
+      `.player-list-button.${oldName}`
+    );
+    if (!btn) return false;
+
+    btn.textContent = newName;
+    btn.classList.replace(oldName, newName);
+
+    const item = this.items.find(i => i.itemName === oldName);
+    if (item) item.itemName = newName;
+
+    return true;
   }
 }

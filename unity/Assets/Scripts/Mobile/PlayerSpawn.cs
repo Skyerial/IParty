@@ -10,11 +10,8 @@ using TMPro;
 public class PlayerSpawn : MonoBehaviour
 {
     public GameObject nameboardPrefab;
-<<<<<<< Updated upstream
     int i = 0;
     public GameObject crown;
-=======
->>>>>>> Stashed changes
     /**
      * @brief Called at the start of the scene. Clears controller list if in Lobby.
      * @return void

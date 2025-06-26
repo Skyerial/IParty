@@ -280,6 +280,14 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.player-list-button:focus {
+  outline: none;
 }
 
 .player-list-button:active {

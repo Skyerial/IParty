@@ -7,8 +7,10 @@ import { OneButton } from "../controllers/oneButton.js";
 import { ReadyController } from "../controllers/readyController.js";
 import { CustomJoystickController } from "../controllers/customJoystickController.js";
 import { TankJoystickController } from "../controllers/tankJoystickController.js";
-import { initializeController } from "../main.js";
+import { initializeController, loadPage } from "../main.js";
 import { getController } from "../main.js";
+import { DescriptionController } from "../controllers/descriptionController.js";
+import { WaitingPage } from "../pages/waitingPage.js";
 
 /**
  * @brief Mapping of controller types to their corresponding controller classes
@@ -21,7 +23,8 @@ const CONTROLLER_MAP = {
   "turf": CustomJoystickController,
   "spleef": CustomJoystickController,
   "ready": ReadyController,
-  "tank": TankJoystickController
+  "tank": TankJoystickController,
+  "description": DescriptionController
 };
 
 /**
@@ -136,6 +139,8 @@ export class SocketManager {
       initializeController(GyroController, root, "Shake your phone to whack a mole");
     } else if (controller == "mainboard") {
       initializeController(GyroController, root, "Shake your phone to throw the dice");
+    } else if (controller == "waitingpage") {
+      loadPage(WaitingPage, root);
     } else if (CONTROLLER_MAP[controller]) {
       initializeController(CONTROLLER_MAP[controller], root);
     } else {
@@ -170,9 +175,6 @@ export class SocketManager {
       case "controller":
         this.loadController(data);
         break;
-      case "clear-text":
-        document.querySelector("#myText").value = "";
-        break;
       case "reconnect-status":
         data.approved
           ? initializeController(JoystickController, root)
@@ -190,6 +192,7 @@ export class SocketManager {
         this.handleDeadUpdate(data);
         break;
     }
+
     console.log(data);
   }
 

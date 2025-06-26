@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,26 +8,33 @@ public class JoinPartyLeader : MonoBehaviour
 
     private void Start()
     {
-        var controllers = ServerManager.allControllers?.Values.ToList();
-        if (controllers != null && controllers.Count > 0)
-        {
-            // Assign first player as party leader
-            var partyLeader = controllers[0];
-
-            ServerManager.SendToSpecificSocket(partyLeader, "spleef");
-
-            foreach (var device in controllers.Skip(1))
-            {
-                ServerManager.SendToSpecificSocket(device, "mainboard");
-            }
-
-            // Join party leader into the scene
-            PlayerInputManager.instance.playerPrefab = prefab;
-            PlayerInputManager.instance.JoinPlayer(-1, -1, null, partyLeader);
-        }
-        else
+        var controllers = ServerManager.allControllers.Values.ToList();
+        if (controllers.Count == 0)
         {
             Debug.LogWarning("No controllers found in ServerManager.");
+            return;
         }
+
+        var leader = controllers[0];
+        var leaderMsg = new ServerManager.MessagePlayers {
+            type       = "controller",
+            controller = "description"
+        };
+
+        ServerManager.SendMessageToClient(leader.remoteId, JsonUtility.ToJson(leaderMsg));
+
+        for (int i = 1; i < controllers.Count; i++)
+        {
+            var dev = controllers[i];
+            var waitMsg = new ServerManager.MessagePlayers {
+                type       = "controller",
+                controller = "waitingpage"
+            };
+
+            ServerManager.SendMessageToClient(dev.remoteId, JsonUtility.ToJson(waitMsg));
+        }
+
+        PlayerInputManager.instance.playerPrefab = prefab;
+        PlayerInputManager.instance.JoinPlayer(-1, -1, null, leader);
     }
 }

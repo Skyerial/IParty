@@ -2,6 +2,7 @@ import { ViewRenderer } from "../utils/viewRenderer.js";
 import { socketManager } from "../main.js";
 import { ReconnectPage } from "./reconnectPage.js";
 import { LoginPage } from "./loginPage.js";
+import { loadPage } from "../main.js";
 
 /**
  * ConnectPage
@@ -33,14 +34,15 @@ export class ConnectPage extends ViewRenderer {
       if (!socketManager.isConnected()) {
         socketManager.connect(inputField.value);
       }
-      await new LoginPage(this.container).init();
+      await loadPage(LoginPage, this.container);
     });
 
     reconnectBtn.addEventListener("click", async () => {
       if (!socketManager.isConnected()) {
         socketManager.connect(inputField.value);
       }
-      await new ReconnectPage(this.container).init();
+
+      await loadPage(ReconnectPage, this.container);
     });
   }
 }

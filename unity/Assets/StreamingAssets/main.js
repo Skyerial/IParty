@@ -46,3 +46,9 @@ function setController(controller) {
 export function getController() {
   return currController;
 }
+
+export async function loadPage(Page, container) {
+  new Page(container).init();
+
+  if(currController) setController(null); 
+}

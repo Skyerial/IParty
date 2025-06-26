@@ -532,26 +532,6 @@ public class ServerManager : MonoBehaviour
         string json = JsonUtility.ToJson(messageObject);
         sock.Send(json);
     }
-    
-
-    public static void SendToSpecificSocket(VirtualController controller, string controllerName)
-    {
-        if (!allSockets.ContainsKey(controller))
-        {
-            Debug.LogWarning($"Socket for controller {controller.name} not found.");
-            return;
-        }
-
-        var messageObject = new MessagePlayers
-        {
-            type = "controller",
-            controller = controllerName
-        };
-
-        string json = JsonUtility.ToJson(messageObject);
-        allSockets[controller].Send(json);
-    }
-
 
     public void CheckAllSockets()
     {
