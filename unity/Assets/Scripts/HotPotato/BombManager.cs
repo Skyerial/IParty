@@ -124,7 +124,6 @@ public class BombManager : MonoBehaviour
                 if (playerInput != null)
                 {
                     initPlayer(playerInput);
-                    GameManager.RegisterPlayerGame(playerInput);
                     MovementHotpotato mover = playerInput.GetComponent<MovementHotpotato>();
                     mover.bombManager = this;
                 }
