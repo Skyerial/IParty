@@ -7,35 +7,92 @@ using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
+/**
+ * @brief Manages overall Spleef game flow: player registration, countdown, tile drops, and finish sequence.
+ */
 public class SpleefGameManager : MonoBehaviour
 {
     public static SpleefGameManager Instance { get; private set; }
 
     [Header("Player Labels")]
+    /**
+     * @brief Duration (in seconds) to display player labels at game start.
+     */
     public float labelDisplayTime  = 5f;
 
     [Header("Pre-Game Countdown")]
+    /**
+     * @brief Canvas used for the pre-game countdown.
+     */
     public Canvas countdownCanvas;
+    /**
+     * @brief Text component displaying the countdown number.
+     */
     public TMP_Text countdownText;
+    /**
+     * @brief Starting count value for the pre-game countdown.
+     */
     public int countdownStart = 3;
+    /**
+     * @brief Ambient audio clip played before the countdown.
+     */
     public AudioClip preGameAmbient;
+    /**
+     * @brief Audio clip played during the full countdown.
+     */
     public AudioClip fullCountdownClip;
 
     [Header("Tile Drop Settings")]
+    /**
+     * @brief Canvas used for the tile-drop notification.
+     */
     public Canvas tileDropCanvas;
+    /**
+     * @brief Text component displaying the time until tiles drop.
+     */
     public TMP_Text tileDropText;
+    /**
+     * @brief Delay (in seconds) before tiles begin dropping.
+     */
     public float tileDropDelay = 5f;
+    /**
+     * @brief Tracks whether tile dropping is enabled.
+     */
     private bool tilesDroppingEnabled = false;
+    /**
+     * @brief Indicates whether tiles dropping is enabled.
+     */
     public bool TilesDroppingEnabled => tilesDroppingEnabled;
+    /**
+     * @brief Name of the scene to load after the round finishes.
+     */
     public string nextSceneName;
+    /**
+     * @brief Main background music audio clip.
+     */
     public AudioClip mainMusic;
 
     [Header("Finish Settings")]
+    /**
+     * @brief Canvas shown at the finish.
+     */
     public Canvas finishCanvas;
+    /**
+     * @brief Text component shown at game end.
+     */
     public TMP_Text finishText;
+    /**
+     * @brief Duration (in seconds) to display the finish screen.
+     */
     public float finishDisplayTime = 3f;
+    /**
+     * @brief Audio clip played when the game finishes.
+     */
     public AudioClip finishClip;
 
+    /**
+     * @brief Internal structure for storing player input devices and assigned colors.
+     */
     class PlayerEntry
     {
         public InputDevice Device;
@@ -49,6 +106,9 @@ public class SpleefGameManager : MonoBehaviour
     private AudioManager globalAudioManager;
     private AudioSource audioSource;
 
+    /**
+     * @brief Unity event called when the script instance is loaded; initializes singletons and references.
+     */
     void Awake()
     {
         globalAudioManager = FindAnyObjectByType<AudioManager>();
@@ -60,6 +120,9 @@ public class SpleefGameManager : MonoBehaviour
             Destroy(gameObject);
     }
 
+    /**
+     * @brief Unity event called on the first frame; stops music, hides UI, configures audio source, and signals server.
+     */
     void Start()
     {
         globalAudioManager.StopMusic();
@@ -81,6 +144,10 @@ public class SpleefGameManager : MonoBehaviour
         ServerManager.SendtoAllSockets("spleef");
     }
 
+    /**
+     * @brief Registers a new player: applies materials, deactivates input, and adds to the game.
+     * @param pi The PlayerInput instance for the joining player.
+     */
     public static void RegisterPlayerGame(PlayerInput pi)
     {
         var dev = pi.devices[0];
@@ -101,6 +168,13 @@ public class SpleefGameManager : MonoBehaviour
         pi.DeactivateInput();
         Instance.AddPlayer(pi, dev, mat.color);
     }
+
+    /**
+     * @brief Adds a PlayerInput to the manager with its device and color, then shows player labels.
+     * @param pi The PlayerInput instance.
+     * @param dev The InputDevice associated with the player.
+     * @param color The color assigned to the player.
+     */
     private void AddPlayer(PlayerInput pi, InputDevice dev, Color color)
     {
         Instance.players[pi] = new PlayerEntry { Device = dev, Color = color };
@@ -108,11 +182,18 @@ public class SpleefGameManager : MonoBehaviour
         StartCoroutine(ShowPlayerLabels());
     }
 
+    /**
+     * @brief Starts the game by launching the pre-game countdown coroutine.
+     */
     public void StartGame()
     {
         StartCoroutine(PreGameCountdown());
     }
 
+    /**
+     * @brief Coroutine to display player name labels above characters for a set duration.
+     * @return IEnumerator for coroutine control.
+     */
     private IEnumerator ShowPlayerLabels()
     {
         foreach (var kv in players)
@@ -139,6 +220,10 @@ public class SpleefGameManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Coroutine handling the countdown before gameplay begins, with audio fades and time scale control.
+     * @return IEnumerator for coroutine control.
+     */
     IEnumerator PreGameCountdown()
     {
         if (preGameAmbient != null)
@@ -177,6 +262,10 @@ public class SpleefGameManager : MonoBehaviour
         StartCoroutine(EnableTileDropsAfterDelay());
     }
 
+    /**
+     * @brief Coroutine that waits for the tile drop delay, updates the UI timer, and enables tile dropping.
+     * @return IEnumerator for coroutine control.
+     */
     IEnumerator EnableTileDropsAfterDelay()
     {
         tileDropCanvas?.gameObject.SetActive(true);
@@ -198,6 +287,10 @@ public class SpleefGameManager : MonoBehaviour
         tilesDroppingEnabled = true;
     }
 
+    /**
+     * @brief Updates the tile-drop countdown text to show remaining minutes and seconds.
+     * @param remaining Time remaining before tile drop.
+     */
     void UpdateMatchTimerText(float remaining)
     {
         if (tileDropText == null) return;
@@ -207,6 +300,10 @@ public class SpleefGameManager : MonoBehaviour
         tileDropText.text = $"{mins}:{secs:00} Before Tiles Drop";
     }
 
+    /**
+     * @brief Handles logic when a player is eliminated, disables their input and checks for round end.
+     * @param pi The PlayerInput instance of the eliminated player.
+     */
     public void OnPlayerEliminated(PlayerInput pi)
     {
         if (!eliminationOrder.Contains(pi))
@@ -225,6 +322,10 @@ public class SpleefGameManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Coroutine executed when only one player remains; shows finish UI, plays audio, finalizes ranking, and loads next scene.
+     * @return IEnumerator for coroutine control.
+     */
     private IEnumerator OnPlayerEliminatedRoutine()
     {
         foreach (var pi in players.Keys)
@@ -246,6 +347,9 @@ public class SpleefGameManager : MonoBehaviour
         sceneSwitcher.LoadNewScene(nextSceneName);
     }
 
+    /**
+     * @brief Orders players by elimination and updates the PlayerManager’s ranking.
+     */
     public void FinalizeRanking()
     {
         var pm = Object.FindFirstObjectByType<PlayerManager>();
@@ -259,6 +363,11 @@ public class SpleefGameManager : MonoBehaviour
             pm.tempRankAdd(device);
     }
     
+    /**
+     * @brief Retrieves the assigned color for the given player, defaulting to white if not found.
+     * @param pi The PlayerInput instance.
+     * @return The player's assigned color.
+     */
     public Color GetPlayerColor(PlayerInput pi) 
     {
         if (players.TryGetValue(pi, out var entry))
@@ -267,6 +376,11 @@ public class SpleefGameManager : MonoBehaviour
         return Color.white;
     }
 
+    /**
+     * @brief Coroutine that fades out the audio source over a specified duration.
+     * @param duration The duration of the fade-out in seconds.
+     * @return IEnumerator for coroutine control.
+     */
     private IEnumerator FadeOut(float duration)
     {
         float startVol = audioSource.volume;
@@ -283,6 +397,11 @@ public class SpleefGameManager : MonoBehaviour
         audioSource.volume = startVol;
     }
 
+    /**
+     * @brief Coroutine that fades in the audio source over a specified duration.
+     * @param duration The duration of the fade-in in seconds.
+     * @return IEnumerator for coroutine control.
+     */
     private IEnumerator FadeIn(float duration)
     {
         float targetVol = audioSource.volume;
