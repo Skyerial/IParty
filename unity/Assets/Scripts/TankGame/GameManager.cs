@@ -4,10 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public float labelDisplayTime  = 5f;
     private static GameManager instance;
     public static bool gameActive = true;
     public static List<PlayerInput> gamePlayers = new List<PlayerInput>();
@@ -77,6 +78,31 @@ public class GameManager : MonoBehaviour
         Debug.Log(player);
         gamePlayers.Add(player);
         player.DeactivateInput();
+
+        instance.StartCoroutine(instance.ShowPlayerLabels());
+    }
+
+    private IEnumerator ShowPlayerLabels()
+    {
+        foreach (var pi in gamePlayers)
+        {
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(true);
+
+            var img = labelGO.GetComponentInChildren<Image>();
+            img.color = PlayerManager.findColor(pi.devices[0]).color;
+
+            var txt = labelGO.GetComponentInChildren<TMP_Text>();
+            txt.text = PlayerManager.playerStats[pi.devices[0]].name;
+        }
+
+        yield return new WaitForSecondsRealtime(labelDisplayTime);
+
+        foreach (var pi in gamePlayers)
+        {
+            var labelGO = pi.transform.Find("PlayerLabelCanvas").gameObject;
+            labelGO.SetActive(false);
+        }
     }
 
     public static void PlayerDied(PlayerInput player)
