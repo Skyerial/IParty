@@ -15,7 +15,6 @@ public class Bomb : MonoBehaviour
     public GameObject explosion;
     public bool isBeingThrown = false;
     AudioSource audioSource;
-    private bool hasPlayedThrowSound = false;
 
     /**
      * @brief Initializes the bomb with a random countdown time and sets up initial properties.
@@ -40,12 +39,10 @@ public class Bomb : MonoBehaviour
         if (!isBeingThrown)
         {
             elapsedTime += Time.deltaTime;
-            hasPlayedThrowSound = false;
         }
         else
         {
             audioSource.Play();
-            hasPlayedThrowSound = true;
         }
 
         float flickerInterval = Mathf.Lerp(0.5f, 0.05f, elapsedTime / countdownTime);

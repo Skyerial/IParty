@@ -1,12 +1,19 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Controls the animation played on the win screen based on player ranking.
+ */
 public class WinscreenAnimator : MonoBehaviour
 {
     private Animator animator;
     private int playerID;
     private PlayerInput playerInput;
 
+    /**
+     * @brief Called when the object is initialized. Triggers the ranking display.
+     * @return void
+     */
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -23,7 +30,10 @@ public class WinscreenAnimator : MonoBehaviour
         }
     }
 
-
+    /**
+     * @brief Determines the player's ranking and plays the corresponding animation.
+     * @return void
+     */
     void PlayAnimationBasedOnRank()
     {
         var ranking = PlayerManager.instance.rankGameboard;
@@ -33,8 +43,8 @@ public class WinscreenAnimator : MonoBehaviour
             Debug.LogWarning($"Player {playerID} not found in rankGameboard.");
             return;
         }
-        
-        int position = ranking.IndexOf(playerID) + 1; 
+
+        int position = ranking.IndexOf(playerID) + 1;
 
         switch (position)
         {
@@ -56,4 +66,3 @@ public class WinscreenAnimator : MonoBehaviour
         }
     }
 }
-

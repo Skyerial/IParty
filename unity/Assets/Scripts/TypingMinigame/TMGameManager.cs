@@ -18,8 +18,6 @@ public class TMGameManager : MonoBehaviour
 
     public List<GameObject> spawns; // spawn1, spawn2
 
-    private bool gameStarted = false;
-
     public int finishCount = 0;
 
     public Dictionary<string, PlayerTypingController> playerControllers;
@@ -54,7 +52,6 @@ public class TMGameManager : MonoBehaviour
 
     public void StartGame()
     {
-        gameStarted = true;
         Debug.Log("Game started!");
 
         AudioManager.Instance.PlayRandomMiniGameTrack();

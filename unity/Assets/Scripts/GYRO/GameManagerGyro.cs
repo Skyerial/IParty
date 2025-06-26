@@ -146,6 +146,10 @@ public class GameManagerGyro : MonoBehaviour
             elapsed += Time.deltaTime;
             float remaining = matchDuration - elapsed;
             int sec = Mathf.CeilToInt(remaining);
+            if (sec <= 10)
+            {
+                timerText.color = Color.red;
+            }
             timerText.text = sec.ToString();
             yield return null;
         }

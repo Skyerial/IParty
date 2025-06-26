@@ -160,6 +160,10 @@ export class SocketManager {
   handleCommand(data) {
     const root = document.querySelector(".view-container");
     switch (data.type) {
+      case "ping":
+        const pong = JSON.stringify({ type: "pong" });
+        this.send(pong);
+        break;
       case "controller":
         this.loadController(data);
         break;

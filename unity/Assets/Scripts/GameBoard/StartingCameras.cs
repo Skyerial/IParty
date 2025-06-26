@@ -7,31 +7,54 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+/**
+ * @brief Handles the starting camera of the board game. It causes the camera
+ * to spiral towards a given centre point.
+ */
 
 public class StartingCameras : MonoBehaviour
 {
+    /**
+    * @brief This given transform is the centerpoint to which the camera spirals
+    */
     public Transform centerPoint; // The point to look at (e.g., player or scene center)
+
+    /**
+    * @brief This is the duration of the camera movement
+    */
     public float duration = 10f;    // Time to complete one full circle
-    // public float height = 500f;
-    public GameObject camera;
+
+    /**
+    * @brief This GameObject is the camera that spirals towards the center
+    */
+    public new GameObject camera;
+
+    /**
+    * @brief This defines the starting radius (distance from camera to center)
+    * which will decrease during the movement (as a spiral should).
+    */
     public float startRadius = 100f;
+    /**
+    * @brief This defines the ending radius (distance from camera to center).
+    * So to what radius the camera will decrease during the movement.
+    */
     public float endRadius = 2f;
+    /**
+    * @brief This defines the height at the start of the movement which will
+    * also linearly decrease as the movement continues.
+    */
     public float startHeight = 50f;
+    /**
+    * @brief This defines the ending height of the movement, so till what height
+    * it will decrease.
+    */
     public float endHeight = 10f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        startRadius = Vector3.Distance(centerPoint.position, camera.transform.position);
-        StartCoroutine(SpiralCamera());
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    IEnumerator SpiralCamera()
+    /**
+    * @brief This public function can be called by other cs files
+    * (e.g. GameMaster) causing the spiral camera movement to start.
+    */
+    public IEnumerator SpiralCamera(System.Action onComplete)
     {
         float elapsed = 0f;
 
@@ -58,6 +81,8 @@ public class StartingCameras : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+        camera.SetActive(false);
+        onComplete?.Invoke();
     }
 }
 

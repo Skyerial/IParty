@@ -154,7 +154,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  spawns: []
   finishCount: 0
+  playerInputs: []
+  spawn: {fileID: 0}
+  WinScreen: 
 --- !u!4 &123813362
 Transform:
   m_ObjectHideFlags: 0
@@ -235,7 +239,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae8c67ed648da6c6293959c941c0db7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forceUp: 2
+  horizontalForce: 5
+  forceUp: 10
+  velocityThreshold: 0.01
+  maxWaitTime: 5
+  heightAbovePlayer: 2
+  debug: 1
 --- !u!1 &506228758
 GameObject:
   m_ObjectHideFlags: 0

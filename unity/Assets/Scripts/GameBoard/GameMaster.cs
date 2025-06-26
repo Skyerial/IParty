@@ -24,24 +24,56 @@ public class GameMaster : MonoBehaviour
     public List<GameObject> Dice = new List<GameObject>();
     public TextMeshProUGUI numberText;
     public TextMeshProUGUI turnText;
+    public SwitchScene switchScene;
 
     public int press_random = 0;
+    /**
+    * @brief GameObject containing all tiles that make up the route
+    */
     public Transform tileGroup;
+    /**
+    * @brief Bird GameObject used for flying the player from his tile to 5
+    tiles further away.This happens when landing on special blue tiles.
+    */
     public GameObject Bird;
+    /**
+    * @brief GameObject that appears when a minigame is selected randomly
+    */
     public GameObject minigameSelector;
     public GameObject progressGroup;
     private swipe_menu menu;
     public bool numberShown = false;
+    /**
+    * @brief Starting Camera game object used to show a game board camera view
+    at the start of the game (introduction camera)
+    */
+    public GameObject startingCam;
     private bool waitingForDice = false;
+    /**
+    * @brief Camera used when a dice is thrown
+    */
     private Camera diceCam;
     private Dictionary<int, Slider> progressBars = new Dictionary<int, Slider>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        ServerManager.SendtoAllSockets("gyro");
+        clearTurnText();
         clearDiceText();
         diceCam = GameObject.Find("DiceCamera").GetComponent<Camera>();
+        GameObject.Find("DiceCamera").SetActive(false);
         AudioManager audioHandler = FindAnyObjectByType<AudioManager>();
         audioHandler.PlayRandomMiniGameTrack();
+        StartingCameras sc = startingCam.GetComponent<StartingCameras>();
+        StartCoroutine(sc.SpiralCamera(afterCamera));
+    }
+
+    /**
+    * @brief This function runs after the spiralcamera in StartingCameras.cs
+    is called, it is called as a callback function.
+    */
+    void afterCamera()
+    {
         EnablePlayerCamera(current_player);
         updateTurnText();
     }
@@ -130,6 +162,10 @@ public class GameMaster : MonoBehaviour
         activateProgressBar(device);
     }
 
+    /**
+    * @brief Function that causes the load of a random minigame and the switch
+    of scene
+    */
     void LoadRandomMinigame()
     {
         menu = minigameSelector.GetComponentInChildren<swipe_menu>();
@@ -162,6 +198,10 @@ public class GameMaster : MonoBehaviour
         diceCam.gameObject.SetActive(true);
     }
 
+    /**
+    * @brief Function that causes the player to move from its current position
+    to the given tile.
+    */
     private IEnumerator MovePlayerToTileMarker(GameObject player, int steps, int markerIndex = 0, float duration = 0.5f, float jumpHeight = 2f)
     {
         PlayerMovement playerScript = player.GetComponent<PlayerMovement>();
@@ -200,16 +240,29 @@ public class GameMaster : MonoBehaviour
         yield return StartCoroutine(playerScript.rotate_and_jump(start, end));
     }
 
+    /**
+    * @brief Function that causes the player to move multiple steps, this involves
+    calling MovePlayerToTileMarker multiple times (depending on the dice
+    throw)
+    */
     private IEnumerator MoveMultipleSteps(GameObject player, int steps)
     {
         for (int i = 0; i < steps; i++)
         {
             yield return StartCoroutine(MovePlayerToTileMarker(player, 1));
+            if (player.GetComponent<PlayerMovement>().current_pos >= tileGroup.childCount - 1)
+            {
+                break;
+            }
             updateProgressBar();
         }
         yield return StartCoroutine(landedTileHandler(player));
     }
 
+    /**
+    * @brief This is called after all steps by 1 player are taken. The landed
+    tile is handled by checking the tile type and taking according action.
+    */
     private IEnumerator landedTileHandler(GameObject player)
     {
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
@@ -242,6 +295,10 @@ public class GameMaster : MonoBehaviour
         waitingForDice = false;
     }
 
+    /**
+    * @brief This is called if the tile type equals 2 indicating a blue tile
+    that causes a bird to fly the player 5 tiles further.
+    */
     private IEnumerator flyPlayer(GameObject player, int playerNr)
     {
 
@@ -252,6 +309,10 @@ public class GameMaster : MonoBehaviour
         player.GetComponent<PlayerMovement>().current_pos += 5;
     }
 
+    /**
+    * @brief This is called if the tile type equals 2 indicating a blue tile
+    that causes a bird to fly the player 5 tiles further.
+    */
     private Vector3 getTileMarkerPos(int tileNr, int marker_nr)
     {
         Transform tile = tileGroup.GetChild(tileNr);
@@ -273,6 +334,10 @@ public class GameMaster : MonoBehaviour
         return markers[marker_nr].position;
     }
 
+    /**
+    * @brief This is called if the tile type equals 2 indicating a blue tile
+    that causes a bird to fly the player 5 tiles further.
+    */
     private IEnumerator MoveAlongParabola(Vector3 middle, GameObject player, int playerNr)
     {
         float arcDuration = 1.5f;
@@ -295,11 +360,15 @@ public class GameMaster : MonoBehaviour
         PlayerMovement playerScript = player.GetComponent<PlayerMovement>();
         yield return StartCoroutine(playerScript.rotate(middle, end));
 
-        Vector3 offset = new Vector3(0, 15, -20); // e.g., 2 units above the player
-        Vector3 start = player.transform.position + offset;
-        GameObject bird = Instantiate(Bird, player.transform);
-        bird.transform.localPosition = new Vector3(0, 15, -20);  // local offset behind player
-        bird.transform.localRotation = player.transform.rotation;
+        Vector3 direction = end - middle;
+        direction.y = 0f;
+        Vector3 start = direction.normalized * -20f;
+        start.y = 15;
+        start = player.transform.position + start;
+        GameObject bird = Instantiate(Bird);
+        bird.transform.position = start;  // local offset behind player
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        bird.transform.localRotation = targetRotation;
 
         for (float t = 0; t < 1; t += Time.deltaTime / arcDuration)
         {
@@ -328,16 +397,22 @@ public class GameMaster : MonoBehaviour
         playerScript.makeFall();
         yield return new WaitForSeconds(3f);
     }
+
+    /**
+    * @brief This is called if the tile is the last one, meaning the game has
+    finished. It handles the current player positions so that these can be
+    represented on the podium in the winner scene.
+    */
     private void finishGame(List<int> players, List<int> positions)
     {
         var paired = positions
             .Select((value, index) => new { Key = value, Value = players[index] })
-            .OrderByDescending(pair => pair.Key) 
+            .OrderByDescending(pair => pair.Key)
             .ToList();
 
         var ranking = positions
         .Select((position, index) => new { Position = position, PlayerID = players[index] })
-        .OrderByDescending(pair => pair.Position) 
+        .OrderByDescending(pair => pair.Position)
         .ToList();
 
         // Extract the sorted values back
@@ -345,8 +420,8 @@ public class GameMaster : MonoBehaviour
         players = paired.Select(p => p.Value).ToList();
         List<int> rankedPlayerIDs = ranking.Select(p => p.PlayerID).ToList();
         PlayerManager.instance.rankGameboard = rankedPlayerIDs;
-        Debug.Log(positions);
-        Debug.Log(players);
+        switchScene.LoadNewScene("WinScreen3D");
+
     }
 
     // Finds and stores the progressbars.

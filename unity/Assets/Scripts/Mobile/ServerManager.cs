@@ -15,7 +15,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 using System.Linq;
-using UnityEngine.InputSystem.Controls;
 
 // Newly added:
 using System.Net.Security;
@@ -57,6 +56,7 @@ public class ServerManager : MonoBehaviour
     public static List<string> takenColors = new List<string>();
 
     public static Dictionary<VirtualController, IWebSocketConnection> allSockets = new Dictionary<VirtualController, IWebSocketConnection>();
+    private readonly ConcurrentDictionary<IWebSocketConnection, bool> awaitingPongs = new();
 
     // NEWLY ADDED:
     private Thread httpsThread;
@@ -278,7 +278,10 @@ public class ServerManager : MonoBehaviour
                     Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
                     if (reconnectFunction)
                     {
-                        reconnectFunction.DisconnectEvent(connectionId, port);
+                        if (reconnectFunction.connectionId != connectionId)
+                        {
+                            reconnectFunction.DisconnectEvent(connectionId, socket.ConnectionInfo.ClientPort.ToString());
+                        }
                     }
                     else
                     {
@@ -299,10 +302,25 @@ public class ServerManager : MonoBehaviour
 
             socket.OnMessage = msg =>
             {
+                if (msg.Contains("pong"))
+                {
+                    awaitingPongs[socket] = false;
+                    Debug.Log($"Received pong from {socket.ConnectionInfo.ClientIpAddress}");
+                    return;
+                }
                 string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
                 Debug.Log($"[Local][WS] Msg from {connectionId}");
                 commandQueue.Enqueue((msg, connectionId));
             };
+        });
+
+        _ = Task.Run(async () =>
+        {
+            while (true)
+            {
+                await PingAllAsync();
+                await Task.Delay(10000); // Ping every 10 seconds
+            }
         });
 
         Debug.Log($"[Local] WS server started at {wsPrefix}");
@@ -500,6 +518,79 @@ public class ServerManager : MonoBehaviour
             foreach (var sock in allSockets.Values.ToArray())
             {
                 sock.Send(json);
+            }
+        }
+    }
+
+    public static void SendtoSocket(VirtualController controller)
+    {
+        var messageObject = new MessagePlayers
+        {
+            type = "clear-text",
+            controller = controller.name
+        };
+
+        var sock = allSockets[controller];
+        string json = JsonUtility.ToJson(messageObject);
+        sock.Send(json);
+    }
+    public async Task PingAllAsync()
+    {
+        awaitingPongs.Clear();
+
+        foreach (var socket in allSockets.Values.ToArray())
+        {
+            Debug.Log($"Trying to ping {socket.ConnectionInfo.ClientIpAddress}");
+            if (socket.IsAvailable)
+            {
+                // Might remove it
+                awaitingPongs[socket] = true;
+
+                var messageObject = new Ping
+                {
+                    type = "ping",
+                };
+
+                string json = JsonUtility.ToJson(messageObject);
+                await socket.Send(json);
+            }
+            else
+            {
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
+                    string ip = socket.ConnectionInfo.ClientIpAddress;
+                    int port = socket.ConnectionInfo.ClientPort;
+                    string connectionId = $"{ip}:{port}";
+
+                    if (reconnectFunction && (reconnectFunction.connectionId != connectionId))
+                    {
+                        reconnectFunction.DisconnectEvent(connectionId, socket.ConnectionInfo.ClientPort.ToString());
+                    }
+                });
+                Debug.Log($"The socket {socket.ConnectionInfo.ClientIpAddress} isn't available");
+            }
+        }
+
+        await Task.Delay(5000);
+
+        foreach (var kvp in awaitingPongs)
+        {
+            Debug.Log($"{kvp.Key.ConnectionInfo.ClientIpAddress}:{kvp.Value}");
+            if (kvp.Value) // still waiting for pong
+            {
+                awaitingPongs.TryRemove(kvp.Key, out _);
+                MainThreadDispatcher.Enqueue(() =>
+                {
+                    Reconnect reconnectFunction = FindAnyObjectByType<Reconnect>();
+                    string ip = kvp.Key.ConnectionInfo.ClientIpAddress;
+                    int port = kvp.Key.ConnectionInfo.ClientPort;
+                    string connectionId = $"{ip}:{port}";
+                    if (reconnectFunction && (reconnectFunction.connectionId != connectionId))
+                    {
+                        reconnectFunction.DisconnectEvent(connectionId, kvp.Key.ConnectionInfo.ClientPort.ToString());
+                    }
+                });
             }
         }
     }
@@ -744,7 +835,8 @@ public class ServerManager : MonoBehaviour
     public class ReconnectJSON { public string type; public bool approved; }
     [Serializable]
     public class CreatorJSON { public string type; public bool approved; public string name; }
-
+    [Serializable]
+    public class Ping { public string type; }
     [Serializable]
     private class HttpTunnelRequest { public string requestId; public string method; public string url; public string bodyBase64; public string contentType; }
 

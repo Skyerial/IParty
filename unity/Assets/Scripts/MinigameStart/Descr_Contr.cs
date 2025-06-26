@@ -16,7 +16,7 @@ public class Descr_Contr : MonoBehaviour
     public bool isSelected;
     public bool isDescriptionButton;
     public Descr_Contr otherScript;  // Reference to the *other instance* of this same script
-    private string minigame = "TankGame";
+    private string minigame = PlayerManager.currentMinigame;
 
     private void loadText(string minigame_name)
     {
@@ -30,7 +30,7 @@ public class Descr_Contr : MonoBehaviour
             fileName = minigame_name + "Controls";
         }
 
-        string filePath = Path.Combine("Game Descriptions/", fileName);
+        string filePath = Path.Combine("Game Descriptions/", minigame_name, fileName);
 
         TextAsset mytxtData = Resources.Load<TextAsset>(filePath);
         if (mytxtData != null)
@@ -39,7 +39,7 @@ public class Descr_Contr : MonoBehaviour
         }
         else
         {
-            Debug.LogError("TextAsset not found at: " + filePath);
+            Debug.LogWarning("TextAsset not found at: " + filePath);
         }
     }
 
@@ -48,14 +48,14 @@ public class Descr_Contr : MonoBehaviour
         string fileName;
         if (isDescriptionButton)
         {
-            fileName = minigame_name + "DesciptionImage";
+            fileName = minigame_name + "DescriptionImage";
         }
         else
         {
             fileName = minigame_name + "ControlsImage";
         }
 
-        string filePath = Path.Combine("Game Descriptions/", fileName);
+        string filePath = Path.Combine("Game Descriptions/", minigame_name, fileName);
         // Load sprite from Resources/MyImages
         Sprite newSprite = Resources.Load<Sprite>(filePath);
 
@@ -88,6 +88,9 @@ public class Descr_Contr : MonoBehaviour
             otherTargetImage.color = isSelected ? unselectedColor : selectedColor;
             loadText(minigame);
             SetImage(minigame);
+
+            Vector2 originalSize = explanationImage.rectTransform.sizeDelta;
+            explanationImage.rectTransform.sizeDelta = new Vector2(originalSize.y, originalSize.x);
         }
     }
 

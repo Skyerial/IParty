@@ -67,13 +67,10 @@ public class DebugSandboxButton : MonoBehaviour
 
         Button btn = buttonGO.GetComponent<Button>();
         btn.onClick.AddListener(() =>
-        {
+        {   
+            DebugEnabled = true;
             Debug.Log("DEBUG button clicked: loading sandbox scene...");
             SceneManager.LoadScene(sandboxSceneName);
         });
-
-        DebugEnabled = true;
-
-
     }
 }

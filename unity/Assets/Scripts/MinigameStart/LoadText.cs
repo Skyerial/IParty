@@ -9,10 +9,12 @@ public class LoadText : MonoBehaviour
 {
     public TextMeshProUGUI text;
 
+    private string minigame = PlayerManager.currentMinigame;
+
     void Start()
     {
-        string fileName = "TankGame" + "Description";
-        string filePath = Path.Combine("Game Descriptions/", fileName);
+        string fileName = minigame + "Description";
+        string filePath = Path.Combine("Game Descriptions/", minigame,  fileName);
 
         TextAsset mytxtData = Resources.Load<TextAsset>(filePath);
         if (mytxtData != null)
@@ -21,7 +23,7 @@ public class LoadText : MonoBehaviour
         }
         else
         {
-            Debug.LogError("TextAsset not found at: " + filePath);
+            Debug.LogWarning("TextAsset not found at: " + filePath);
         }
     }
 }
