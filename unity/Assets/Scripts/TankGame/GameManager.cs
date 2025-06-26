@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         gamePlayers.Add(player);
         player.DeactivateInput();
 
-        instance.StartCoroutine(instance.ShowPlayerLabels());
+        // instance.StartCoroutine(instance.ShowPlayerLabels());
     }
 
     private IEnumerator ShowPlayerLabels()
