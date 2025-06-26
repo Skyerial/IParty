@@ -105,7 +105,7 @@ public class GameMaster : MonoBehaviour
             // If the variabele = 0 after updating it means a full round has been played.
             if (change_player == 0)
             {
-                // LoadRandomMinigame();
+                LoadRandomMinigame();
             }
         }
     }
