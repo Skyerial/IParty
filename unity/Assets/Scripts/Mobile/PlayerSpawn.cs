@@ -11,7 +11,7 @@ public class PlayerSpawn : MonoBehaviour
 {
     public GameObject nameboardPrefab;
     int i = 0;
-
+    public GameObject crown;
     /**
      * @brief Called at the start of the scene. Clears controller list if in Lobby.
      * @return void
@@ -57,11 +57,7 @@ public class PlayerSpawn : MonoBehaviour
 
                 if (spawnPoints[spawnIndex].name == "L1")
                 {
-                    GameObject crown = Resources.FindObjectsOfTypeAll<GameObject>()
-                               .FirstOrDefault(go => go.name == "crown");
                     crown.SetActive(true);
-                    crown.transform.localScale = Vector3.one * 3f;
-                    crown.transform.rotation = Quaternion.Euler(270f, 0f, 0f);
                 }
             }
         }
