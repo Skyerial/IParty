@@ -8,27 +8,65 @@ using UnityEngine.Video;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+
+/**
+ * @brief Handles the main logic of the game, registering players and the distributing of incoming input to the right players
+ */
 public class TMGameManager : MonoBehaviour
 {
     public static TMGameManager Instance { get; private set; }
 
+    /**
+    * @brief The amount of words that need to be typed correctly to win the game
+    */
     public int wordsPerPlayer = 10;
 
-    public List<PlayerTypingController> players; // list of row1, ro2, etc
+    /**
+    * @brief A list containing all the rows that a player could be attached to
+    */
+    public List<PlayerTypingController> rows; // list of row1, ro2, etc
 
+    /**
+    * @brief A list of all the spawns
+    */
     public List<GameObject> spawns; // spawn1, spawn2
 
+    /**
+    * @brief Amount of players that have finished
+    */
     public int finishCount = 0;
 
+    /**
+    * @brief Dict that links remote ids to PlayerTypingControllers
+    */
     public Dictionary<string, PlayerTypingController> playerControllers;
 
+    /**
+    * @brief Dict that links PlayerTypingController to their connected VirtualController
+    */
     public Dictionary<PlayerTypingController, VirtualController> playerVirtualControllers;
 
+    /**
+    * @brief List of PlayerInputs coming in from the JoinAll
+    */
     public List<PlayerInput> playerInputs;
+
+    /**
+    * @brief Spawn object that contains the spawns for all possible player spawns
+    */
     public GameObject spawn;
+
+    /**
+    * @brief The WinScreen name to transition to after the game is finished
+    */
     public string WinScreen;
+
     private SwitchScene sceneSwitcher;
 
+    /**
+    * @brief This class is the message that contains which controller needs to load on the client
+    * and the list of all the words the player needs to type to win
+    */
     [Serializable]
     private class AllWordsMessage
     {
@@ -52,16 +90,12 @@ public class TMGameManager : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log("Game started!");
-
         AudioManager.Instance.PlayRandomMiniGameTrack();
-        // playerControllers = new Dictionary<string, PlayerTypingController>();
-        // playerVirtualControllers = new Dictionary<PlayerTypingController, VirtualController>();
-        // playerInputs = new List<PlayerInput>();
-
-        // AttachMobilePlayer();
     }
 
+    /**
+    * @brief Registers the player by giving it a row with the player name, setting player color and face.
+    */
     public void RegisterPlayer(PlayerInput pi, VirtualController controller)
     {
         if (playerControllers == null)
@@ -79,7 +113,7 @@ public class TMGameManager : MonoBehaviour
         }
         int playerIndex = playerInputs.FindIndex(p => p == pi);
         Debug.Log($"playerIndex: {playerIndex}");
-        PlayerTypingController typingController = players[playerIndex];
+        PlayerTypingController typingController = rows[playerIndex];
         typingController.playerInputIndex = playerIndex;
 
         // place the player on its spawn
@@ -100,68 +134,13 @@ public class TMGameManager : MonoBehaviour
         typingController.inputField.text = "";
         SendAllWordsToClient(typingController);
 
-        TextMeshProUGUI name = players[playerIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI name = rows[playerIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         name.text = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == playerIndex).name;
     }
 
-    private void ColorPlayer(PlayerInput pi)
-    {
-        InputDevice dev = pi.devices[0];
-        Material mat = PlayerManager.findColor(dev);
-
-        SkinnedMeshRenderer body = pi.transform.Find("Body").GetComponent<SkinnedMeshRenderer>();
-        body.material = mat;
-    }
-
-    private void AddFacePlayer(PlayerInput pi)
-    {
-        Transform face = pi.transform.Find("Face");
-        SkinnedMeshRenderer renderer_face = face.GetComponent<SkinnedMeshRenderer>();
-        Texture2D faceTexture = new Texture2D(2, 2);
-        faceTexture.LoadImage(PlayerManager.playerStats[pi.devices[0]].face);
-        renderer_face.material = new Material(renderer_face.material);
-        renderer_face.material.mainTexture = faceTexture;
-    }
-
-    // private void AttachMobilePlayer()
-    // {
-    //     int i = 0;
-
-    //     foreach (var mobilePlayer in PlayerManager.playerStats)
-    //     {
-    //         if (i >= players.Count) break;
-
-    //         var controller = mobilePlayer.Key as VirtualController;
-    //         if (controller == null)
-    //         {
-    //             Debug.LogWarning("Controller is not a VirtualController. Skipping.");
-    //             continue;
-    //         }
-    //         var typingController = players[i];
-
-    //         playerControllers[controller.remoteId] = typingController;
-    //         playerVirtualControllers[typingController] = controller;
-
-    //         typingController.textSpawner.words = wordsPerPlayer;
-    //         typingController.textSpawner.SpawnWords();
-    //         typingController.raceController.InitializeRace(wordsPerPlayer);
-    //         typingController.Initialize();
-    //         typingController.inputField.interactable = true;
-    //         typingController.inputField.text = "";
-
-    //         TextMeshProUGUI name = players[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-    //         name.text = mobilePlayer.Value.name;
-
-    //         i++;
-    //     }
-
-    //     while (i < players.Count)
-    //     {
-    //         players[i].gameObject.SetActive(false);
-    //         i++;
-    //     }
-    // }
-
+    /**
+    * @brief Pass a completed word to the PlayerTypingController of the right player
+    */
     public void HandleMobileInput(VirtualController player, string input)
     {
         if (playerControllers.TryGetValue(player.remoteId, out var controller))
@@ -174,6 +153,9 @@ public class TMGameManager : MonoBehaviour
         }
     }
 
+    /**
+    * @brief Send all the words that the player needs to type to the client device
+    */
     public void SendAllWordsToClient(PlayerTypingController player)
     {
         // lookup their VirtualController
@@ -191,23 +173,9 @@ public class TMGameManager : MonoBehaviour
         ServerManager.SendMessageToClient(clientId, json);
     }
 
-    private string FinishPositionIntToString(int position)
-    {
-        switch (position)
-        {
-            case 1:
-                return "1st";
-            case 2:
-                return "2nd";
-            case 3:
-                return "3rd";
-            case 4:
-                return "4th";
-        }
-
-        return "";
-    }
-
+    /**
+    * @brief Once all put one player is finished end the game and go to the winscreen
+    */
     public void OnPlayerFinished(PlayerTypingController player)
     {
         finishCount++;
@@ -246,4 +214,39 @@ public class TMGameManager : MonoBehaviour
         sceneSwitcher.LoadNewScene(WinScreen);
     }
 
+    private void ColorPlayer(PlayerInput pi)
+    {
+        InputDevice dev = pi.devices[0];
+        Material mat = PlayerManager.findColor(dev);
+
+        SkinnedMeshRenderer body = pi.transform.Find("Body").GetComponent<SkinnedMeshRenderer>();
+        body.material = mat;
+    }
+
+    private void AddFacePlayer(PlayerInput pi)
+    {
+        Transform face = pi.transform.Find("Face");
+        SkinnedMeshRenderer renderer_face = face.GetComponent<SkinnedMeshRenderer>();
+        Texture2D faceTexture = new Texture2D(2, 2);
+        faceTexture.LoadImage(PlayerManager.playerStats[pi.devices[0]].face);
+        renderer_face.material = new Material(renderer_face.material);
+        renderer_face.material.mainTexture = faceTexture;
+    }
+
+    private string FinishPositionIntToString(int position)
+    {
+        switch (position)
+        {
+            case 1:
+                return "1st";
+            case 2:
+                return "2nd";
+            case 3:
+                return "3rd";
+            case 4:
+                return "4th";
+        }
+
+        return "";
+    }
 }

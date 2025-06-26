@@ -4,20 +4,29 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-// words come at the player, player 'kills' the words
-// every word is its own object, gives easier control over movement and animations per word
-// counter # remaining on the right
-// words hop on moving
-// have two text boxes, one what the player types, one what the player needs to type, this way you can do checks and maybe color the right or wrong letters as well
-
+/**
+* @brief Choses random words from a dictionary to give to the players. Players don't get the same list of words
+*/
 public class TextSpawner : MonoBehaviour
 {
+    /**
+    * @brief List containing all the words that have been spawned
+    */
     public List<string> spawnedWords = new List<string>();
 
+    /**
+    * @brief The amount of words that need to be spawned
+    */
     public int words;
 
+    /**
+    * @brief The location to start spawning the words
+    */
     public Transform spawner;
 
+    /**
+    * @brief Dict of all possible words to spawn
+    */
     private string[] wordList = new string[]
     {
     // 2-letter (5)
@@ -47,15 +56,10 @@ public class TextSpawner : MonoBehaviour
     // 8-letter (3)
     "building", "elephant", "notebook"
     };
-    // {
-    //     "apple", "banana", "grape", "orange", "melon",
-    //     "cloud", "stream", "code", "unity", "keyboard",
-    //     "game", "level", "score", "player", "speed"
-    // };
-    // {
-    //     "a"
-    // };
 
+    /**
+    * @brief Spawn all words chosing randomly from wordList
+    */
     public void SpawnWords()
     {
         spawnedWords.Clear(); // Clear if previously used
