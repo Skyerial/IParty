@@ -82,6 +82,7 @@ public class swipe_menu : MonoBehaviour {
             case "WhackCard": selectedScene = "GYRO"; break;
             case "HotpotatoCard": selectedScene = "Hotpotato"; break;
             case "SkyglutesCard": selectedScene = "Skyglutes"; break;
+            case "TypingCard": selectedScene = "TypingMinigame"; break;
             default: selectedScene = "MainMenu"; break;
         }
 
