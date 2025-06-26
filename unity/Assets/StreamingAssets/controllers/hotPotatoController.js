@@ -1,4 +1,5 @@
 import { LayoutManager } from "../utils/layoutManager.js";
+import { ListComponent } from "./components/listComponent.js";
 
 /**
  * HotPotatoController initializes a list-based game UI using player statistics.
@@ -22,10 +23,25 @@ export class HotPotatoController {
    * Initialize the layout by creating a LayoutManager and adding a list.
    */
   async init() {
-    const layout = new LayoutManager(this.container, true);
-    await layout.init();
+    this.layout = new LayoutManager(this.container, true);
+    await this.layout.init();
 
     // Add a list populated with playernames
-    await layout.addList(this.playerStats);
+    await this.layout.addList(this.playerStats);
+  }
+
+  /**
+   * Remove a player’s button from the on-screen list.
+   *
+   * Looks up the ListComponent in this controller’s layout, and if found
+   * hides (removes) the entry matching `playerName`.
+   *
+   * @param {string} playerName - The exact label of the player to remove.
+   */
+  removePlayer(playerName) {
+    const listComponent = this.layout.getComponent(ListComponent);
+    if (listComponent) {
+      listComponent.removeItem(playerName);
+    }
   }
 }

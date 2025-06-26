@@ -87,12 +87,19 @@ public class Bomb : MonoBehaviour
                 PlayerManager.instance.tempRankAdd(device);
                 string playerName = PlayerManager.playerStats[device].name;
 
+                var deadUpdate = new DeadUpdate {
+                    type       = "hp-deadupdate",
+                    playerName = playerName
+                };
+
+                ServerManager.SendMessages(JsonUtility.ToJson(deadUpdate));
+
                 var allTexts = FindObjectsByType<TMPro.TextMeshProUGUI>(FindObjectsSortMode.None);
                 foreach (var text in allTexts)
                 {
                     if (text.text == playerName)
                     {
-                        Destroy(text.gameObject); 
+                        Destroy(text.gameObject);
                         break;
                     }
                 }
@@ -102,6 +109,12 @@ public class Bomb : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+    
+    public class DeadUpdate
+    {
+        public string type;
+        public string playerName;
     }
 }
 

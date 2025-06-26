@@ -8,6 +8,7 @@ import { ReadyController } from "../controllers/readyController.js";
 import { CustomJoystickController } from "../controllers/customJoystickController.js";
 import { TankJoystickController } from "../controllers/tankJoystickController.js";
 import { initializeController } from "../main.js";
+import { getController } from "../main.js";
 
 /**
  * @brief Mapping of controller types to their corresponding controller classes
@@ -124,9 +125,9 @@ export class SocketManager {
 
     if (controller === "hotpotato") {
       const list = playerstats.map(({ name, color, button }) => ({
-        label: name,
-        color,
-        jsonButton: button,
+        itemName: name,
+        itemColor: color,
+        connectedBtn: button,
       }));
 
       initializeController(HotPotatoController, root, list);
@@ -136,6 +137,18 @@ export class SocketManager {
       initializeController(CONTROLLER_MAP[controller], root);
     } else {
       console.warn(`Unknown controller type: ${controller}`);
+    }
+  }
+
+  /**
+   * Handles incoming update, about a players death, from hotpotato minigame.
+   * 
+   * @param {object} data 
+   */
+  handleDeadUpdate(data) {
+    const hController = getController();
+    if (hController instanceof HotPotatoController) {
+      hController.removePlayer(data.playerName);
     }
   }
 
@@ -165,6 +178,9 @@ export class SocketManager {
         } else {
           alert("Color taken, choose another.");
         }
+        break;
+      case "hp-deadupdate":
+        this.handleDeadUpdate(data);
         break;
     }
     console.log(data);

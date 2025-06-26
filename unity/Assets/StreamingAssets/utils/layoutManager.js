@@ -26,6 +26,7 @@ export class LayoutManager extends ViewRenderer {
         this.slots = [];
         this.vertical = vertical;
         this.hasMovementComponent = false;
+        this.components = [];
     }
 
     /**
@@ -39,7 +40,7 @@ export class LayoutManager extends ViewRenderer {
      * Adds a D-pad component if none exists.
      */
     async addDpad() {
-        if (!this._startMovement('dpad')) return;
+        if (!this.startMovement('dpad')) return;
         await this.addComponent(DpadComponent);
     }
 
@@ -47,7 +48,7 @@ export class LayoutManager extends ViewRenderer {
      * Adds a joystick component if none exists.
      */
     async addJoystick() {
-        if (!this._startMovement('analog')) return;
+        if (!this.startMovement('analog')) return;
         await this.addComponent(JoystickComponent);
     }
 
@@ -55,7 +56,7 @@ export class LayoutManager extends ViewRenderer {
      * Adds a text input component if none exists.
      */
     async addText(words) {
-        if (!this._startMovement('text')) return;
+        if (!this.startMovement('text')) return;
         await this.addComponent(TextComponent, words);
     }
 
@@ -95,7 +96,7 @@ export class LayoutManager extends ViewRenderer {
      * @param {string} type - 'dpad' or 'analog'
      * @returns {boolean} True if allowed, false if already used.
      */
-    _startMovement(type) {
+    startMovement(type) {
         if (this.hasMovementComponent) {
             alert('Only one movement component allowed');
             return false;
@@ -121,18 +122,29 @@ export class LayoutManager extends ViewRenderer {
         }
 
         await component.init();
-        this._loadComponentView(component);
+        this.components.push(component);
+        this.loadComponentView(component);
     }
 
     /**
      * Wraps a component in a slot and adds it to the layout.
      * @param {object} component
      */
-    _loadComponentView(component) {
+    loadComponentView(component) {
         const slot = document.createElement('div');
         slot.className = 'controller-slot';
         slot.appendChild(component.getContainer());
         this.layout.appendChild(slot);
         this.slots.push(slot);
+    }
+
+    /**
+     * Returns the first component of the given class.
+     * 
+     * @param {object} componentClass - The class of the component you're looking for
+     * @returns The component you're looking for
+     */
+    getComponent(componentClass) {
+        return this.components.find(c => c instanceof componentClass) || null;
     }
 }

@@ -31,37 +31,49 @@ export class ListComponent extends ViewRenderer {
    */
   bindEvents() {
     const listContainer = this.container.querySelector(".player-button-list");
-    listContainer.innerHTML = '';
+    listContainer.innerHTML = "";
 
     // Render each item as a touchable button
-    this.items.forEach(({ label, color, jsonButton }) => {
+    this.items.forEach(({ itemName, itemColor, connectedBtn }) => {
       const button = document.createElement("button");
-      button.classList.add("player-list-button");
-      button.style.backgroundColor = color;
-      button.textContent = label;
+      button.classList.add("player-list-button", `${itemName}`);
+      button.style.backgroundColor = itemColor;
+      button.textContent = itemName;
 
       // On touch start: send press event
-      button.addEventListener("pointerdown", e => {
-        if (e.pointerType !== 'touch') return;
-        socketManager.updateButton(jsonButton, true);
+      button.addEventListener("pointerdown", (e) => {
+        if (e.pointerType !== "touch") return;
+        socketManager.updateButton(connectedBtn, true);
         button.setPointerCapture(e.pointerId);
       });
 
       // On touch end: send release event
-      button.addEventListener("pointerup", e => {
-        if (e.pointerType !== 'touch') return;
-        socketManager.updateButton(jsonButton, false);
+      button.addEventListener("pointerup", (e) => {
+        if (e.pointerType !== "touch") return;
+        socketManager.updateButton(connectedBtn, false);
         button.releasePointerCapture(e.pointerId);
       });
 
       // On touch cancel: send release event
-      button.addEventListener("pointercancel", e => {
-        if (e.pointerType !== 'touch') return;
-        socketManager.updateButton(jsonButton, false);
+      button.addEventListener("pointercancel", (e) => {
+        if (e.pointerType !== "touch") return;
+        socketManager.updateButton(connectedBtn, false);
       });
 
       listContainer.appendChild(button);
     });
   }
-}
 
+  /**
+   * Removes the given item from the UI.
+   * 
+   * @param {string} itemName - The name of the item you want to remove.
+   * This name has to be the same as the one passed to the list component initially.
+   */
+  removeItem(itemName) {
+    const item = this.container.querySelector(`.${itemName}`);
+
+    if (!player) return;
+    item.style.display = "none";
+  }
+}
