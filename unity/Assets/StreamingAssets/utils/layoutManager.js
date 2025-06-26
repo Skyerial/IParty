@@ -89,6 +89,7 @@ export class LayoutManager extends ViewRenderer {
      */
     async addGyro() {
         await this.addComponent(GyroComponent);
+        socketManager.changeMovementType("analog"); // added this to make sure that the type in state is reset after a minigame
     }
 
     /**
