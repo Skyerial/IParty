@@ -10,8 +10,8 @@ public class StartButtonManager : MonoBehaviour
     {
         if (startButton != null)
         {
-            // Enable only if there are at least 2 players
-            startButton.interactable = PlayerManager.playerStats.Count >= 2;
+            // Check if the number of players is greater than or equal to the minimum required
+            startButton.interactable = PlayerManager.playerStats.Count >= minPlayers;
         }
     }
 }

@@ -4,20 +4,28 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+/**
+ * @brief Handles scene transitions, including fade effects and optional auto-transition on start.
+ */
 public class SwitchScene : MonoBehaviour
 {
     [Header("Fader Settings")]
-    [SerializeField] private RectTransform fader;
-    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private RectTransform fader; /**< UI element used to fade in/out during transitions. */
+    [SerializeField] private float fadeDuration = 0.5f; /**< Duration of the fade animation. */
 
     [Header("Auto-Transition Settings")]
-    [SerializeField] private bool autoTransitionOnStart = false;
-    [SerializeField] private float delayBeforeTransition = 3f;
-    [SerializeField] private string autoTransitionScene = "MobileSandbox";
+    [SerializeField] private bool autoTransitionOnStart = false; /**< If true, automatically transitions to another scene on start. */
+    [SerializeField] private float delayBeforeTransition = 3f; /**< Delay before auto-transition begins. */
+    [SerializeField] private string autoTransitionScene = "MobileSandbox"; /**< Name of the scene to auto-transition to. */
 
-    private static bool hasLoadedMainMenuBefore = false;
-    public bool skipNextStart = false;
+    private static bool hasLoadedMainMenuBefore = false; /**< Tracks whether the MainMenu has been loaded previously. */
+    public bool skipNextStart = false; /**< If true, skips transition effects on next start. */
 
+    /**
+     * @brief Unity callback invoked on object initialization.
+     *        Handles fade-in effects and optional auto-transition.
+     * @return void
+     */
     private void Start()
     {
         if (fader != null)
@@ -55,19 +63,27 @@ public class SwitchScene : MonoBehaviour
         }
     }
 
-
+    /**
+     * @brief Loads a scene after a delay if auto-transition is enabled.
+     * @return void
+     */
     private void AutoTransition()
     {
         LoadNewScene(autoTransitionScene);
     }
 
+    /**
+     * @brief Loads a new scene with fade transition and performs cleanup if transitioning to MainMenu.
+     * @param sceneName The name of the scene to load.
+     * @return void
+     */
     public void LoadNewScene(string sceneName)
     {
         Debug.Log("Loading scene: " + sceneName);
 
         if (sceneName == "MainMenu")
         {
-            // --- Disconnect networking ---
+            // Disconnect networking
             var serverManager = Object.FindFirstObjectByType<ServerManager>();
             if (serverManager != null)
             {
@@ -75,14 +91,14 @@ public class SwitchScene : MonoBehaviour
                 Destroy(serverManager.gameObject);
             }
 
-            // --- Clean up players ---
+            // Clean up players
             var inputManager = Object.FindFirstObjectByType<PlayerInputManager>();
             if (inputManager != null)
             {
                 inputManager.DisableJoining();
             }
 
-            foreach (var player in PlayerInput.all.ToList()) // Make a copy to safely remove
+            foreach (var player in PlayerInput.all.ToList())
             {
                 Destroy(player.gameObject);
             }
@@ -95,7 +111,7 @@ public class SwitchScene : MonoBehaviour
             }
         }
 
-        // --- Do the scene transition ---
+        // Do the scene transition
         if (fader != null)
         {
             fader.gameObject.SetActive(true);
@@ -110,7 +126,11 @@ public class SwitchScene : MonoBehaviour
         }
     }
 
-
+    /**
+     * @brief Loads a new scene additively with a fade transition.
+     * @param sceneName The name of the additive scene to load.
+     * @return void
+     */
     public void LoadSceneAdditive(string sceneName)
     {
         if (fader != null)
@@ -127,4 +147,3 @@ public class SwitchScene : MonoBehaviour
         }
     }
 }
-
