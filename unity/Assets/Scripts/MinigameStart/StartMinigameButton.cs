@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/**
+ * @brief Button to start a selected minigame.
+ * This script is attached to a button that, when clicked,
+ * loads the currently selected minigame scene.
+ */
 public class StartMinigameButton : MonoBehaviour
 {
     public void LoadSelectedMinigame()

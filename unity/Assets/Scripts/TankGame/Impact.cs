@@ -1,9 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Handles impact events in the tank game.
+ * This script is responsible for detecting collisions with players bullets.
+ */
 public class Impact : MonoBehaviour
 {
     public GameObject explosionPrefab;
+
+    /**
+     * @brief Called when a collision occurs.
+     */
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))

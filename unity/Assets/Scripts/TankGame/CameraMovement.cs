@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
+/**
+ * @brief Camera Movement for tank game introduction.
+ */
 public class CameraMovement : MonoBehaviour
 {
     public Transform startPoint;
@@ -8,11 +11,18 @@ public class CameraMovement : MonoBehaviour
     public float moveDuration = 3f;
     public float arcHeight = 3f; // Adjust for how high the arc is
 
+    /**
+     * @brief Initializes the camera movement coroutine when the script starts.
+     */
     void Start()
     {
         StartCoroutine(MoveAlongArc());
     }
 
+    /**
+     * @brief Moves the camera along a quadratic Bezier curve from startPoint to targetPoint.
+     * The camera will arc up to a specified height before descending to the target point.
+     */
     IEnumerator MoveAlongArc()
     {
         float elapsed = 0f;

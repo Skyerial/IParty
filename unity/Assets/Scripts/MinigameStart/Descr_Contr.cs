@@ -5,6 +5,12 @@ using System;
 using System.IO;
 using System.Text;
 using UnityEditor;
+
+/**
+ * @brief Controls the description and controls UI for a minigame description.
+ * This script manages the display of game descriptions and controls,
+ * allowing users to switch between different minigames.
+ */
 public class Descr_Contr : MonoBehaviour
 {
     public Image targetImage; // this is the visible UI element to color

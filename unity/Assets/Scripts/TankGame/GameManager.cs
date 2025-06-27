@@ -6,6 +6,10 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/**
+ * @brief Manages the game state for the tank game.
+ * Handles player input activation, displays player labels, and manages the game lifecycle.
+ */
 public class GameManager : MonoBehaviour
 {
     public float labelDisplayTime  = 5f;
@@ -19,7 +23,9 @@ public class GameManager : MonoBehaviour
     public int countDownCount;
     public Canvas countDownCanvas;
 
-
+    /**
+     * @brief Gets the singleton instance of GameManager and initializes the scene switcher.
+     */
     void Awake()
     {
         if (instance == null) instance = this;
@@ -31,6 +37,10 @@ public class GameManager : MonoBehaviour
         ServerManager.SendtoAllSockets("tank");
     }
 
+    /**
+     * @brief Starts the countdown timer for the game.
+     * Activates the countdown canvas and pauses the game time.
+     */
     public void StartCountDown()
     {
         countDownCount = countDownStartNumber;
@@ -40,6 +50,10 @@ public class GameManager : MonoBehaviour
         StartCoroutine(CountDownCo());
     }
 
+    /**
+     * @brief Coroutine that handles the countdown logic.
+     * Updates the countdown text and manages the countdown timer.
+     */
     private IEnumerator CountDownCo()
     {
         if (countDownCount > 0)
@@ -66,6 +80,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Activates all player inputs.
+     * Used to unpause the game or when players are not active.
+     */
     void ActivateAllInput()
     {
         foreach (var player in gamePlayers)
@@ -73,6 +91,12 @@ public class GameManager : MonoBehaviour
             player.ActivateInput();
         }
     }
+
+    /**
+     * @brief Registers a player input for the game.
+     * Adds the player to the gamePlayers list and starts showing player labels.
+     * @param player The PlayerInput instance of the player to register.
+     */
     public static void RegisterPlayerGame(PlayerInput player)
     {
         Debug.Log(player);
@@ -82,6 +106,10 @@ public class GameManager : MonoBehaviour
         instance.StartCoroutine(instance.ShowPlayerLabels());
     }
 
+    /**
+     * @brief Shows player labels for all registered players.
+     * Displays the player's name and color on their respective label canvas.
+     */
     private IEnumerator ShowPlayerLabels()
     {
         foreach (var pi in gamePlayers)
@@ -105,6 +133,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Handles player death.
+     * Removes the player from the gamePlayers list and updates the death order.
+     * Checks if the game has ended after a player dies.
+     * @param player The PlayerInput instance of the player that died.
+     */
     public static void PlayerDied(PlayerInput player)
     {
         Debug.Log(player + " died!");
@@ -116,12 +150,21 @@ public class GameManager : MonoBehaviour
         CheckForGameEnd();
     }
 
+    /**
+     * @brief Starts the game.
+     * Activates all player inputs and starts the countdown timer.
+     */
     public void StartGame()
     {
         ActivateAllInput();
         StartCountDown();
     }
 
+    /**
+     * @brief Checks if the game has ended.
+     * If only one player remains, the game is marked as inactive and the winner is announced.
+     * Updates the death order and adds ranks to players based on their death order.
+     */
     public static void CheckForGameEnd()
     {
         if (gamePlayers.Count <= 1 && gameActive)
@@ -145,6 +188,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /** @brief Ends the game and loads the win screen scene.
+     * Uses the scene switcher if available, otherwise uses SceneManager to load the scene.
+     */
     public void EndGameAndLoadScene()
     {
         if (sceneSwitcher != null)

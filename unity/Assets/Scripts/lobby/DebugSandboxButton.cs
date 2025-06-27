@@ -2,6 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/**
+ * @brief Button to load a sandbox scene for debugging purposes in the lobby.
+ * This script creates a button in the UI that, when clicked,
+ * loads a specified sandbox scene for testing.
+ */
 public class DebugSandboxButton : MonoBehaviour
 {
     [Header("Debug Toggle")]
@@ -15,7 +20,10 @@ public class DebugSandboxButton : MonoBehaviour
     public static bool DebugEnabled { get; private set; } = false;
 
 
-
+    /**
+     * @brief Start is called before the first frame update.
+     * This method checks if the debug button should be enabled and creates it if so only in the unity editor.
+     */
     private void Start()
     {
 #if UNITY_EDITOR
@@ -28,6 +36,10 @@ public class DebugSandboxButton : MonoBehaviour
 #endif
     }
 
+    /**
+     * @brief Creates a debug button in the UI to load the sandbox scene in the lobby.
+     * This method sets up the button's appearance and functionality.
+     */
     private void CreateDebugButton()
     {
         Canvas canvas = Object.FindFirstObjectByType<Canvas>();
@@ -67,7 +79,7 @@ public class DebugSandboxButton : MonoBehaviour
 
         Button btn = buttonGO.GetComponent<Button>();
         btn.onClick.AddListener(() =>
-        {   
+        {
             DebugEnabled = true;
             Debug.Log("DEBUG button clicked: loading sandbox scene...");
             SceneManager.LoadScene(sandboxSceneName);

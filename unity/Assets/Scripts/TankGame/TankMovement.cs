@@ -11,6 +11,12 @@ using Unity.VisualScripting;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerInput))]
+
+/**
+ * @brief Handles tank movement, shooting, and ground checks.
+ * This script manages the tank's movement speed, rotation, ground detection,
+ * and shooting mechanics with a cooldown system.
+ */
 public class TankMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -54,6 +60,9 @@ public class TankMovement : MonoBehaviour
     private float nextFire;
     private float currentFire;
 
+    /**
+     * @brief Initializes components, sets up input actions, and configures Rigidbody constraints.
+     */
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -78,6 +87,10 @@ public class TankMovement : MonoBehaviour
         jumpAction.performed += ctx => jumpPressed = true;
     }
 
+    /**
+     * @brief Enables input actions when the object is enabled.
+     * This allows the callbacks to fire when the object is active.
+     */
     private void OnEnable()
     {
         // Enable each action so callbacks fire
@@ -85,6 +98,10 @@ public class TankMovement : MonoBehaviour
         jumpAction.Enable();
     }
 
+    /**
+     * @brief Disables input actions when the object is disabled.
+     * This prevents callbacks from firing when the object is inactive.
+     */
     private void OnDisable()
     {
         // Disable actions to stop callbacks when object is inactive
@@ -92,6 +109,10 @@ public class TankMovement : MonoBehaviour
         jumpAction.Disable();
     }
 
+    /**
+     * @brief Updates the stamina bar UI every frame.
+     * The fill amount is calculated based on the time since the last fire.
+     */
     private void Update()
     {
         // Update the stamina bar UI every frame
@@ -101,6 +122,10 @@ public class TankMovement : MonoBehaviour
         }
     }
 
+    /**
+     * @brief FixedUpdate is called at a fixed interval and is used for physics calculations.
+     * This method handles movement, rotation, and shooting logic.
+     */
     private void FixedUpdate()
     {
         // Build world‐space input direction
@@ -144,6 +169,11 @@ public class TankMovement : MonoBehaviour
         jumpPressed = false;
     }
 
+    /**
+     * @brief Checks if the tank is grounded by casting a sphere at the bottom of the capsule.
+     * This method uses Physics.CheckSphere to determine if there is ground beneath the tank.
+     * @return True if grounded, false otherwise.
+     */
     private bool IsGrounded()
     {
         Vector3 worldCenter = transform.TransformPoint(capsule.center);
@@ -159,6 +189,11 @@ public class TankMovement : MonoBehaviour
         );
     }
 
+    /**
+     * @brief Instantiates a bullet at the bullet point and applies force to it.
+     * This method creates a bullet GameObject, applies a forward force to it,
+     * and destroys it after a specified time.
+     */
     void Shoot()
     {
         GameObject bullet = Instantiate(bulletPrefab, bulletPoint.transform.position, transform.rotation);
@@ -167,7 +202,7 @@ public class TankMovement : MonoBehaviour
         // GameObject trail = Instantiate(smoke, bullet.transform);
         // trail.transform.Rotate(-90f, 0f, 0f);
         // trail.transform.localPosition = Vector3.zero;
-        
+
         bullet.GetComponent<Rigidbody>().AddForce(transform.forward * 500);
         Destroy(bullet, 10);
     }

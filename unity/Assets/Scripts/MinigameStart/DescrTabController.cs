@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Controls the description and controls tab switching in a minigame UI.
+ * This script allows players to switch between a description tab and a controls tab
+ * using input actions, and it handles starting the minigame when the start button is pressed.
+ */
 public class DescrTabController : MonoBehaviour
 {
     public Descr_Contr descriptionTab;

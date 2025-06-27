@@ -3,12 +3,14 @@
 ## Overview
 iParty is a Unity-based digital party game where you use your mobile phone as your controller! Player compete in minigames to gain an advantage in moving higher in the world and to win it all. This project was developed for the Project Software Engineering course at the University of Amsterdam.
 
+Project website http://83.96.253.147/
+
 ## Project Structure
 - `unity/` - Contains the Unity project, including all game assets, scripts, and scenes.
 - `testing/` - Contains scripts and tools for automated and manual testing, including `fourplayertest.py` and setup files.
 - `doxygen/` - Contains Doxygen configuration (`Doxyfile`) and generated documentation output.
 
-## Game
+## Unity
 The game is implemented in Unity (see [`unity/`](unity/)).
 Players move around a virtual board, triggering events and playing minigames. The codebase is organized into scripts for board logic, player control, minigames, and UI.
 

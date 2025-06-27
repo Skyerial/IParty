@@ -3,8 +3,18 @@ using UnityEngine.UI;
 using ZXing;
 using ZXing.Common;
 
+/**
+ * @brief Generates a QR code from a given text and displays it on a RawImage component.
+ * Used in the lobby and mobile testing scene.
+ */
 public class QRCodeGenerator : MonoBehaviour
 {
+    /**
+     * @brief Generates a QR code from the specified text and assigns it to the target RawImage.
+     *
+     * @param text The text to encode in the QR code.
+     * @param targetRenderer The RawImage component where the QR code will be displayed.
+     */
     public static void GenerateQRCode(string text, RawImage targetRenderer)
     {
         var writer = new BarcodeWriterPixelData

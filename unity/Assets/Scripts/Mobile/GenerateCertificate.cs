@@ -10,8 +10,14 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 
+/**
+ * @brief Generates and exports a self-signed X.509 certificate as a .pfx file.
+ */
 public static class GenerateCertificate
 {
+    /**
+     * @brief Creates a self-signed certificate and saves it as a PKCS#12 (.pfx) file.
+     */
     public static void Generate(string subjectName, string password, string outputPath)
     {
         // Generate random key pair
