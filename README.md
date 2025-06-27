@@ -41,6 +41,7 @@ doxygen doxygen/Doxyfile
 Most bugs can be stopped by preventing reconnection is needed. Reconnection works on local most of the time but can cause bugs to happen and does not work when playing remotely. Other bugs are:
 
 - Starting the game too quickly after connecting a player (<5 seconds) stops the gameboard from loading them properly.
+- Transition from SkyGlutes to Board Game may fail.
 - The remote server does not allow reconnections; leaving the browser causes the player unable to play.
 - Random reconnection prompt (rarely happens)
-- Moving back and forth from Lobby to Main Menu stops QR-code generation
+- Moving back and forth from Lobby to Main Menu stops QR-code generation.
