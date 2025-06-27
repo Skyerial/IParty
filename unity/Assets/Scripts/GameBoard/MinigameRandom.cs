@@ -58,17 +58,17 @@ public class swipe_menu : MonoBehaviour {
             yield return null;
         }
 
-        int chosenIndex = Random.Range(1, cardCount - 1);
-        // chosenIndex = chosenIndex % 4;
+        int chosenIndex = Random.Range(2, 5);
+        // chosenIndex = chosenIndex % 5;
 
         if (chosenIndex == 2) {
             chosenIndex = 3; // Ensure we don't select the "Whack" card
         }
 
-        if (chosenIndex > 3)
-        {
-            chosenIndex = 0; // Ensure we don't select the "Hotpotato" card
-        }
+        // if (chosenIndex > 4)
+        // {
+        //     chosenIndex = 0; // Ensure we don't select the "Hotpotato" card
+        // }
 
         float targetPos = pos[chosenIndex];
 
