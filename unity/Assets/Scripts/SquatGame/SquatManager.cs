@@ -84,7 +84,6 @@ public class SquatManager : MonoBehaviour
     {
         inputEnabled = false;
         RankPlayers();
-        UpdatePlayerStats();
 
         PlayerManager.instance.tempRankClear();
         for (int i = rankingList.Count - 1; i >= 0; i--)
@@ -118,24 +117,6 @@ public class SquatManager : MonoBehaviour
             .ToList();
 
         highestPlayer = rankingList.FirstOrDefault();
-    }
-
-    /**
-     * @brief Updates playerStats with final ranking positions.
-     */
-    void UpdatePlayerStats()
-    {
-        for (int i = 0; i < rankingList.Count; i++)
-        {
-            var input = rankingList[i].GetComponent<PlayerInput>();
-            if (
-                input != null
-                && PlayerManager.playerStats.TryGetValue(input.devices[0], out var stats)
-            )
-            {
-                stats.position = i + 1;
-            }
-        }
     }
 
     /**
