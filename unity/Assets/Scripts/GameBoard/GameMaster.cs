@@ -17,15 +17,44 @@ using UnityEngine.Rendering;
 
 public class GameMaster : MonoBehaviour
 {
+    /**
+    * @brief Current player that has to throw
+    */
     public int current_player = 0;
+    /**
+    * @brief Integer holding the next player that should throw
+    */
     public int change_player = 1;
     private List<GameObject> players = new List<GameObject>();
+
+    /**
+    * @brief Slots for the dice positions
+    */
     public List<GameObject> Slots = new List<GameObject>();
+
+    /**
+    * @brief Dice list opbject for throw result
+    */
     public List<GameObject> Dice = new List<GameObject>();
+
+    /**
+    * @brief Text for the dice
+    */
     public TextMeshProUGUI numberText;
+
+    /**
+    * @brief GameObject containing all tiles that make up the route
+    */
     public TextMeshProUGUI turnText;
+
+    /**
+    * @brief Used for switching scenes
+    */
     public SwitchScene switchScene;
 
+    /**
+    * @brief Check for dice state
+    */
     public int press_random = 0;
     /**
     * @brief GameObject containing all tiles that make up the route
@@ -40,7 +69,15 @@ public class GameMaster : MonoBehaviour
     * @brief GameObject that appears when a minigame is selected randomly
     */
     public GameObject minigameSelector;
+
+    /**
+    * @brief Object holding progress bar elements
+    */
     public GameObject progressGroup;
+
+    /**
+    * @brief GameObject that appears when a minigame is selected randomly
+    */
     private swipe_menu menu;
     public bool numberShown = false;
     /**
@@ -53,6 +90,10 @@ public class GameMaster : MonoBehaviour
     * @brief Camera used when a dice is thrown
     */
     private Camera diceCam;
+
+    /**
+    * @brief Dictionary holding different players for the progress bar
+    */
     private Dictionary<int, Slider> progressBars = new Dictionary<int, Slider>();
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -90,7 +131,10 @@ public class GameMaster : MonoBehaviour
         updateTurnText();
     }
 
-    // Update is called once per frame
+    /**
+    * @brief Update function called upon every frame handling cameras and
+    * minigame loading
+    */
     void Update()
     {
         if (current_player != change_player)
@@ -122,6 +166,9 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    /**
+    * @brief Function used for rolling the dice for the current player
+    */
     private IEnumerator RollDiceForPlayer(int diceIndex = 0)
     {
         // Position dice above current player
@@ -164,6 +211,9 @@ public class GameMaster : MonoBehaviour
         StartCoroutine(MoveMultipleSteps(players[current_player], totalAmount));
     }
 
+    /**
+    * @brief function called for registering players to the game
+    */
     public void RegisterPlayer(PlayerInput playerInput)
     {
         Debug.Log(playerInput.gameObject.name);
@@ -436,7 +486,9 @@ public class GameMaster : MonoBehaviour
 
     }
 
-    // Finds and stores the progressbars.
+    /**
+    * @brief Finds and stores progress bars
+    */
     private void activateProgressBar(InputDevice device)
     {
         int id = PlayerManager.playerStats[device].playerID;
@@ -459,7 +511,9 @@ public class GameMaster : MonoBehaviour
         barParent.gameObject.SetActive(true);
     }
 
-    // Uses the stored progress bars
+    /**
+    * @brief help function for storing progress bars
+    */
     private void updateProgressBar()
     {
         Slider bar = progressBars[current_player];
@@ -468,23 +522,35 @@ public class GameMaster : MonoBehaviour
         bar.value = position / (float)tileGroup.childCount;
     }
 
+    /**
+    * @brief Function used for update the text when turns are switched
+    */
     private void updateTurnText()
     {
         var device = players[current_player].GetComponent<PlayerInput>().devices[0];
         turnText.text = PlayerManager.playerStats[device].name + "'s turn";
     }
 
+    /**
+    * @brief Function that clears the turn text
+    */
     private void clearTurnText()
     {
         turnText.text = "";
     }
 
+    /**
+    * @brief Function that updates the number of dice on the screen
+    */
     private void updateDiceText(string result)
     {
         numberText.text += result;
         Slots[numberText.text.Count() - 1].gameObject.SetActive(true);
     }
 
+    /**
+    * @brief Function that clears the dice on the screen
+    */
     private void clearDiceText()
     {
         foreach (var slot in Slots) slot.gameObject.SetActive(false);

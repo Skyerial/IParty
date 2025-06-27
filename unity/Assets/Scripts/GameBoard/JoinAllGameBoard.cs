@@ -8,6 +8,10 @@ public class JoinAllGameBoard : MonoBehaviour
     public GameObject prefab;
     public GameMaster gameMaster;
     // public Material targetMaterial;
+
+    /**
+    * @brief Function called on start of the gameboard (every time)
+    */
     void Start()
     {
         gameMaster = FindAnyObjectByType<GameMaster>();
@@ -56,15 +60,17 @@ public class JoinAllGameBoard : MonoBehaviour
         }
     }
 
-
+    /**
+    * @brief adds color to a given player
+    */
     void colorPlayer(PlayerInput playerInput)
     {
         var body = playerInput.GetComponentsInChildren<SkinnedMeshRenderer>()
                      .First(r => r.name == "Body");
-        
+
         var face = playerInput.GetComponentsInChildren<SkinnedMeshRenderer>()
                      .First(r => r.name == "Face");
-        
+
         body.material = PlayerManager.findColor(playerInput.devices[0]);
 
         Material newMat = new Material(face.material);
