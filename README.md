@@ -33,6 +33,6 @@ doxygen Doxyfile
 
 ### Known bugs
 
-Ranking in the Tank minigame is reversed
-Upon joining without enabling Gyro, some players might not spawn in the gameboard.
-Skyglutes occasionally stops some players from spawning, skipping their turn.
+- Ranking in the Tank minigame is reversed
+- Upon joining without enabling Gyro, some players might not spawn in the gameboard.
+- Skyglutes occasionally stops some players from spawning, skipping their turn.
