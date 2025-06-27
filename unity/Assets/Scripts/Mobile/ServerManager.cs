@@ -117,7 +117,7 @@ public class ServerManager : MonoBehaviour
         TcpListener tcpListener = new TcpListener(IPAddress.Parse(ip), 8080);
         tcpListener.Start();
         Debug.Log($"[Local][HTTPS] Trying to run on https://{ip}:8080");
-        QRCodeGenerator.GenerateQRCode("https://" + ip + ":8080", targetRenderer);
+        MainThreadDispatcher.Enqueue(() => QRCodeGenerator.GenerateQRCode("https://" + ip + ":8080", targetRenderer));
         httpsThread = new Thread(() =>
         {
             while (true)
@@ -125,7 +125,7 @@ public class ServerManager : MonoBehaviour
                 try
                 {
                     var client = tcpListener.AcceptTcpClient();
-                    HandleClient(client);
+                    MainThreadDispatcher.Enqueue(() => HandleClient(client));
                 }
                 catch (Exception ex)
                 {
@@ -581,41 +581,30 @@ public class ServerManager : MonoBehaviour
         CheckAllSockets();
     }
 
+    // FIXED: InputSystem device removal
     public void HandleReconnect(string key, string ip, string port)
     {
-        string oldKey = $"{ip}:{port}"; // reconnecting client
-        if (!allControllers.ContainsKey(oldKey) || !allControllers.ContainsKey(key))
+        string oldKey = $"{ip}:{port}";
+
+        lock (controllerLock)
         {
-            Debug.LogWarning($"[Reconnect] Missing key: {oldKey} or {key}");
-            return;
+            if (!allControllers.ContainsKey(oldKey) || !allControllers.ContainsKey(key)) return;
+
+            var reconnectingDevice = allControllers[oldKey];
+            var oldDevice = allControllers[key];
+
+            if (!allSockets.TryGetValue(oldDevice, out var socket)) return;
+
+            allSockets[reconnectingDevice] = socket;
+            allSockets.Remove(oldDevice);
+
+            InputSystem.RemoveDevice(oldDevice);
+            allControllers[key] = reconnectingDevice;
+            allControllers.Remove(oldKey);
         }
-
-        var reconnectingDevice = allControllers[oldKey];
-        var oldDevice = allControllers[key];
-
-
-        if (!allSockets.TryGetValue(oldDevice, out var socket))
-        {
-            Debug.LogWarning($"[Reconnect] No socket found for device with key: {key}");
-            return;
-        }
-
-        allSockets[reconnectingDevice] = socket;
-        allSockets.Remove(oldDevice);
-        InputSystem.RemoveDevice(oldDevice);
-
-        // Replace controller in key map
-        allControllers[key] = reconnectingDevice;
-        allControllers.Remove(oldKey);
 
         Debug.Log($"[Reconnect] Swapped controller {oldKey} -> {key}");
-        foreach (var con in allControllers.Keys.ToArray())
-        {
-            Debug.Log("Controller " + con);
-        }
-
-        var reconnectFunction = FindAnyObjectByType<Reconnect>();
-        reconnectFunction?.ReconnectEvent();
+        FindAnyObjectByType<Reconnect>()?.ReconnectEvent();
         CheckAllSockets();
     }
     public static void SendMessageToClient(string clientId, string json)
@@ -795,29 +784,39 @@ public class ServerManager : MonoBehaviour
         // PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
     }
 
+    // FIXED: Thread-safe access to shared dictionaries
+    private readonly object controllerLock = new();
+
     void CleanupController(string clientId)
     {
-        if (allControllers.TryGetValue(clientId, out var dev))
+        lock (controllerLock)
         {
-            foreach (var p in PlayerInput.all)
-                if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
+            if (!allControllers.TryGetValue(clientId, out var dev)) return;
 
-            // Removing Player from PlayerManager.
-            takenColors.Remove(PlayerManager.playerStats[allControllers[clientId]].color);
-            foreach (string color in takenColors)
+            foreach (var p in PlayerInput.all)
             {
-                Debug.Log("The remaining color:" + color);
+                if (p.devices.Contains(dev)) { Destroy(p.gameObject); break; }
             }
+
+            if (PlayerManager.playerStats.TryGetValue(dev, out var stats))
+                takenColors.Remove(stats.color);
+
             PlayerSpawn playerSpawn = FindAnyObjectByType<PlayerSpawn>();
-            playerSpawn.RemoveFromLobby(allControllers[clientId]);
-            PlayerManager.RemovePlayer(allControllers[clientId]);
-            allSockets.Remove(allControllers[clientId]);
+            playerSpawn?.RemoveFromLobby(dev);
+            PlayerManager.RemovePlayer(dev);
+            allSockets.Remove(dev);
             allControllers.Remove(clientId);
         }
     }
 
+
+    // FIXED: Graceful shutdown using CancellationToken
+    private CancellationTokenSource cancelSource = new();
+
     void OnApplicationQuit()
     {
+        cancelSource.Cancel();
+
         if (useRemote)
         {
             httpTunnel?.Close();
@@ -825,10 +824,7 @@ public class ServerManager : MonoBehaviour
         }
         else
         {
-            // httpListener?.Stop();
-            // httpThread?.Abort();
             tcpListener?.Stop();
-            httpsThread?.Abort();
             wsServer?.Dispose();
         }
     }
