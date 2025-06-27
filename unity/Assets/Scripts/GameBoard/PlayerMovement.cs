@@ -5,17 +5,61 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    /**
+    * @brief ID of you as a player
+    */
     public int player_id = 0;
+
+    /**
+    * @brief current position of you as a player
+    */
     public int current_pos = 0;
+
+    /**
+    * @brief integer telling if jumping is still happening
+    */
     public int increment = 0;
+
+    /**
+    * @brief Player animator used in the script
+    */
     private Animator animator;
+
+
+    /**
+    * @brief Mask defining the ground layer
+    */
     public LayerMask groundLayerMask;
+
+    /**
+    * @brief Float defining how far one can be from the ground to be
+    * considered standing on it
+    */
     public float groundCheckOffset = 0.1f;
+
+    /**
+    * @brief Capsule collider of the player
+    */
     private CapsuleCollider cap;
+
+    /**
+    * @brief gamemaster class of the gameboard
+    */
     private GameMaster gameMaster;
+
+    /**
+    * @brief playerinput object handling player input (component of player game object)
+    */
     private PlayerInput playerInput;
+
+    /**
+    * @brief Specific inputaction to move player
+    */
     private InputAction moveAction;
 
+    /**
+    * @brief Function ran at start of the class, to initiate components
+    */
     private void Start()
     {
         // Newly added
@@ -44,6 +88,9 @@ public class PlayerMovement : MonoBehaviour
         transform.position = spawnPoint.transform.position;
     }
 
+    /**
+    * @brief handles who is able to give input to the game
+    */
     private void HandleInput()
     {
         Debug.Log($"Button pressed by {player_id}, the current player is {gameMaster.current_player}.");
@@ -53,17 +100,27 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /**
+    * @brief Checks for the player to be grounded during the board game
+    * so that it can be animated accordingly
+    */
     void Update()
     {
         animator.SetBool("IsGrounded", IsGrounded());
     }
 
+    /**
+    * @brief Couroutine for rotating as well as jumping to the next tile
+    */
     public IEnumerator rotate_and_jump(Vector3 start, Vector3 end)
     {
         yield return StartCoroutine(rotate(start, end));
         yield return StartCoroutine(jump(start, end));
     }
 
+    /**
+    * @brief Couroutine for rotating to the next tile
+    */
     public IEnumerator rotate(Vector3 start, Vector3 end)
     {
         Vector3 direction = end - start;
@@ -79,12 +136,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /**
+    * @brief Function for handling jump from start to end
+    */
     public IEnumerator jump(Vector3 start, Vector3 end)
     {
         animator.SetTrigger("Jump");
         yield return StartCoroutine(JumpArc(transform, start, end, 0.4f, 1f));
     }
 
+    /**
+    * @brief Couroutine for rotating target along targetRotation
+    */
     public IEnumerator RotateToTarget(Quaternion targetRotation, float duration)
     {
         Quaternion startRotation = transform.rotation;
@@ -100,6 +163,11 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = targetRotation; // Snap to final rotation to avoid overshoot
     }
 
+    /**
+    * @brief Function that checks if the player is grounded and returns a
+    * boolean accordingly. So a grounded player is a player standing on
+    * objects that unity considers as ground.
+    */
     private bool IsGrounded()
     {
         // compute sphere‐check at bottom of capsule
@@ -116,6 +184,10 @@ public class PlayerMovement : MonoBehaviour
         );
     }
 
+    /**
+    * @brief Coroutine that causes the target to jump from start to end for
+    * the duration with a given height.
+    */
     private IEnumerator JumpArc(Transform target, Vector3 start, Vector3 end, float duration, float height)
     {
         float elapsed = 0f;
@@ -148,6 +220,10 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    /**
+    * @brief Function that defines linear movement of the object from start
+    * to end with duration.
+    */
     public IEnumerator LinearMovement(Vector3 start, Vector3 end, float duration)
     {
         float elapsed = 0f;
@@ -161,6 +237,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+    /**
+    * @brief Function forcing the player to enter falling animation
+    */
     public void makeFall()
     {
         animator.SetBool("Dash", true);
