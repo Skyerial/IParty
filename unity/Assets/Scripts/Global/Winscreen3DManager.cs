@@ -3,19 +3,26 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Manages the 3D win screen by spawning and registering players in ranking order.
+ */
 public class Winscreen3DManager : MonoBehaviour
 {
-
+    /**
+     * @brief Prefab used to instantiate each player's representation on the win screen.
+     */
     public GameObject prefab;
 
+    /**
+     * @brief Unity event called on Start; initiates joining of all players for win display.
+     */
     void Start()
     {
         JoinAllPlayers();
     }
 
     /**
-     * @brief Joins all connected players and initializes their setup.
-     * @return void
+     * @brief Joins all connected players based on game ranking, spawns their prefabs, and registers them.
      */
     void JoinAllPlayers()
     {
@@ -53,5 +60,4 @@ public class Winscreen3DManager : MonoBehaviour
             }
         }
     }
-
 }

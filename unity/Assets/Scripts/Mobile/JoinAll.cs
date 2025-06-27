@@ -3,11 +3,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /**
- * @brief Joining Script for the mobile testing scene.
-*/
+ * @brief Auto-joins all connected virtual controllers at the start of the mobile testing scene.
+ */
 public class JoinAll : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /**
+     * @brief Unity event called on Start; iterates over all virtual controllers and joins each as a player.
+     */
     void Start()
     {
         if (ServerManager.allControllers != null)

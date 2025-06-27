@@ -3,25 +3,37 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 
+/**
+ * @brief Singleton audio manager that handles theme and minigame track playback with fade transitions.
+ */
 public class AudioManager : MonoBehaviour
 {
+    /**
+     * @brief Global instance reference.
+     */
     public static AudioManager Instance;
 
-    // [SerializeField]
-    // private AudioSource audioSource;
-
-    // [SerializeField]
-    // private Slider musicVolumeSlider;
-
     [Header("Audio Setup")]
+    /**
+     * @brief AudioSource used for playing music tracks.
+     */
     public AudioSource musicSource;
 
     [Header("Main Theme")]
+    /**
+     * @brief Audio clip for the main theme.
+     */
     public AudioClip mainTheme;
 
     [Header("Mini-Game Tracks")]
+    /**
+     * @brief Array of AudioClips for minigame background tracks.
+     */
     public AudioClip[] miniGameTracks = new AudioClip[5];
 
+    /**
+     * @brief Unity event called when the script instance is loaded; initializes singleton and plays main theme.
+     */
     private void Awake()
     {
         if (Instance == null)
@@ -38,7 +50,10 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // Plays main theme 
+    /**
+     * @brief Plays the main theme starting at a random cue point with a fade transition.
+     * @param fadeDuration Duration of fade-out and fade-in in seconds (default 1f).
+     */
     public void PlayMainTheme(float fadeDuration = 1f)
     {
         // Define cue points in seconds: 0:00, 1:14, 2:27
@@ -48,7 +63,10 @@ public class AudioManager : MonoBehaviour
         StartCoroutine(FadeToTrack(mainTheme, fadeDuration, startTime));
     }
 
-    // Randomly plays 1 of 5 minigame tracks
+    /**
+     * @brief Randomly selects and plays one of the mini-game tracks with a fade transition.
+     * @param fadeDuration Duration of fade-out and fade-in in seconds (default 1f).
+     */
     public void PlayRandomMiniGameTrack(float fadeDuration = 1f)
     {
         if (miniGameTracks.Length == 0)
@@ -61,6 +79,11 @@ public class AudioManager : MonoBehaviour
         StartCoroutine(FadeToTrack(miniGameTracks[index], fadeDuration));
     }
 
+    /**
+     * @brief Plays a specific mini-game track by index with a fade transition.
+     * @param index Index of the mini-game track in the array.
+     * @param fadeDuration Duration of fade-out and fade-in in seconds (default 1f).
+     */
     public void PlaySelectedMiniGameTrack(int index, float fadeDuration = 1f)
     {
         if (miniGameTracks.Length == 0)
@@ -72,17 +95,29 @@ public class AudioManager : MonoBehaviour
         StartCoroutine(FadeToTrack(miniGameTracks[index], fadeDuration));
     }
 
+    /**
+     * @brief Stops music playback immediately.
+     */
     public void StopMusic()
     {
         musicSource.Stop();
     }
 
+    /**
+     * @brief Starts or resumes music playback immediately.
+     */
     public void PlayMusic()
     {
         musicSource.Play();
     }
 
-    // Coroutine to fade out current track and fade in the new track
+    /**
+     * @brief Coroutine that fades out the current track, switches to a new clip, and fades it in.
+     * @param newClip The AudioClip to switch to.
+     * @param duration The duration of fade-out and fade-in in seconds.
+     * @param startTime Optional start time within the new clip (default 0f).
+     * @return IEnumerator for coroutine control.
+     */
     private IEnumerator FadeToTrack(AudioClip newClip, float duration, float startTime = 0f)
     {
         float startVolume = musicSource.volume;

@@ -53,6 +53,7 @@ public class Movement : MonoBehaviour
 
     /**
      * @brief Randomly plays idle animations with randomized wait times and mirroring.
+     * @return IEnumerator for coroutine control.
      */
     IEnumerator PlayIdleAnimationsRandomly()
     {

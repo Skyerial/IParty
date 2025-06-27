@@ -10,9 +10,12 @@ public class PlayerManager : MonoBehaviour
 {
     private const int MaxPlayers = 4;
     /**
-    * @brief Boolean keeping track if the board has been loaded already before
-    */
+     * @brief Tracks which player IDs have already been assigned.
+     */
     private static HashSet<int> currentPlayers = new HashSet<int>();
+    /**
+     * @brief Singleton instance reference.
+     */
     public static PlayerManager instance;
 
     /**
@@ -20,6 +23,9 @@ public class PlayerManager : MonoBehaviour
      */
     public static List<PlayerStats> tempRanking = new();
 
+    /**
+     * @brief List representing final rankings on the gameboard.
+     */
     public List<int> rankGameboard = new();
 
     /**
@@ -36,16 +42,21 @@ public class PlayerManager : MonoBehaviour
     }
 
     /**
-     * @brief Maps input devices to their corresponding player stats.
+     * @brief Maps input devices to their corresponding PlayerStats.
      */
     public static Dictionary<InputDevice, PlayerStats> playerStats = new();
 
+    /**
+     * @brief Name of the current minigame in play.
+     */
     public static string currentMinigame;
+    /**
+     * @brief Flag indicating whether the gameboard has been initialized before.
+     */
     public static bool firstTimeBoard = true;
 
     /**
-     * @brief Called when this object is initialized. Sets singleton instance and persists it across scenes.
-     * @return void
+     * @brief Unity Awake event; sets up singleton instance and persists across scenes.
      */
     void Awake()
     {
@@ -62,11 +73,10 @@ public class PlayerManager : MonoBehaviour
 
     /**
      * @brief Registers a new player with their device, color, name, and face image.
-     * @param device The player's input device.
-     * @param color Player's color as a string.
-     * @param name Player's display name.
-     * @param face Byte array representing face texture image.
-     * @return void
+     * @param device The player's InputDevice.
+     * @param color The player's chosen color as a string.
+     * @param name The player's display name.
+     * @param face Byte array representing the player's face texture.
      */
     public static void RegisterPlayer(InputDevice device, string color, string name, byte[] face)
     {
@@ -79,11 +89,12 @@ public class PlayerManager : MonoBehaviour
             name = name,
             face = face
         };
-
-        // instance.rankGameboard.Add(playerStats[device].playerID);
-        // currentPlayers++;
     }
 
+    /**
+     * @brief Assigns the next available player ID up to MaxPlayers.
+     * @return The assigned player ID, or 5 if none available.
+     */
     public static int AssignID()
     {
         for (int id = 0; id < MaxPlayers; id++)
@@ -99,9 +110,8 @@ public class PlayerManager : MonoBehaviour
     }
 
     /**
-     * @brief Adds a player to the temporary ranking list if not already present.
-     * @param device The player's input device.
-     * @return void
+     * @brief Adds a player's stats to the temporary ranking list if not already present.
+     * @param device The player's InputDevice whose stats to add.
      */
     public void tempRankAdd(InputDevice device)
     {
@@ -114,7 +124,6 @@ public class PlayerManager : MonoBehaviour
 
     /**
      * @brief Clears the temporary ranking list.
-     * @return void
      */
     public void tempRankClear()
     {
@@ -122,22 +131,19 @@ public class PlayerManager : MonoBehaviour
     }
 
     /**
-     * @brief Removes a player from the playerStats dictionary.
-     * @param device The player's input device.
-     * @return void
+     * @brief Removes a player from tracking when they leave the game.
+     * @param device The player's InputDevice to remove.
      */
     public static void RemovePlayer(InputDevice device)
     {
         currentPlayers.Remove(playerStats[device].playerID);
         playerStats.Remove(device);
-        // currentPlayers--;
     }
 
     /**
-     * @brief Increments the position value for a player.
-     * @param device The player's input device.
-     * @param increment Value to add to the player's position.
-     * @return void
+     * @brief Increments the stored position value for a specific player.
+     * @param device The player's InputDevice whose position to increment.
+     * @param increment The amount to add to the player's position.
      */
     public static void AddPosition(InputDevice device, int increment)
     {
@@ -145,9 +151,9 @@ public class PlayerManager : MonoBehaviour
     }
 
     /**
-     * @brief Returns the color material associated with the player's selected color.
-     * @param device The player's input device.
-     * @return Material representing the player's color.
+     * @brief Retrieves the Material associated with the player's selected color.
+     * @param device The player's InputDevice whose color to find.
+     * @return A Material corresponding to the player's chosen color.
      */
     public static Material findColor(InputDevice device)
     {
@@ -172,8 +178,8 @@ public class PlayerManager : MonoBehaviour
 
     /**
      * @brief Converts a player's face byte array into a Texture2D object.
-     * @param device The player's input device.
-     * @return Texture2D of the player's face, or blank if not available.
+     * @param device The player's InputDevice whose face to load.
+     * @return A Texture2D of the player's face, or a blank texture if unavailable.
      */
     public static Texture2D findFace(InputDevice device)
     {
@@ -188,6 +194,10 @@ public class PlayerManager : MonoBehaviour
         return texture;
     }
 
+    /**
+     * @brief Updates the current minigame name.
+     * @param name The name of the new current minigame.
+     */
     public static void changeCurrentMinigame(string name)
     {
         currentMinigame = name;

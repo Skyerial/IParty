@@ -14,6 +14,7 @@ public class MainThreadDispatcher : MonoBehaviour
 
     /**
      * @brief Adds an action to the execution queue to be run on the main thread.
+     * @param action The Action delegate to enqueue.
      */
     public static void Enqueue(Action action)
     {
@@ -24,7 +25,7 @@ public class MainThreadDispatcher : MonoBehaviour
     }
 
     /**
-     * @brief Executes all queued actions on the main thread during the Update loop.
+     * @brief Unity event called once per frame; executes all queued actions on the main thread.
      */
     void Update()
     {
