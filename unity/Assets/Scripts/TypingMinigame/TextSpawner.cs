@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using System.Collections.Generic;
@@ -9,24 +8,16 @@ using System.Collections.Generic;
 */
 public class TextSpawner : MonoBehaviour
 {
-    /**
-    * @brief List containing all the words that have been spawned
-    */
+    /** @brief List containing all the words that have been spawned */
     public List<string> spawnedWords = new List<string>();
 
-    /**
-    * @brief The amount of words that need to be spawned
-    */
+    /** @brief The amount of words that need to be spawned */
     public int words;
 
-    /**
-    * @brief The location to start spawning the words
-    */
+    /** @brief The location to start spawning the words */
     public Transform spawner;
 
-    /**
-    * @brief Dict of all possible words to spawn
-    */
+    /** @brief Dict of all possible words to spawn */
     private string[] wordList = new string[]
     {
     // 2-letter (5)

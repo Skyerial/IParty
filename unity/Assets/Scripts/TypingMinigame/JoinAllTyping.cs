@@ -2,11 +2,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 
+
+/**
+* @brief Join function that connects a remote player to the PlayerInputManager of unity, assigns a prefab for the player
+            and then registers the player with the TMGameManager
+*/
 public class JoinAllTyping : MonoBehaviour
 {
     public GameObject prefab;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (ServerManager.allControllers == null) return;
@@ -15,14 +19,13 @@ public class JoinAllTyping : MonoBehaviour
 
         foreach (var device in ServerManager.allControllers.Values.ToArray())
         {
-            var pi = PlayerInputManager.instance?.JoinPlayer(-1, -1, null, device);     
+            var pi = PlayerInputManager.instance?.JoinPlayer(-1, -1, null, device);
             if (pi == null)
             {
                 Debug.LogError($"JoinPlayer failed for {device}");
                 continue;
             }
-            Debug.Log($"null check - {pi} - {device}");
             TMGameManager.Instance?.RegisterPlayer(pi, device);
-        }   
+        }
     }
 }

@@ -3,8 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEngine.Video;
 using UnityEngine.InputSystem;
 using System.Linq;
 
@@ -16,49 +14,31 @@ public class TMGameManager : MonoBehaviour
 {
     public static TMGameManager Instance { get; private set; }
 
-    /**
-    * @brief The amount of words that need to be typed correctly to win the game
-    */
+    /** @brief The amount of words that need to be typed correctly to win the game */
     public int wordsPerPlayer = 10;
 
-    /**
-    * @brief A list containing all the rows that a player could be attached to
-    */
+    /** @brief A list containing all the rows that a player could be attached to */
     public List<PlayerTypingController> rows; // list of row1, ro2, etc
 
-    /**
-    * @brief A list of all the spawns
-    */
+    /** @brief A list of all the spawns */
     public List<GameObject> spawns; // spawn1, spawn2
 
-    /**
-    * @brief Amount of players that have finished
-    */
+    /** @brief Amount of players that have finished */
     public int finishCount = 0;
 
-    /**
-    * @brief Dict that links remote ids to PlayerTypingControllers
-    */
+    /** @brief Dict that links remote ids to PlayerTypingControllers */
     public Dictionary<string, PlayerTypingController> playerControllers;
 
-    /**
-    * @brief Dict that links PlayerTypingController to their connected VirtualController
-    */
+    /** @brief Dict that links PlayerTypingController to their connected VirtualController */
     public Dictionary<PlayerTypingController, VirtualController> playerVirtualControllers;
 
-    /**
-    * @brief List of PlayerInputs coming in from the JoinAll
-    */
+    /** @brief List of PlayerInputs coming in from the JoinAll */
     public List<PlayerInput> playerInputs;
 
-    /**
-    * @brief Spawn object that contains the spawns for all possible player spawns
-    */
+    /** @brief Spawn object that contains the spawns for all possible player spawns */
     public GameObject spawn;
 
-    /**
-    * @brief The WinScreen name to transition to after the game is finished
-    */
+    /** @brief The WinScreen name to transition to after the game is finished */
     public string WinScreen;
 
     private SwitchScene sceneSwitcher;
@@ -95,6 +75,8 @@ public class TMGameManager : MonoBehaviour
 
     /**
     * @brief Registers the player by giving it a row with the player name, setting player color and face.
+    * @param[IN] pi The PlayerInput that is the player that needs to be registered
+    * @param[IN] controller VirtualController that contains the remote ID
     */
     public void RegisterPlayer(PlayerInput pi, VirtualController controller)
     {
@@ -112,7 +94,6 @@ public class TMGameManager : MonoBehaviour
             return;
         }
         int playerIndex = playerInputs.FindIndex(p => p == pi);
-        Debug.Log($"playerIndex: {playerIndex}");
         PlayerTypingController typingController = rows[playerIndex];
         typingController.playerInputIndex = playerIndex;
 
@@ -140,6 +121,9 @@ public class TMGameManager : MonoBehaviour
 
     /**
     * @brief Pass a completed word to the PlayerTypingController of the right player
+    * @param[IN] controller VirtualController that contains the remote ID
+    * @param[IN] input The input string coming from the remote player,
+                        should be called every time the input changes on the remote player
     */
     public void HandleMobileInput(VirtualController player, string input)
     {
@@ -155,6 +139,7 @@ public class TMGameManager : MonoBehaviour
 
     /**
     * @brief Send all the words that the player needs to type to the client device
+    * @param[IN] player The PlayerTypingController of a single player
     */
     public void SendAllWordsToClient(PlayerTypingController player)
     {
@@ -175,13 +160,13 @@ public class TMGameManager : MonoBehaviour
 
     /**
     * @brief Once all put one player is finished end the game and go to the winscreen
+    * @param[IN] player The PlayerTypingController of a single player
     */
     public void OnPlayerFinished(PlayerTypingController player)
     {
         finishCount++;
         player.finishPostion = finishCount;
         player.wordsLeftText.text = FinishPositionIntToString(finishCount);
-        Debug.Log($"{player.name} finished in position {finishCount}");
         player.inputField.interactable = false;
 
         TM_MusicController.Instance.PlayFinishSFX();
@@ -194,6 +179,9 @@ public class TMGameManager : MonoBehaviour
         }
     }
 
+    /**
+    * @brief Call once the game is finished. Will update the player rankings in the PlayerManager and switch to the winscreen
+    */
     private IEnumerator HandleEndGameSequence()
     {
         yield return new WaitForSeconds(1f); // Wait for fade out to finish
@@ -209,9 +197,6 @@ public class TMGameManager : MonoBehaviour
 
         foreach (var controller in sortedControllers)
         {
-            // TextMeshProUGUI name = rows[controller.playerInputIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-            var name = PlayerManager.playerStats.Values.FirstOrDefault(p => p.playerID == controller.playerInputIndex).name;
-            Debug.Log($"finish position: {controller.finishPostion} index: {controller.playerInputIndex} name: {name}");
             InputDevice id = playerInputs[controller.playerInputIndex].devices[0];
             pm.tempRankAdd(id);
         }
@@ -219,6 +204,10 @@ public class TMGameManager : MonoBehaviour
         sceneSwitcher.LoadNewScene(WinScreen);
     }
 
+    /**
+    * @brief Set the prefab to the color of the player
+    * @param[IN] pi PlayerInput that has the color of the player
+    */
     private void ColorPlayer(PlayerInput pi)
     {
         InputDevice dev = pi.devices[0];
@@ -228,6 +217,10 @@ public class TMGameManager : MonoBehaviour
         body.material = mat;
     }
 
+    /**
+    * @brief Set the face of the prefab to the face of the player
+    * @param[IN] pi PlayerInput that has the face of the player
+    */
     private void AddFacePlayer(PlayerInput pi)
     {
         Transform face = pi.transform.Find("Face");
@@ -238,6 +231,11 @@ public class TMGameManager : MonoBehaviour
         renderer_face.material.mainTexture = faceTexture;
     }
 
+    /**
+    * @brief Helper to convert int to string of a finish position
+    * @param[IN] position The finish position of the player
+    * @return Finish position as string
+    */
     private string FinishPositionIntToString(int position)
     {
         switch (position)

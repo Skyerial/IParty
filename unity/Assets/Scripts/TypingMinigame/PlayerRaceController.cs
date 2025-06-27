@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+
+/**
+* @brief Attached to player to move the player from start to finish
+*/
 public class PlayerRaceController : MonoBehaviour
 {
     public Transform finishLine;           // Set in Inspector
@@ -10,19 +14,10 @@ public class PlayerRaceController : MonoBehaviour
     private int wordsTyped = 0;
     private Animator animator;
 
-    // private void Start()
-    // {
-    //     animator = GetComponent<Animator>();
-
-    //     startPosition = transform.position;
-
-    //     // Total distance from start to finish
-    //     float totalDistance = Vector3.Distance(startPosition, finishLine.position);
-
-    //     // How far to move per word typed
-    //     stepDistance = totalDistance / totalWords;
-    // }
-
+    /**
+    * @brief Calculate step size based on the amount of words that need to be typed
+    * @param[IN] totalWordsCount The amount of words that need to be typed
+    */
     public void InitializeRace(int totalWordsCount)
     {
         animator = GetComponent<Animator>();
@@ -34,6 +29,9 @@ public class PlayerRaceController : MonoBehaviour
         stepDistance = totalDistance / totalWords;
     }
 
+    /**
+    * @brief Call when a word has been typed correctly to move the player stepDistance ahead
+    */
     public void OnWordTyped()
     {
         if (wordsTyped >= totalWords)
@@ -45,31 +43,23 @@ public class PlayerRaceController : MonoBehaviour
         Vector3 direction = (finishLine.position - startPosition).normalized;
         Vector3 targetPosition = startPosition + direction * (stepDistance * wordsTyped);
 
-        // Move smoothly to the new position
         StartCoroutine(MovePlayer(targetPosition));
-        // StartCoroutine(MovePlayerSmoothly(targetPosition));
     }
 
-    private IEnumerator MovePlayerSmoothly(Vector3 targetPos)
+    /**
+    * @brief Set the player to a winning animation
+    */
+    public void WinningAnim()
     {
-        float t = 0f;
-        float duration = 0.4f; // Animation speed
-        Vector3 initialPos = transform.position;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime / duration;
-            transform.position = Vector3.Lerp(initialPos, targetPos, t);
-            yield return null;
-        }
-
-        transform.position = targetPos;
+        animator.SetTrigger("Jump");
     }
 
+    /**
+    * @brief Move the player to the target position and set the running animation
+    * @param[IN] targetPos The position the player needs to travel to
+    */
     private IEnumerator MovePlayer(Vector3 targetPos)
     {
-        Debug.Log($"raceController gameobject {gameObject}");
-        Debug.Log($"raceController animator {animator}");
         animator.SetBool("IsRunning", true);
         gameObject.LeanMoveX(targetPos.x, 0.4f);
 
@@ -79,26 +69,5 @@ public class PlayerRaceController : MonoBehaviour
         }
 
         animator.SetBool("IsRunning", false);
-    }
-
-    public void WinningAnim()
-    {
-        // while (!gameEnd)
-        // {
-        Debug.Log("chekc");
-        animator.SetTrigger("Jump");
-        // StartCoroutine(WaitForAnimation(animator, "Jump"));
-        // }
-    }
-    
-    private IEnumerator WaitForAnimation(Animator animator, string stateName)
-    {
-        // Wait until the Animator is in the desired state
-        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
-            yield return null;
-
-        // Now wait for the animation to finish
-        float length = animator.GetCurrentAnimatorStateInfo(0).length;
-        yield return new WaitForSeconds(length);
     }
 }
