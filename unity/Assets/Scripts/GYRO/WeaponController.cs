@@ -2,27 +2,54 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/**
+ * @brief Controls the weapon slamming mechanics and collision interactions with game objects (e.g., Mole, Bomb, OilBarrel).
+ */
 [RequireComponent(typeof(Collider), typeof(Rigidbody))]
 public class WeaponController : MonoBehaviour
 {
     [Header("Slam Settings")]
 
+    /**
+     * @brief Total duration for a slam action (down and up phases combined).
+     */
     [Tooltip("Total slam duration (down + up) in seconds")]
     public float slamDuration = 0.3f;
 
+    /**
+     * @brief Factor to slow the return if the slam missed a target.
+     */
     [Tooltip("Multiplier to slow down the return after a miss (1 = normal speed, 2 = twice as slow)")]
     public float missReturnMultiplier = 2f;
 
+    /**
+     * @brief Downward angle for the slam (X-axis).
+     */
     [Tooltip("Slam angle X (downward)")]
     public float slamAngleX = 60f;
 
+    /**
+     * @brief Side angle for the slam (Z-axis).
+     */
     [Tooltip("Slam angle Z (sideways)")]
     public float slamAngleZ = -25f;
 
+    /**
+     * @brief Reference to the player's camera for visual effects.
+     */
     [Tooltip("for the dizzy effect")]
     public Transform playerCamera;
+
+    /**
+     * @brief Duration of the dizzy screen effect.
+     */
     public float dizzyDuration = 2f;
+
+    /**
+     * @brief Intensity of the dizzy effect.
+     */
     public float dizzyIntensity = 1f;
+
     PlayerInput playerInput;
     InputAction slamAction;
 
@@ -30,6 +57,9 @@ public class WeaponController : MonoBehaviour
     bool hasHit = false;
     Quaternion startRot, downRot;
 
+    /**
+     * @brief Initializes rigidbody and constraints on awake.
+     */
     void Awake()
     {
         // playerInput = GetComponent<PlayerInput>();
@@ -51,12 +81,18 @@ public class WeaponController : MonoBehaviour
     //         StartCoroutine(SlamRoutine());
     // }
 
+    /**
+     * @brief Public method to trigger the slam manually.
+     */
     public void Slam()
     {
         if (!isSlamming)
             StartCoroutine(SlamRoutine());
     }
 
+    /**
+     * @brief Coroutine that animates the slam motion down and up.
+     */
     IEnumerator SlamRoutine()
     {
         isSlamming = true;
@@ -95,6 +131,10 @@ public class WeaponController : MonoBehaviour
         isSlamming = false;
     }
 
+    /**
+     * @brief Trigger callback to detect collisions with game objects.
+     * @param other The collider the weapon enters.
+     */
     void OnTriggerEnter(Collider other)
     {
         if (!isSlamming || hasHit) return;
@@ -127,6 +167,9 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Coroutine for dizzy visual feedback after hitting a bomb.
+     */
     IEnumerator BombEffect()
     {
         Vector3 originalPosition = playerCamera.localPosition;
@@ -162,6 +205,4 @@ public class WeaponController : MonoBehaviour
         playerCamera.localPosition = originalPosition;
         playerCamera.localRotation = originalRotation;
     }
-
-
 }
