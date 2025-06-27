@@ -86,7 +86,6 @@ Hold it too long, and BOOM ... you’re out.
 Fast reflexes and sneaky timing will keep you in the game.
 Will you pass it in time, or will the potato roast you?
 
-
 ---
 
 <small>

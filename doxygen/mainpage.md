@@ -20,6 +20,7 @@ In game scripts are organised by minigames that they belong to, with seperate fo
 - Select the correct build profile, and press the build button to build an executeable.(Make sure that all the scenes are selected and present and the MainMenu scene is at index 0!)
 - If all goes well, the selected folder should now contain all the necessary files and the executeable.
 
+---
 
 <small>
 Developed by Group E for the University of Amsterdam.

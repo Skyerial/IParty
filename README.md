@@ -34,7 +34,7 @@ sudo apt install graphviz
 
 Create documentation:
 ```bash
-doxygen Doxyfile
+doxygen doxygen/Doxyfile
 ```
 
 ### Known bugs
@@ -45,4 +45,4 @@ Most bugs can be stopped by preventing reconnection is needed. Reconnection work
 - Skyglutes occasionally stops some players from spawning, skipping their turn or even fataly stopping the game.
 - Random reconnection prompt (rarely happens)
 - Moving back and forth from Lobby to Main Menu stops QR-code generation
-
+- Starting the game too quickly after connecting a player stops them from loading in as gyro is certified.
