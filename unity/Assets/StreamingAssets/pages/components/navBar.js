@@ -3,13 +3,13 @@ import { ViewRenderer } from "../../utils/viewRenderer.js";
 import { socketManager } from "../../main.js";
 
 /**
- * NavBar
- *
- * Displays the site navigation bar and handles logo clicks to navigate
- * to the connection page when not already connected.
+ * @brief Displays the site navigation bar and handles logo clicks to navigate
+ *        to the connection page when not already connected.
+ * @extends ViewRenderer
  */
 export class NavBar extends ViewRenderer {
   /**
+   * @brief Constructs a NavBar instance.
    * @param {HTMLElement} container - The element where the navigation bar will be rendered.
    */
   constructor(container) {
@@ -17,8 +17,8 @@ export class NavBar extends ViewRenderer {
   }
 
   /**
-   * After the view loads, finds the logo element and sets up its click action.
-   * If there is no active socket connection, clicking the logo opens the connect page.
+   * @brief Called after the navigation HTML is loaded; sets up the logo click handler.
+   * @details If there is no active socket connection, clicking the logo will open the ConnectPage.
    */
   bindEvents() {
     const viewContainer = document.querySelector(".view-container");

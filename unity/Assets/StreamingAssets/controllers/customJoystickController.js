@@ -1,13 +1,12 @@
 import { LayoutManager } from "../utils/layoutManager.js";
 
 /**
- * CustomJoystickController initializes a custom joystick and button layout within a given container.
- * It uses LayoutManager to append joystick and button controls to the UI.
+ * @brief Initializes a custom joystick and button layout using LayoutManager.
+ * @details Appends joystick and specific buttons ('C' and 'A') to the provided container.
  */
 export class CustomJoystickController {
   /**
-   * Create a CustomJoystickController.
-   *
+   * @brief Constructs a CustomJoystickController.
    * @param {HTMLElement} container - The DOM element to host the joystick and buttons.
    */
   constructor(container) {
@@ -15,7 +14,8 @@ export class CustomJoystickController {
   }
 
   /**
-   * Initialize the layout by creating a LayoutManager and adding controls.
+   * @brief Initializes the layout by creating a LayoutManager and adding controls.
+   * @returns {Promise<void>} Resolves when joystick and buttons are added.
    */
   async init() {
     const layout = new LayoutManager(this.container, false);

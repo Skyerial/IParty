@@ -2,15 +2,12 @@ import { ViewRenderer } from '../../utils/viewRenderer.js';
 import { socketManager } from '../../main.js';
 
 /**
- * DpadComponent
- *
- * Renders a D-pad input control and handles touch interactions for directional input.
- * Supports optional vertical orientation.
+ * @brief Renders a D-pad input control and handles touch interactions for directional input.
+ * @details Supports optional vertical orientation.
  */
 export class DpadComponent extends ViewRenderer {
   /**
-   * Create a DpadComponent
-   * 
+   * @brief Constructs a DpadComponent instance.
    * @param {HTMLElement} container - Element where the D-pad view will be rendered.
    * @param {boolean} [vertical=false] - If true, arranges the D-pad vertically.
    */
@@ -20,9 +17,9 @@ export class DpadComponent extends ViewRenderer {
   }
 
   /**
-   * After the view loads, applies vertical orientation if needed,
-   * then sets up touch event listeners on each direction button
-   * to send D-pad updates over the socket.
+   * @brief Called after the view loads; applies vertical orientation if needed,
+   *        then sets up touch event listeners on each direction button
+   *        to send D-pad updates over the socket.
    */
   bindEvents() {
     if (this.vertical) {

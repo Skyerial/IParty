@@ -1,18 +1,16 @@
 import { socketManager } from "../../main.js";
 import { ViewRenderer } from "../../utils/viewRenderer.js";
 
-
 /**
- * TextComponent renders a text input UI and emits text updates through the socketManager.
- *
+ * @brief Renders a text input UI and emits text updates through the socketManager.
  * @extends ViewRenderer
  */
 export class TextComponent extends ViewRenderer {
   /**
-   * Create a TextComponent.
-   *
+   * @brief Constructs a TextComponent.
    * @param {HTMLElement} container - The DOM element to render the text input into.
    * @param {boolean} [vertical=false] - If true, adjusts behavior for vertical layout (unused currently).
+   * @param {string[]} words - Array of target words to validate against input.
    */
   constructor(container, vertical = false, words) {
     super("./views/components/textComponentView.html", container, "textInput");
@@ -23,8 +21,8 @@ export class TextComponent extends ViewRenderer {
   }
 
   /**
-   * Bind input event listener to the text field.
-   * Sends current text value on every change.
+   * @brief Binds the input event listener to the text field.
+   *        Sends the current text value on every change and checks for target-word matches.
    */
   bindEvents() {
     const text = this.container.querySelector('#myText');

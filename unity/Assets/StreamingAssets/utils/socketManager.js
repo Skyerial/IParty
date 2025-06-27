@@ -13,8 +13,8 @@ import { DescriptionController } from "../controllers/descriptionController.js";
 import { WaitingPage } from "../pages/waitingPage.js";
 
 /**
- * @brief Mapping of controller types to their corresponding controller classes
- * @details Maps string identifiers to controller constructors for dynamic controller instantiation
+ * @brief Mapping of controller type identifiers to their corresponding controller classes.
+ * @details Used for dynamic instantiation based on the 'controller' field from server messages.
  */
 const CONTROLLER_MAP = {
   "dpad-preset": DpadController,
@@ -28,17 +28,14 @@ const CONTROLLER_MAP = {
 };
 
 /**
- * SocketManager
- *
- * Manages a WebSocket connection for sending and receiving controller data.
- * Handles connection setup, message parsing, and state updates for different input types.
+ * @brief Manages a WebSocket connection for sending and receiving controller data.
+ * @details Handles connection setup, message parsing, and updates for different input types.
  */
 export class SocketManager {
   /**
-   * Creates a new SocketManager.
-   *
-   * @param {string} relayHost - Hostname for the relay server (default: 'iparty.duckdns.org').
-   * @param {string} movementType - Initial movement mode ('analog' or 'dpad').
+   * @brief Constructs a SocketManager instance.
+   * @param {string} relayHost - Hostname of the relay server. Defaults to 'iparty.duckdns.org'.
+   * @param {string} movementType - Initial movement mode ('analog' or 'dpad'). Defaults to 'analog'.
    */
   constructor(relayHost = "iparty.duckdns.org", movementType = "analog") {
     this.socket = null;
@@ -58,10 +55,8 @@ export class SocketManager {
   }
 
   /**
-   * Sets movement mode and resets state fields.
-   * Supports 'analog' or 'dpad' modes.
-   *
-   * @param {string} type - 'analog' for continuous input, 'dpad' for directional input.
+   * @brief Sets the active movement type and initializes state fields.
+   * @param {string} type - 'analog' for continuous input or 'dpad' for directional input.
    */
   changeMovementType(type) {
     this.activeMovementType = type === "dpad" ? "dpad" : "analog";
@@ -88,8 +83,7 @@ export class SocketManager {
   }
 
   /**
-   * Opens a WebSocket connection using the provided room code.
-   *
+   * @brief Opens a WebSocket connection using the provided room code.
    * @param {string} code - Room code for host connections.
    */
   connect(code) {
@@ -117,9 +111,8 @@ export class SocketManager {
   }
 
   /**
-   * Chooses and initializes the correct controller based on incoming data.
-   *
-   * @param {object} data - Parsed message data, including controller type and stats.
+   * @brief Loads and initializes the appropriate controller view based on incoming data.
+   * @param {object} data - Parsed message data, including 'controller' and optional 'playerstats'.
    */
   loadController(data) {
     const root = document.querySelector(".view-container");
@@ -131,7 +124,6 @@ export class SocketManager {
         itemColor: color,
         connectedBtn: button,
       }));
-
       initializeController(HotPotatoController, root, list);
     } else if (controller == "text-preset") {
       initializeController(TextController, root, data.words);
@@ -149,9 +141,8 @@ export class SocketManager {
   }
 
   /**
-   * Handles incoming update, about a players death, from hotpotato minigame.
-   * 
-   * @param {object} data 
+   * @brief Handles death updates for the HotPotatoController.
+   * @param {object} data - The data payload containing playerName.
    */
   handleDeadUpdate(data) {
     const hController = getController();
@@ -161,8 +152,7 @@ export class SocketManager {
   }
 
   /**
-   * Processes incoming commands and updates UI or state accordingly.
-   *
+   * @brief Processes incoming command data and updates state or UI accordingly.
    * @param {object} data - Parsed message data with a 'type' field.
    */
   handleCommand(data) {
@@ -192,30 +182,27 @@ export class SocketManager {
         this.handleDeadUpdate(data);
         break;
     }
-
     console.log(data);
   }
 
   /**
-   * Closes the WebSocket if it is open.
+   * @brief Closes the WebSocket connection if it is open.
    */
   disconnect() {
     if (this.isConnected()) this.socket.close();
   }
 
   /**
-   * Checks if the WebSocket is currently open.
-   *
-   * @returns {boolean} True if connected, false otherwise.
+   * @brief Checks if the WebSocket is currently open.
+   * @returns {boolean} True if connected; false otherwise.
    */
   isConnected() {
     return this.socket?.readyState === WebSocket.OPEN;
   }
 
   /**
-   * Saves custom handlers for open, message, and close events.
-   *
-   * @param {object} handlers - Object with onOpen, onMessage, onClose functions.
+   * @brief Registers custom handlers for open, message, and close events.
+   * @param {object} handlers - Object containing onOpen, onMessage, onClose callbacks.
    */
   setHandlers({ onOpen, onMessage, onClose }) {
     this.onOpen = onOpen;
@@ -224,10 +211,9 @@ export class SocketManager {
   }
 
   /**
-   * Updates analog stick coordinates and triggers sending if needed.
-   *
-   * @param {number} x - X axis value between -1 and 1.
-   * @param {number} y - Y axis value between -1 and 1.
+   * @brief Updates analog stick coordinates and triggers send loop if needed.
+   * @param {number} x - X-axis value between -1 and 1.
+   * @param {number} y - Y-axis value between -1 and 1.
    */
   updateAnalog(x, y) {
     if (this.activeMovementType !== "analog") return;
@@ -240,9 +226,8 @@ export class SocketManager {
   }
 
   /**
-   * Updates a D-pad direction state and sends if connected.
-   *
-   * @param {string} direction - 'up', 'down', 'left', or 'right'.
+   * @brief Updates D-pad directional state and sends if connected.
+   * @param {string} direction - One of 'up', 'down', 'left', 'right'.
    * @param {boolean} value - Pressed (true) or released (false).
    */
   updateDpad(direction, value) {
@@ -252,8 +237,7 @@ export class SocketManager {
   }
 
   /**
-   * Updates a button press state and sends if connected.
-   *
+   * @brief Updates button press state and sends if connected.
    * @param {string} name - Button identifier (e.g., 'A', 'B').
    * @param {boolean} value - Pressed (true) or released (false).
    */
@@ -263,9 +247,8 @@ export class SocketManager {
   }
 
   /**
-   * Updates text input state and sends if connected.
-   *
-   * @param {string} char - New text character.
+   * @brief Updates text input state and sends if connected.
+   * @param {string} char - The current text value.
    */
   updateText(char) {
     this.state.T = char;
@@ -273,9 +256,8 @@ export class SocketManager {
   }
 
   /**
-   * Builds an object with only the relevant state fields.
-   *
-   * @returns {object} Filtered state ready for sending.
+   * @brief Builds an object with only the relevant state fields for transmission.
+   * @returns {object} Filtered state object.
    */
   getFilteredState() {
     const baseKeys = ["type", "A", "B", "C", "D", "button", "T"];
@@ -286,7 +268,7 @@ export class SocketManager {
   }
 
   /**
-   * Sends the filtered state if it has changed.
+   * @brief Sends the filtered state if it has changed since last send.
    */
   sendFiltered() {
     if (!this.isConnected()) return;
@@ -298,7 +280,7 @@ export class SocketManager {
   }
 
   /**
-   * Starts a loop to send analog updates at intervals when active.
+   * @brief Starts a periodic send loop for analog updates.
    */
   startLoop() {
     if (this.timer) return;
@@ -308,7 +290,7 @@ export class SocketManager {
   }
 
   /**
-   * Stops the analog update loop.
+   * @brief Stops the periodic send loop.
    */
   stopLoop() {
     clearInterval(this.timer);
@@ -316,7 +298,7 @@ export class SocketManager {
   }
 
   /**
-   * Tracks analog stick activity and manages the send loop.
+   * @brief Manages analog activity state and send loop based on movement.
    */
   updateActivity() {
     if (this.activeMovementType !== "analog") return;
@@ -332,8 +314,7 @@ export class SocketManager {
   }
 
   /**
-   * Returns the movement keys for the current mode.
-   *
+   * @brief Returns the movement keys appropriate for the current mode.
    * @returns {string[]} Array of movement key names.
    */
   getMovementKeys() {
@@ -343,19 +324,17 @@ export class SocketManager {
   }
 
   /**
-   * Picks only specified keys from an object.
-   *
+   * @brief Utility to pick only specified keys from an object.
    * @param {object} obj - Source object.
-   * @param {string[]} keys - Keys to pick.
-   * @returns {object} Object with only the selected keys.
+   * @param {string[]} keys - Keys to select.
+   * @returns {object} Object containing only the selected key-value pairs.
    */
   pick(obj, keys) {
     return keys.reduce((res, k) => ((res[k] = obj[k]), res), {});
   }
 
   /**
-   * Sends arbitrary data over the WebSocket.
-   *
+   * @brief Sends arbitrary data over the WebSocket if connected.
    * @param {object} data - Data to send.
    */
   send(data) {
@@ -367,8 +346,7 @@ export class SocketManager {
   }
 
   /**
-   * Stores the client name.
-   *
+   * @brief Stores the client name for identification.
    * @param {string} name - Name to set as client identifier.
    */
   setClientName(name) {

@@ -2,15 +2,12 @@ import { ViewRenderer } from '../../utils/viewRenderer.js';
 import { socketManager } from '../../main.js';
 
 /**
- * ButtonsComponent
- *
- * Renders a configurable set of buttons and handles touch interactions for each.
- * Buttons are grouped into clusters based on the number provided (2 or 4 by default).
+ * @brief Renders a configurable set of buttons and handles touch interactions for each.
+ * @details Buttons are grouped into clusters based on the number provided (default 2 or 4).
  */
 export class ButtonsComponent extends ViewRenderer {
   /**
-   * Create a ButtonsComponent
-   * 
+   * @brief Constructs a ButtonsComponent instance.
    * @param {HTMLElement} container - Element where the buttons view will be rendered.
    * @param {boolean} [vertical=false] - If true, arrange button clusters vertically.
    * @param {string[]} [buttons=['A','B','C','D']] - Array of button labels to display.
@@ -22,8 +19,8 @@ export class ButtonsComponent extends ViewRenderer {
   }
 
   /**
-   * After the view loads, initializes the button layout, applies orientation,
-   * and sets up touch event listeners for each button to send updates over the socket.
+   * @brief Called after the view loads; initializes the button layout, applies orientation,
+   *        and sets up touch event listeners for each button to send updates over the socket.
    */
   bindEvents() {
     this.initLayout();
@@ -57,8 +54,8 @@ export class ButtonsComponent extends ViewRenderer {
   }
 
   /**
-   * Creates clusters of buttons and appends them to the container.
-   * Uses a specific CSS class based on the number of buttons.
+   * @brief Creates clusters of buttons and appends them to the container.
+   * @details Uses a specific CSS class based on the number of buttons for layout styling.
    */
   initLayout() {
     if (this.buttons.length === 0) return;
@@ -78,8 +75,8 @@ export class ButtonsComponent extends ViewRenderer {
   }
 
   /**
-   * Determines the CSS class for the button cluster based on count.
-   * @returns {string} Cluster class name ('button-cluster' or 'button-cluster-two').
+   * @brief Determines the CSS class for the button cluster based on the count of buttons.
+   * @returns {string} Cluster class name ('button-cluster', 'button-cluster-two', etc.).
    */
   determineClusterClass() {
     switch(this.buttons.length) {

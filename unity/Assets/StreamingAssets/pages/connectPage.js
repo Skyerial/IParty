@@ -5,13 +5,13 @@ import { LoginPage } from "./loginPage.js";
 import { loadPage } from "../main.js";
 
 /**
- * ConnectPage
- *
- * Presents a lobby interface where users enter or reconnect to a game code.
- * Handles both initial connection and reconnection flows.
+ * @brief Presents a lobby interface where users enter or reconnect to a game code.
+ * @details Handles both initial connection and reconnection flows.
+ * @extends ViewRenderer
  */
 export class ConnectPage extends ViewRenderer {
   /**
+   * @brief Constructs a ConnectPage.
    * @param {HTMLElement} container - Element where the connect view will appear.
    * @param {boolean} [created] - Indicates if a new lobby was just created.
    */
@@ -21,9 +21,9 @@ export class ConnectPage extends ViewRenderer {
   }
 
   /**
-   * After the view loads, attaches click handlers to the join and reconnect buttons.
-   * - Join: opens a socket connection using the input value, then opens LoginPage.
-   * - Reconnect: opens a socket connection using the input value, then opens ReconnectPage.
+   * @brief Called after the view loads; attaches click handlers to the join and reconnect buttons.
+   * @details - Join: opens a socket connection using the input value, then navigates to LoginPage.
+   *          - Reconnect: opens a socket connection using the input value, then navigates to ReconnectPage.
    */
   bindEvents() {
     const inputField = document.querySelector(".lobby-input");

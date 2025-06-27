@@ -1,14 +1,12 @@
 import { LayoutManager } from "../utils/layoutManager.js";
 
 /**
- * DpadController initializes a directional pad (D-pad) and optional buttons within a given container.
- *
- * It uses LayoutManager to append the D-pad and control buttons to the UI.
+ * @brief Initializes a directional pad (D-pad) and optional buttons within a given container.
+ * @details Uses LayoutManager to append the D-pad control and default buttons to the UI.
  */
 export class DpadController {
   /**
-   * Create a DpadController.
-   *
+   * @brief Constructs a DpadController.
    * @param {HTMLElement} container - The DOM element to host the D-pad and buttons.
    */
   constructor(container) {
@@ -16,7 +14,8 @@ export class DpadController {
   }
 
   /**
-   * Initialize the layout by creating a LayoutManager and adding controls.
+   * @brief Initializes the layout by creating a LayoutManager and adding controls.
+   * @returns {Promise<void>} Resolves when the D-pad and buttons have been added.
    */
   async init() {
     const layout = new LayoutManager(this.container, false);

@@ -2,15 +2,12 @@ import { ViewRenderer } from "../../utils/viewRenderer.js";
 import { socketManager } from '../../main.js';
 
 /**
- * ButtonComponent
- *
- * Renders a single large button and handles touch interactions.
- * Supports custom text and CSS class via options.
+ * @brief Renders a single large button and handles touch interactions.
+ * @details Supports custom text and CSS class via options, and sends button-press updates over the socket.
  */
 export class ButtonComponent extends ViewRenderer {
   /**
-   * Create a ButtonComponent
-   * 
+   * @brief Constructs a ButtonComponent instance.
    * @param {HTMLElement} container - Element where the button view will be rendered.
    * @param {boolean} vertical - If true, button is laid out vertically.
    * @param {Object} [options] - Configuration options for the button.
@@ -24,8 +21,8 @@ export class ButtonComponent extends ViewRenderer {
   }
 
   /**
-   * After the view loads, finds the button element, applies custom text and class,
-   * and sets up touch event listeners to send button-press updates over the socket.
+   * @brief Called after the view loads; finds the button element, applies custom text and class,
+   *        and sets up touch event listeners to send button-press updates over the socket.
    */
   bindEvents() {
     const btn = this.container.querySelector('.big-button');

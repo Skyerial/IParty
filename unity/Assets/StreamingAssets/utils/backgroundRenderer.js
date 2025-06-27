@@ -12,13 +12,11 @@ const MODEL_COLOR_MAP = {
 const BG_COLOR_DEFAULT = 0x687cff;
 
 /**
- * BackgroundRenderer
- *
- * Sets up a 3D scene with Three.js, including camera, lighting, controls,
- * and a live video-textured 3D model, displayed as a background in a container.
+ * @brief Sets up a Three.js scene with lighting, controls, webcam-textured model, and handles rendering loop.
  */
 export class BackgroundRenderer {
     /**
+     * @brief Constructs a BackgroundRenderer for the given container element.
      * @param {HTMLElement} containerEl - The DOM element to host the Three.js canvas and video feed.
      */
     constructor(containerEl) {
@@ -35,8 +33,8 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Initializes the scene by setting up renderer, scene, camera, controls, lights,
-     * the webcam video feed, loading the 3D model and starting the animation loop.
+     * @brief Initializes the renderer: scene, camera, lights, video feed, model loading, and starts animation.
+     * @returns {Promise<void>}
      */
     async init() {
         this.setupScene();
@@ -51,7 +49,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Creates a Three.js Scene and sets its background color.
+     * @brief Creates a Three.js Scene and sets its background color.
      */
     setupScene() {
         this.scene = new THREE.Scene();
@@ -59,7 +57,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Configures a PerspectiveCamera and positions it to view the scene.
+     * @brief Configures a PerspectiveCamera and positions it to view the scene.
      */
     setupCamera() {
         this.camera = new THREE.PerspectiveCamera(
@@ -72,8 +70,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Creates the WebGLRenderer, sizes it to the window, attaches its canvas,
-     * and adds a CSS class for styling.
+     * @brief Creates the WebGLRenderer, sizes it to the window, and attaches its canvas to the container.
      */
     setupRenderer() {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -83,7 +80,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Adds OrbitControls to allow user interaction with the camera.
+     * @brief Adds OrbitControls to allow user interaction with the camera.
      */
     setupControls() {
         const controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -92,7 +89,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Adds hemisphere and directional lights to the scene for realistic lighting.
+     * @brief Adds hemisphere and directional lights for realistic illumination.
      */
     setupLights() {
         const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
@@ -105,9 +102,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Sets up a hidden video element to capture webcam feed,
-     * creates a VideoTexture, and resolves when ready or on error.
-     *
+     * @brief Captures webcam feed into a hidden video element and creates a VideoTexture.
      * @returns {Promise<void>}
      */
     setupVideoFeed() {
@@ -144,9 +139,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Loads an FBX model and applies the video texture to its body,
-     * sets up animations, and adds it to the scene.
-     *
+     * @brief Loads an FBX model, applies video texture and animations, then adds it to the scene.
      * @returns {Promise<void>}
      */
     loadModel() {
@@ -182,8 +175,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Sets the model's material color from predefined options.
-     *
+     * @brief Sets the model's material color from predefined MODEL_COLOR_MAP.
      * @param {string} key - Color name key (e.g., 'Blue', 'Red').
      */
     applyColor(key) {
@@ -192,7 +184,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Runs the animation loop: updates mixer and renders the scene each frame.
+     * @brief Runs the animation loop: updates mixer and renders the scene each frame.
      */
     animate() {
         requestAnimationFrame(() => this.animate());
@@ -202,7 +194,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Updates camera and renderer size on window resize.
+     * @brief Adjusts camera aspect and renderer size on window resize.
      */
     onResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -211,10 +203,7 @@ export class BackgroundRenderer {
     }
 
     /**
-     * Stops the video stream and cleans up associated resources.
-     * - Stops all media tracks from the webcam stream.
-     * - Removes the video element from the DOM.
-     * - Disposes of the video texture used on the model.
+     * @brief Stops the webcam stream, removes video element, and disposes of the VideoTexture.
      */
     stop() {
         if (this.stream) {

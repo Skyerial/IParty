@@ -1,15 +1,12 @@
 /**
- * ViewRenderer
- *
- * A simple class that loads an HTML file and displays it inside a given container element.
- * Child classes can customize how events are set up after the HTML is loaded.
+ * @brief A simple class that loads an HTML file into a container and allows subclasses to bind events.
+ * @details Fetches and injects HTML content, then calls bindEvents and reconnectEvent hooks.
  */
 export class ViewRenderer {
     /**
-     * Sets up a new ViewRenderer instance.
-     *
+     * @brief Constructs a new ViewRenderer.
      * @param {string} htmlFile - The path or URL of the HTML file to load.
-     * @param {HTMLElement} container - The element where the HTML content will appear.
+     * @param {HTMLElement} container - The element where the HTML content will be injected.
      */
     constructor(htmlFile, container) {
         this.htmlFile = htmlFile;
@@ -17,10 +14,9 @@ export class ViewRenderer {
     }
 
     /**
-     * Loads the HTML content and displays it, then calls the method to set up events.
-     *
+     * @brief Initializes the view by loading HTML, injecting it, and binding events.
      * @async
-     * @returns {Promise<void>} Completes when content is shown and events are set up.
+     * @returns {Promise<void>} Resolves when content is loaded and events are set up.
      */
     async init() {
         const html = await this.loadHTML(this.htmlFile);
@@ -30,12 +26,10 @@ export class ViewRenderer {
     }
 
     /**
-     * Fetches the HTML from the specified location.
-     * Logs an error if the fetch fails, but still returns whatever text is received.
-     *
+     * @brief Fetches HTML content from the specified file or URL.
      * @async
      * @param {string} file - The HTML file path or URL.
-     * @returns {Promise<string>} The raw HTML as a string.
+     * @returns {Promise<string>} The fetched HTML as a string.
      */
     async loadHTML(file) {
         const response = await fetch(file);
@@ -46,23 +40,25 @@ export class ViewRenderer {
     }
 
     /**
-     * Sets up event listeners on the rendered content.
-     * Child classes should override this method to add their own event handling.
+     * @brief Hook for subclasses to attach event listeners after HTML is injected.
+     * @remarks Override in child classes to implement specific event bindings.
      */
     bindEvents() {
         // Override in child classes to attach event handlers
     }
 
     /**
-     * Returns the container element where the HTML is rendered.
-     *
-     * @returns {HTMLElement} The container element.
+     * @brief Hook for subclasses to handle reconnection logic after view initialization.
+     * @remarks Override in child classes if needed.
      */
-    
     reconnectEvent() {
         // to be overridden in subclass
     }
 
+    /**
+     * @brief Retrieves the container element used for rendering.
+     * @returns {HTMLElement} The container element.
+     */
     getContainer() {
         return this.container;
     }

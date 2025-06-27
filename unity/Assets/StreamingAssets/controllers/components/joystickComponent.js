@@ -3,15 +3,14 @@ import { ViewRenderer } from '../../utils/viewRenderer.js';
 import { socketManager } from '../../main.js';
 
 /**
- * JoystickComponent renders a virtual joystick UI that captures touch input
- * and emits normalized analog values through the socketManager.
+ * @brief Renders a virtual joystick UI that captures touch input
+ *        and emits normalized analog values through the socketManager.
  */
 export class JoystickComponent extends ViewRenderer {
   /**
-   * Create a JoystickComponent.
-   *
+   * @brief Constructs a JoystickComponent.
    * @param {HTMLElement} container - The DOM element to render the joystick into.
-   * @param {boolean} [vertical=false] - If true, invert axes for a vertical layout.
+   * @param {boolean} [vertical=false] - If true, invert axes for vertical layout.
    */
   constructor(container, vertical = false) {
     super(
@@ -25,8 +24,8 @@ export class JoystickComponent extends ViewRenderer {
   }
 
   /**
-   * Bind pointer event listeners to the joystick elements.
-   * Handles pointerdown, pointermove, pointerup, and pointercancel.
+   * @brief Binds pointer event listeners to the joystick elements.
+   * @details Handles pointerdown, pointermove, pointerup, and pointercancel events.
    */
   bindEvents() {
     const joystick = this.container.querySelector('#joystick');
@@ -64,14 +63,13 @@ export class JoystickComponent extends ViewRenderer {
       socketManager.updateAnalog(x, y);
     });
 
-    // On touch end or cancel: reset joystick
+    // On touch end or cancel: reset joystick to neutral
     joystick.addEventListener('pointerup',     e => this.reset(e));
     joystick.addEventListener('pointercancel', e => this.reset(e));
   }
 
   /**
-   * Reset the joystick to its neutral position and emit zeroed analog input.
-   *
+   * @brief Resets the joystick to its neutral position and emits zeroed analog input.
    * @param {PointerEvent} e - The pointer event triggering the reset.
    */
   reset(e) {
@@ -92,4 +90,3 @@ export class JoystickComponent extends ViewRenderer {
     socketManager.updateAnalog(0, 0);
   }
 }
-

@@ -3,14 +3,15 @@ import { BackgroundRenderer } from '../utils/backgroundRenderer.js';
 import { socketManager } from '../main.js';
 
 const MAX_NAME_LENGTH = 12;
+
 /**
- * LoginPage
- *
- * Renders a login interface with live video background.
- * Allows the user to take or retake a snapshot, select a color, and submit their details.
+ * @brief Renders a login interface with live video background.
+ * @details Allows the user to take or retake a snapshot, select a color, and submit their details.
+ * @extends ViewRenderer
  */
 export class LoginPage extends ViewRenderer {
   /**
+   * @brief Constructs a LoginPage.
    * @param {HTMLElement} container - Element where the login view will be displayed.
    */
   constructor(container) {
@@ -18,41 +19,46 @@ export class LoginPage extends ViewRenderer {
   }
 
   /**
-   * After the view loads, initializes the background video renderer,
-   * finds input elements, and sets up event listeners for snapshot,
-   * color selection, and form submission.
+   * @brief Called after the view loads; initializes the background video renderer,
+   *        finds input elements, and sets up event listeners for snapshot,
+   *        color selection, and form submission.
    */
   bindEvents() {
     const loginContainer = this.container.querySelector('.login-container');
     if (!loginContainer) throw new Error('Login container not found');
 
+    // Initialize live video background
     this.bgRenderer = new BackgroundRenderer(loginContainer);
     this.bgRenderer.init();
     this.video = this.bgRenderer.video;
 
-    this.nameInput = loginContainer.querySelector('#user');
-    this.colorButtons = Array.from(
-      loginContainer.querySelectorAll('.color-box')
-    );
-    this.snapButton = loginContainer.querySelector('#picture-snap');
-    this.playButton = loginContainer.querySelector('#play-button');
+    // Cache UI elements
+    this.nameInput     = loginContainer.querySelector('#user');
+    this.colorButtons  = Array.from(loginContainer.querySelectorAll('.color-box'));
+    this.snapButton    = loginContainer.querySelector('#picture-snap');
+    this.playButton    = loginContainer.querySelector('#play-button');
 
+    // Bind snapshot toggle
     this.snapButton.addEventListener('click', () =>
       this.toggleSnapshot(loginContainer)
     );
+
+    // Bind color selection
     this.colorButtons.forEach(btn =>
       btn.addEventListener('click', () => this.onColorSelect(btn.id))
     );
+
+    // Bind form submission
     this.playButton.addEventListener('click', () => this.submitPlayer());
   }
 
   /**
-   * Toggles between live video and snapshot mode.
+   * @brief Toggles between live video and snapshot mode.
+   * @param {HTMLElement} loginContainer - The container for the login UI.
+   * @details
    * - In live mode: shows "Take Picture" and removes any existing canvas.
    * - In snapshot mode: pauses video, captures current frame to canvas,
-   *   displays "Retake Picture" button, and stores the canvas.
-   *
-   * @param {HTMLElement} loginContainer - The container for the login UI.
+   *   displays "Retake Picture" button, and stores the canvas element.
    */
   toggleSnapshot(loginContainer) {
     if (this.video.paused) {
@@ -64,7 +70,7 @@ export class LoginPage extends ViewRenderer {
       this.snapButton.textContent = 'Retake Picture';
       const canvas = document.createElement('canvas');
       canvas.id = 'snapshot';
-      canvas.width = this.video.videoWidth;
+      canvas.width  = this.video.videoWidth;
       canvas.height = this.video.videoHeight;
       canvas.getContext('2d').drawImage(this.video, 0, 0);
       loginContainer.appendChild(canvas);
@@ -73,9 +79,8 @@ export class LoginPage extends ViewRenderer {
   }
 
   /**
-   * Handles color button clicks: highlights the selected color,
-   * stores the selection, and applies it to the background renderer.
-   *
+   * @brief Handles color button clicks: highlights the selected color,
+   *        stores the selection, and applies it to the background renderer.
    * @param {string} colorKey - The key identifying the chosen color.
    */
   onColorSelect(colorKey) {
@@ -87,14 +92,16 @@ export class LoginPage extends ViewRenderer {
   }
 
   /**
-   * Validates input, extracts snapshot data if available,
-   * and sends the player’s name, selected color, and image data via socket.
+   * @brief Validates input, extracts snapshot data if available,
+   *        and sends the player’s name, selected color, and image data via socket.
    */
   submitPlayer() {
     const name = this.nameInput.value.trim();
     if (!name) return alert('Please enter a player name.');
-    if (name.length > MAX_NAME_LENGTH) return alert('Name cant be longer than 12 characters');
-    if (!this.selectedColor) return alert('Please select a color.');
+    if (name.length > MAX_NAME_LENGTH)
+      return alert('Name can’t be longer than 12 characters');
+    if (!this.selectedColor) 
+      return alert('Please select a color.');
 
     const data = this.snapshotCanvas
       ? this.snapshotCanvas

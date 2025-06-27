@@ -1,15 +1,14 @@
 import { LayoutManager } from "../utils/layoutManager.js";
 
 /**
- * GyroController initializes a gyroscopic control interface within a given container.
- *
- * It uses LayoutManager to append a gyroscope input control to the UI.
+ * @brief Initializes a gyroscopic control interface within a given container.
+ * @details Uses LayoutManager to append a gyroscope input control to the UI.
  */
 export class GyroController {
   /**
-   * Create a GyroController.
-   *
+   * @brief Constructs a GyroController.
    * @param {HTMLElement} container - The DOM element to host the gyroscopic control.
+   * @param {string} displayText - Text to display alongside the gyroscope control.
    */
   constructor(container, displayText) {
     this.container = container;
@@ -17,7 +16,8 @@ export class GyroController {
   }
 
   /**
-   * Initialize the layout by creating a LayoutManager and adding gyro control.
+   * @brief Initializes the layout by creating a LayoutManager and adding the gyro control.
+   * @returns {Promise<void>} Resolves when layout and gyro control setup complete.
    */
   async init() {
     // Instantiate LayoutManager (horizontal layout)

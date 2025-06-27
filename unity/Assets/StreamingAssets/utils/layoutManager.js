@@ -9,15 +9,12 @@ import { ListComponent } from "../controllers/components/listComponent.js";
 import { GyroComponent } from "../controllers/components/gyroComponent.js";
 
 /**
- * LayoutManager
- *
- * Builds a controller interface layout by adding input components into slots.
- * Supports only one movement component (D-pad or joystick) at a time.
+ * @brief Builds and manages the layout of controller input components in the UI.
+ *        Ensures only one movement component is added.
  */
 export class LayoutManager extends ViewRenderer {
     /**
-     * Create a LayoutManager
-     * 
+     * @brief Constructs a LayoutManager.
      * @param {HTMLElement} container - Element where controller slots will be added.
      * @param {boolean} vertical - If true, arrange components vertically.
      */
@@ -30,14 +27,15 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Called after HTML loads: finds the layout element.
+     * @brief Called after HTML is loaded; locates the controller-layout element.
      */
     bindEvents() {
         this.layout = this.container.querySelector('.controller-layout');
     }
 
     /**
-     * Adds a D-pad component if none exists.
+     * @brief Adds a D-pad component if none exists.
+     * @returns {Promise<void>}
      */
     async addDpad() {
         if (!this.startMovement('dpad')) return;
@@ -45,7 +43,8 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Adds a joystick component if none exists.
+     * @brief Adds a joystick (analog) component if none exists.
+     * @returns {Promise<void>}
      */
     async addJoystick() {
         if (!this.startMovement('analog')) return;
@@ -53,7 +52,9 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Adds a text input component if none exists.
+     * @brief Adds a text input component.
+     * @param {string} words - Initial text or placeholder for the TextComponent.
+     * @returns {Promise<void>}
      */
     async addText(words) {
         if (!this.startMovement('text')) return;
@@ -61,33 +62,36 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Adds multiple buttons from an array of settings.
-     * @param {string[]} buttons
+     * @brief Adds multiple buttons based on an array of settings.
+     * @param {string[]} buttons - Array of button labels or configurations.
+     * @returns {Promise<void>}
      */
     async addButtons(buttons = []) {
         await this.addComponent(ButtonsComponent, buttons);
     }
 
     /**
-     * Adds a single button with custom settings.
-     * @param {object} items
+     * @brief Adds a single button with custom settings.
+     * @param {object} items - Configuration object for the button.
+     * @returns {Promise<void>}
      */
     async addButton(items = {}) {
         await this.addComponent(ButtonComponent, items);
     }
 
     /**
-     * Adds a list view for stats or items.
-     * @param {Array<object>} items
+     * @brief Adds a list component for displaying collections of items or stats.
+     * @param {Array<object>} items - Items to populate the list.
+     * @returns {Promise<void>}
      */
     async addList(items = []) {
         await this.addComponent(ListComponent, items);
     }
 
     /**
-     * Adds a gyroscope-based component.
-     * 
-     * @param {string} displayText - The text to be displayed.
+     * @brief Adds a gyroscope-based control component.
+     * @param {string} displayText - Text to display alongside the GyroComponent.
+     * @returns {Promise<void>}
      */
     async addGyro(displayText) {
         await this.addComponent(GyroComponent, displayText);
@@ -95,9 +99,9 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Helper: ensures only one movement component, sets mode, and marks usage.
-     * @param {string} type - 'dpad' or 'analog'
-     * @returns {boolean} True if allowed, false if already used.
+     * @brief Ensures only one movement component (D-pad or joystick/text) is added.
+     * @param {string} type - Movement type: 'dpad', 'analog', or 'text'.
+     * @returns {boolean} True if movement component can be added; false otherwise.
      */
     startMovement(type) {
         if (this.hasMovementComponent) {
@@ -110,9 +114,10 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Creates, initializes, and displays a component in a new slot.
-     * @param {Function} ComponentClass
-     * @param {*} [param]
+     * @brief Creates, initializes, and displays a component instance in a new slot.
+     * @param {Function} ComponentClass - The component class to instantiate.
+     * @param {*} [param] - Optional parameter passed to the component constructor.
+     * @returns {Promise<void>}
      */
     async addComponent(ComponentClass, param = null) {
         const root = document.createElement('div');
@@ -130,8 +135,9 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Wraps a component in a slot and adds it to the layout.
-     * @param {object} component
+     * @brief Wraps a component in a slot element and appends it to the layout.
+     * @param {object} component - The component instance whose view to load.
+     * @returns {void}
      */
     loadComponentView(component) {
         const slot = document.createElement('div');
@@ -142,10 +148,9 @@ export class LayoutManager extends ViewRenderer {
     }
 
     /**
-     * Returns the first component of the given class.
-     * 
-     * @param {object} componentClass - The class of the component you're looking for
-     * @returns The component you're looking for
+     * @brief Retrieves the first component instance of the specified class.
+     * @param {Function} componentClass - The component class to search for.
+     * @returns {object|null} The matching component instance, or null if not found.
      */
     getComponent(componentClass) {
         return this.components.find(c => c instanceof componentClass) || null;

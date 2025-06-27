@@ -2,16 +2,15 @@ import { ViewRenderer } from '../../utils/viewRenderer.js';
 import { socketManager } from '../../main.js';
 
 /**
- * GyroComponent
- *
- * Manages device motion input by requesting permission, showing prompts,
- * and detecting flick gestures to send button press events.
+ * @brief Manages device motion input by requesting permission, showing prompts,
+ *        and detecting flick gestures to send button press events.
  */
 export class GyroComponent extends ViewRenderer {
   /**
-   * Create a GyroComponent
-   * 
+   * @brief Constructs a GyroComponent instance.
    * @param {HTMLElement} container - Element where the gyro view will be rendered.
+   * @param {boolean} vertical - If true, arranges the UI vertically (unused here).
+   * @param {string} displayText - Text to display in the play view.
    */
   constructor(container, vertical, displayText) {
     super("./views/components/gyroComponentView.html", container);
@@ -20,7 +19,7 @@ export class GyroComponent extends ViewRenderer {
   }
 
   /**
-   * Sets up motion threshold, UI elements, and starts permission flow.
+   * @brief Initializes motion threshold, UI element references, and starts permission flow.
    */
   bindEvents() {
     this.motionThreshold = 15;
@@ -31,14 +30,14 @@ export class GyroComponent extends ViewRenderer {
     this.enableButton = this.container.querySelector("#enableButton");
 
     const text = this.container.querySelector("#displayText");
-    text.innerHTML = (this.displayText);
+    text.innerHTML = this.displayText;
 
     this.requestMotionPermission();
   }
 
   /**
-   * Requests permission for device motion events if needed,
-   * then shows the play view and starts tracking or shows the prompt.
+   * @brief Requests permission for device motion events if needed, then shows the play view
+   *        and starts tracking, or shows the permission prompt on denial.
    */
   requestMotionPermission() {
     if (typeof DeviceMotionEvent?.requestPermission === "function") {
@@ -59,7 +58,7 @@ export class GyroComponent extends ViewRenderer {
   }
 
   /**
-   * Displays the main play UI, hiding the permission prompt.
+   * @brief Displays the main play UI and hides the permission prompt.
    */
   showPlayView() {
     this.permissionPrompt.style.display = "none";
@@ -67,7 +66,7 @@ export class GyroComponent extends ViewRenderer {
   }
 
   /**
-   * Displays the permission prompt and sets up the enable button listener.
+   * @brief Displays the permission prompt and sets up the enable button listener.
    */
   showPermissionPrompt() {
     this.permissionPrompt.style.display = "block";
@@ -80,7 +79,7 @@ export class GyroComponent extends ViewRenderer {
   }
 
   /**
-   * Starts listening to device motion events.
+   * @brief Starts listening to device motion events for flick detection.
    */
   startMotionTracking() {
     window.addEventListener(
@@ -91,10 +90,9 @@ export class GyroComponent extends ViewRenderer {
   }
 
   /**
-   * Handles motion events, detects flicks above the threshold,
-   * and sends a quick simulated button press when a flick occurs.
-   *
-   * @param {DeviceMotionEvent} e - The motion event.
+   * @brief Handles motion events, detects flicks above the threshold,
+   *        and sends a simulated button press ('A') when a flick occurs.
+   * @param {DeviceMotionEvent} e - The motion event payload.
    */
   handleMotionEvent(e) {
     const { acceleration } = e;
