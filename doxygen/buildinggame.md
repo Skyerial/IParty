@@ -26,6 +26,8 @@ To add a new minigame to the project, follow these steps:
     Provide a short description.
     This links your minigame to the gameboard explanation screen. Since this loads the selector and after the description it loads your minigame.
 
+    Create a controller for your minigame: 
+        On the client side, create a new controller class or check if an existing one meets your requirements. Instantiate a new LayoutManager object and add the components you need. Once the class is ready, you can create an instance of it and initialize it to display the controller. On the backend, make sure to include the controller name in the message sent using ServerManager.SendToAllSockets(). Then, add that controller name to the map in socketManager.js so it can be properly recognized and handled on the client.
 <small>
 Developed by Group E for the University of Amsterdam.
 
