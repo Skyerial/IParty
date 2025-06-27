@@ -3,7 +3,13 @@
 ## Overview
 iParty is a Unity-based digital party game where you use your mobile phone as your controller! Player compete in minigames to gain an advantage in moving higher in the world and to win it all. This project was developed for the Project Software Engineering course at the University of Amsterdam.
 
-[Check out our website!](http://83.96.253.147/)
+Check out [our website](http://83.96.253.147/)
+[Our links](http://83.96.253.147/d2/d15/md_files.html)
+[Testing](http://83.96.253.147/de/d6a/md_testing.html)
+[Green Thinking](http://83.96.253.147/de/dc7/md_greenthinking.html)
+[Security](http://83.96.253.147/d3/d79/md_security.html)
+[Adding your own game](http://83.96.253.147/db/d3d/md_buildinggame.html)
+
 
 ## Project Structure
 - `unity/` - Contains the Unity project, including all game assets, scripts, and scenes.
@@ -35,6 +41,6 @@ doxygen Doxyfile
 Most bugs can be stopped by preventing reconnection is needed. Reconnection works on local most of the time but can cause bugs to happen and does not work when playing remotely. Other bugs are:
 
 - Sometimes an issue arrises causing the players not to not load in the gameboard at the start. A simple restart fixes this, if not, run the remote server to play.
-- The remote server does not allow reconnections; leaving the browser causes the player unable to play. 
+- The remote server does not allow reconnections; leaving the browser causes the player unable to play.
 - Skyglutes occasionally stops some players from spawning, skipping their turn or even fataly stopping the game.
 - Random reconnection prompt (rarely happens)
