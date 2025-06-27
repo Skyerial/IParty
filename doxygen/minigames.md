@@ -1,7 +1,7 @@
 # Minigames
 A quick description for all the minigames.
 
-## Whack a Mole
+### Whack a Mole
 They pop up... you slam down!
 In this chaotic reflex-fest, your goal is simple: WHACK the moles before they disappear.
 But beware!
@@ -16,7 +16,7 @@ React fast, aim true and don’t get blinded by the mess.
 Can you out whack your rivals and become the mole-slaying champ?
 
 
-## Tanks
+### Tanks
 Lock on. Line up. Fire!
 Battle it out in a chaotic tank arena where every shot counts.
 Aim at your opponents and blast them into bits — but don’t get trigger-happy...
@@ -26,7 +26,7 @@ Move smart, shoot sharp, and stay alive.
 The last tank standing wins the war!
 
 
-## Spleef
+### Spleef
 Watch your step... or fall into the lava!
 Run around the arena, but be careful — every tile you step on falls away, leaving a trail behind you!
 Stay on solid ground while dodging holes, opponents and your own footsteps.
@@ -37,7 +37,7 @@ Around you: chaos.
 Last player standing wins!
 
 
-## Turf
+### Turf
 Paint the world — and win the turf!
 Grab your paint blaster and cover the field in your color!
 The more ground you paint, the closer you get to victory.
@@ -49,13 +49,13 @@ Move fast.
 The player with the most turf painted wins the match!
 
 
-## Speedtyper
+### Speedtyper
 Race across the river by typing as fast as you can!
 Words appear on your screen — type each one correctly to walk on a bridge and cross to the other side.
 The faster you type, the quicker you move! But watch out: typos will slow you down!
 
 
-## Set
+### Set
 Eyes sharp, brain sharper!
 In this lightning-fast pattern-matching challenge, you’ll scan a grid of colorful cards and race to find sets — groups of three cards that are all the same or all different in every way.
 
@@ -66,7 +66,7 @@ The player with the most sets when time’s up wins the match!
 Ready, set... SET!
 
 
-## Skyglutes
+### Skyglutes
 It’s leg day in the sky!
 Mash those glutes into orbit by tapping your phone like crazy!
 The harder you tap, the higher you jump.
@@ -76,7 +76,7 @@ First one to the stratosphere (or just the highest cloud) wins eternal glory...
 ...and really sore thumbs.
 
 
-## Hot Potato
+### Hot Potato
 Don’t be the last one holding it...
 It’s a ticking time bomb — literally!
 Pass the hot potato before it explodes in your hands!
