@@ -352,6 +352,7 @@ public class SpleefGameManager : MonoBehaviour
      */
     public void FinalizeRanking()
     {
+        eliminationOrder.Reverse();
         var pm = Object.FindFirstObjectByType<PlayerManager>();
         pm.tempRankClear();
 
