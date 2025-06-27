@@ -22,6 +22,31 @@ public class JoinAllGameBoard : MonoBehaviour
                 {
                     gameMaster.RegisterPlayer(playerInput);
                     colorPlayer(playerInput);
+
+                    // ✅ Restore board position
+                    int savedPos = PlayerManager.playerStats[device].position;
+                    int playerID = PlayerManager.playerStats[device].playerID;
+                    playerInput.GetComponent<PlayerMovement>().current_pos = savedPos;
+
+                    // ✅ Move GameObject to correct tile marker
+                    if (savedPos < gameMaster.tileGroup.childCount)
+                    {
+                        var tile = gameMaster.tileGroup.GetChild(savedPos);
+                        var tileScript = tile.GetComponent<tileHandler>();
+                        if (tileScript != null && tileScript.markers.Length > playerID)
+                        {
+                            var marker = tileScript.markers[playerID];
+                            playerInput.transform.position = marker.position + Vector3.up;
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"Invalid tile marker for player {playerID} at tile {savedPos}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Saved position {savedPos} exceeds tile count");
+                    }
                 }
                 else
                 {
@@ -30,6 +55,7 @@ public class JoinAllGameBoard : MonoBehaviour
             }
         }
     }
+
 
     void colorPlayer(PlayerInput playerInput)
     {
