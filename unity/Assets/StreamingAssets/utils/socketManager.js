@@ -177,7 +177,7 @@ export class SocketManager {
         break;
       case "reconnect-status":
         data.approved
-          ? initializeController(JoystickController, root)
+          ? this.loadController(data)
           : alert("Player not found, check the code.");
         break;
       case "character-status":

@@ -8,7 +8,7 @@ public class JoinPartyLeader : MonoBehaviour
 
     private void Start()
     {
-        var controllers = ServerManager.allControllers.Values.ToList();
+        var controllers = ServerManager.allControllers.Keys.ToList();
         if (controllers.Count == 0)
         {
             Debug.LogWarning("No controllers found in ServerManager.");
@@ -21,7 +21,7 @@ public class JoinPartyLeader : MonoBehaviour
             controller = "description"
         };
 
-        ServerManager.SendMessageToClient(leader.remoteId, JsonUtility.ToJson(leaderMsg));
+        ServerManager.SendMessageToClient(leader, JsonUtility.ToJson(leaderMsg));
 
         for (int i = 1; i < controllers.Count; i++)
         {
@@ -31,10 +31,10 @@ public class JoinPartyLeader : MonoBehaviour
                 controller = "waitingpage"
             };
 
-            ServerManager.SendMessageToClient(dev.remoteId, JsonUtility.ToJson(waitMsg));
+            ServerManager.SendMessageToClient(dev, JsonUtility.ToJson(waitMsg));
         }
 
         PlayerInputManager.instance.playerPrefab = prefab;
-        PlayerInputManager.instance.JoinPlayer(-1, -1, null, leader);
+        PlayerInputManager.instance.JoinPlayer(-1, -1, null, ServerManager.allControllers[leader]);
     }
 }

@@ -21,10 +21,11 @@ using System.Linq;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
-
 public class ServerManager : MonoBehaviour
 {
     private static ServerManager instance;
+    public static string CurrentController = "";
+
 
     [Header("Mode Settings")]
     [Tooltip("Enable to use remote relay servers instead of local HTTP/WS servers.")]
@@ -144,6 +145,7 @@ public class ServerManager : MonoBehaviour
         using var ssl = new SslStream(stream, false);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
         Debug.Log("Looking for cert at:" + certPath);
+
         var cert = new X509Certificate2(certPath, "unity");
         ssl.AuthenticateAsServer(cert, false, SslProtocols.Tls12, false);
 
@@ -239,7 +241,8 @@ public class ServerManager : MonoBehaviour
         string wsPrefix = useSecure ? $"wss://{ip}:8181" : $"ws://{ip}:8181";
         wsServer = new WebSocketServer(wsPrefix);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
-        wsServer.Certificate = new X509Certificate2(certPath, "unity");
+        wsServer.Certificate = new X509Certificate2(certPath, "unity", 
+            X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
         wsServer.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
         wsServer.Start(socket =>
         {
@@ -454,6 +457,8 @@ public class ServerManager : MonoBehaviour
 
     public static void SendtoAllSockets(string controller)
     {
+        CurrentController = controller;
+        Debug.Log("Setting a new main controller");
         var messageObject = new MessagePlayers
         {
             type = "controller",
@@ -594,6 +599,10 @@ public class ServerManager : MonoBehaviour
         allControllers.Remove(oldKey);
 
         Debug.Log($"[Reconnect] Swapped controller {oldKey} -> {key}");
+        foreach (var con in allControllers.Keys.ToArray())
+        {
+            Debug.Log("Controller " + con);
+        }
 
         var reconnectFunction = FindAnyObjectByType<Reconnect>();
         reconnectFunction?.ReconnectEvent();
@@ -633,8 +642,8 @@ public class ServerManager : MonoBehaviour
 
     void HandleCommandOnMainThread(string json, string sender)
     {
-        // try
-        // {
+        try
+        {
         var controller = allControllers[sender];
         if (PlayerManager.playerStats.ContainsKey(controller))
         {
@@ -680,29 +689,37 @@ public class ServerManager : MonoBehaviour
             {
                 string ip = sender.Split(":")[0];
                 string port = sender.Split(":")[1];
+                string controllerNow = "joystick-preset";
                 if (allControllers.ContainsKey($"{ip}:{cmd.code}"))
-                {
-                    HandleReconnect(sender, ip, cmd.code);
-                    var messageObject = new ReconnectJSON
                     {
-                        type = "reconnect-status",
-                        approved = true
-                    };
+                        HandleReconnect(sender, ip, cmd.code);
+                        Debug.Log("The current controller is..." + CurrentController);
+                        if (CurrentController != "")
+                        {
+                            Debug.Log("This point was reached.");
+                            controllerNow = CurrentController;
+                        }
+                        var messageObject = new ReconnectJSON
+                        {
+                            type = "reconnect-status",
+                            approved = true,
+                            controller = controllerNow
+                        };
 
-                    var data = JsonUtility.ToJson(messageObject);
-                    SendMessageToClient(sender, data);
-                }
-                else
-                {
-                    var messageObject = new ReconnectJSON
+                        var data = JsonUtility.ToJson(messageObject);
+                        SendMessageToClient(sender, data);
+                    }
+                    else
                     {
-                        type = "reconnect-status",
-                        approved = false
-                    };
+                        var messageObject = new ReconnectJSON
+                        {
+                            type = "reconnect-status",
+                            approved = false
+                        };
 
-                    var data = JsonUtility.ToJson(messageObject);
-                    SendMessageToClient(sender, data);
-                }
+                        var data = JsonUtility.ToJson(messageObject);
+                        SendMessageToClient(sender, data);
+                    }
             }
             else
             {
@@ -751,11 +768,11 @@ public class ServerManager : MonoBehaviour
 
             }
         }
-        // }
-        // catch (Exception e)
-        // {
-        //     Debug.LogWarning("Invalid command JSON: " + e.Message);
-        // }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("Invalid command JSON: " + e.Message);
+        }
     }
 
     void SpawnController(string clientId)
@@ -827,7 +844,7 @@ public class ServerManager : MonoBehaviour
     public class MessagePlayers { public string type; public string controller;/* public List<PlayerConfig> playerstats; */ }
 
     [Serializable]
-    public class ReconnectJSON { public string type; public bool approved; }
+    public class ReconnectJSON { public string type; public bool approved; public string controller; }
     [Serializable]
     public class CreatorJSON { public string type; public bool approved; public string name; }
     [Serializable]
