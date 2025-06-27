@@ -32,7 +32,9 @@ doxygen Doxyfile
 ```
 
 ### Known bugs
+Most bugs can be stopped by preventing reconnection is needed. Reconnection works on local most of the time but can cause bugs to happen and does not work when playing remotely. Other bugs are:
 
-- Ranking in the Tank minigame is reversed
-- Upon joining without enabling Gyro, some players might not spawn in the gameboard.
-- Skyglutes occasionally stops some players from spawning, skipping their turn.
+- Sometimes an issue arrises causing the players not to not load in the gameboard at the start. A simple restart fixes this, if not, run the remote server to play.
+- The remote server does not allow reconnections; leaving the browser causes the player unable to play. 
+- Skyglutes occasionally stops some players from spawning, skipping their turn or even fataly stopping the game.
+- Random reconnection prompt (rarely happens)
