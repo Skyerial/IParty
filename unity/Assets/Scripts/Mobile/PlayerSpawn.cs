@@ -76,6 +76,7 @@ public class PlayerSpawn : MonoBehaviour
             Debug.Log($"Despawning player at: {spawnPoints[spawnIndex].name}");
 
             spawnPoints[spawnIndex].GetChild(0).GetChild(0).gameObject.SetActive(true);
+            crown.SetActive(false);
         }
     }
 

@@ -210,6 +210,12 @@ export class BackgroundRenderer {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    /**
+     * Stops the video stream and cleans up associated resources.
+     * - Stops all media tracks from the webcam stream.
+     * - Removes the video element from the DOM.
+     * - Disposes of the video texture used on the model.
+     */
     stop() {
         if (this.stream) {
             this.stream.getTracks().forEach(track => track.stop());

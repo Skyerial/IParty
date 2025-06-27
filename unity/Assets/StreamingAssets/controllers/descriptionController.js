@@ -34,6 +34,9 @@ export class DescriptionController {
     );
   }
 
+  /**
+   * Changes the control/description button based on currBtnName
+   */
   changeButtonName() {
     const oldName = this.currBtnName;
     const newName = oldName === "Controls" ? "Description" : "Controls";

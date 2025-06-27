@@ -21,15 +21,18 @@ window.addEventListener("DOMContentLoaded", async () => {
     socketManager.connect(code);
     let l = new LoginPage(root);
     await l.init();
-    // Automatically load the controller when QR is used
-    // let js = new JoystickController(root);
-    // await js.init();
   } else {
     let cp = new ConnectPage(root);
     await cp.init();
   }
 });
 
+/**
+ * Instantiates and initializes a controller, and sets it as the current active controller.
+ * @param {Class} Controller - The controller class to instantiate.
+ * @param {HTMLElement} container - DOM element to render the controller into.
+ * @param {*} [param=null] - Optional parameter to pass to the controller.
+ */
 export function initializeController(Controller, container, param = null) {
   const c = param
     ? new Controller(container, param)
@@ -39,14 +42,27 @@ export function initializeController(Controller, container, param = null) {
   setController(c);
 }
 
+/**
+ * Sets the current controller instance.
+ * @param {*} controller - The controller instance to track.
+ */
 function setController(controller) {
   currController = controller;
 }
 
+/**
+ * Gets the currently active controller instance.
+ * @returns {*} - The active controller instance.
+ */
 export function getController() {
   return currController;
 }
 
+/**
+ * Instantiates and initializes a new page, clearing the current controller if one exists.
+ * @param {Class} Page - The page class to instantiate.
+ * @param {HTMLElement} container - The container element to render the page into.
+ */
 export async function loadPage(Page, container) {
   new Page(container).init();
 
