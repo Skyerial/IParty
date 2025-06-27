@@ -4,18 +4,58 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/**
+ * @brief Handles the swipeable UI menu for minigame selection with spin animation and scene loading.
+ */
 public class swipe_menu : MonoBehaviour {
+    /**
+     * @brief The scrollbar UI element controlling the scroll position.
+     */
     public GameObject scrollbar;
+
+    /**
+     * @brief Reference to the Scrollbar component.
+     */
     private Scrollbar scroll;
+
+    /**
+     * @brief Array storing normalized scroll positions for each card.
+     */
     private float[] pos;
+
+    /**
+     * @brief Total number of cards in the menu.
+     */
     private int cardCount;
+
+    /**
+     * @brief Distance between adjacent scroll positions (normalized).
+     */
     private float distance;
+
+    /**
+     * @brief Duration of the spin animation in seconds.
+     */
     public float spinDuration = 3f;
+
+    /**
+     * @brief Speed of the spin animation.
+     */
     public float spinSpeed = 3f;
+
+    /**
+     * @brief Indicates whether the spin animation is currently running.
+     */
     private bool spinning = false;
+
+    /**
+     * @brief Indicates whether the spin animation has completed.
+     */
     private bool hasSpun = false;
 
-
+    /**
+     * @brief Initializes scroll positions and starts the spin coroutine.
+     */
     void Start() {
         scroll = scrollbar.GetComponent<Scrollbar>();
         cardCount = transform.childCount;
@@ -29,6 +69,9 @@ public class swipe_menu : MonoBehaviour {
         StartCoroutine(SpinToRandom());
     }
 
+    /**
+     * @brief Updates card scaling based on current scroll position for visual feedback.
+     */
     void Update() {
         if (spinning) return;
 
@@ -47,6 +90,10 @@ public class swipe_menu : MonoBehaviour {
         }
     }
 
+    /**
+     * @brief Spins the scroll menu to a random card, highlights it, and loads the corresponding scene.
+     * @return Coroutine yielding control during animation and scene loading.
+     */
     IEnumerator SpinToRandom() {
         spinning = true;
 
@@ -94,5 +141,9 @@ public class swipe_menu : MonoBehaviour {
         gameObject.SetActive(false);
     }
 
+    /**
+     * @brief Returns whether the spin has completed.
+     * @return True if the spin animation finished; false otherwise.
+     */
     public bool HasFinishedSpinning() => hasSpun;
 }

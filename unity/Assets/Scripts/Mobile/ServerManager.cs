@@ -16,24 +16,37 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
-
-// Newly added:
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+
+/**
+ * @brief Manages HTTP/HTTPS and WebSocket servers (local or remote), handles client connections, command routing, and controller lifecycle.
+ */
 public class ServerManager : MonoBehaviour
 {
+    /**
+     * @brief Singleton instance reference.
+     */
     private static ServerManager instance;
+    /**
+     * @brief Currently selected controller identifier.
+     */
     public static string CurrentController = "";
 
-
     [Header("Mode Settings")]
+    /**
+     * @brief Enable to use remote relay servers instead of local HTTP/WS servers.
+     */
     [Tooltip("Enable to use remote relay servers instead of local HTTP/WS servers.")]
     public bool useRemote = true;
+    /**
+     * @brief Static mirror of useRemote for initialization.
+     */
     public static bool useRemoteStatic = true;
-
-
-    // Toggle secure websocket, insecure is used to connect testing script
+    /**
+     * @brief Toggle secure WebSocket (WSS) vs insecure (WS).
+     */
     public bool useSecure = true;
 
     private string hostId;
@@ -48,23 +61,37 @@ public class ServerManager : MonoBehaviour
     private WebSocket wsTunnel;
 
     [Header("UI & Utilities")]
+    /**
+     * @brief UI element to render generated QR codes.
+     */
     public RawImage targetRenderer;
 
-    // Thread-safe command queue
+    /**
+     * @brief Thread-safe queue of incoming commands (JSON payload, sender ID).
+     */
     private ConcurrentQueue<(string payloadJson, string senderId)> commandQueue = new ConcurrentQueue<(string, string)>();
 
-    // Map of unique connectionId (IP:Port or clientId:connectionId) → VirtualController
+    /**
+     * @brief Map of connection IDs to VirtualController devices.
+     */
     public static Dictionary<string, VirtualController> allControllers = new Dictionary<string, VirtualController>();
+    /**
+     * @brief List of currently taken player color strings.
+     */
     public static List<string> takenColors = new List<string>();
-
+    /**
+     * @brief Map of VirtualController to its WebSocket connection.
+     */
     public static Dictionary<VirtualController, IWebSocketConnection> allSockets = new Dictionary<VirtualController, IWebSocketConnection>();
     private readonly ConcurrentDictionary<IWebSocketConnection, bool> awaitingPongs = new();
 
-    // NEWLY ADDED:
+    // Newly added for HTTPS
     private Thread httpsThread;
     private TcpListener tcpListener;
 
-
+    /**
+     * @brief Unity Awake event; enforces singleton and persists across scenes.
+     */
     void Awake()
     {
         if (instance == null)
@@ -78,6 +105,9 @@ public class ServerManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Unity Start event; registers input layout, chooses remote/local mode, and starts appropriate servers.
+     */
     void Start()
     {
         hostId = SystemInfo.deviceUniqueIdentifier;
@@ -88,21 +118,19 @@ public class ServerManager : MonoBehaviour
             StartRemoteServers();
         else
         {
-            // HTTP
-            // StartHttpServer();
-
             StartHttpsServer();
-            StartWebSocketServer(); // Uses WSS now
+            StartWebSocketServer();
         }
     }
 
+    /**
+     * @brief Unity Update event; processes queued commands and pumps message queues in remote mode.
+     */
     void Update()
     {
-        // Process incoming commands safely on main thread
         while (commandQueue.TryDequeue(out var item))
             HandleCommandOnMainThread(item.payloadJson, item.senderId);
 
-        // Pump NativeWebSocket queues when using remote mode
         if (useRemote)
         {
             httpTunnel?.DispatchMessageQueue();
@@ -111,6 +139,10 @@ public class ServerManager : MonoBehaviour
     }
 
     // ===================== Local Servers =====================
+
+    /**
+     * @brief Starts a local HTTPS server on port 8080, generates QR code, and spawns handling thread.
+     */
     void StartHttpsServer()
     {
         var ip = ChooseIP() ?? "0.0.0.0";
@@ -139,6 +171,10 @@ public class ServerManager : MonoBehaviour
         Debug.Log("[Local][HTTPS] Server started.");
     }
 
+    /**
+     * @brief Handles an incoming HTTPS client: authenticates SSL, reads HTTP request, serves files or 404.
+     * @param client The accepted TcpClient connection.
+     */
     void HandleClient(TcpClient client)
     {
         using var stream = client.GetStream();
@@ -147,7 +183,7 @@ public class ServerManager : MonoBehaviour
 
         try
         {
-            var cert = new X509Certificate2(certPath, "unity", 
+            var cert = new X509Certificate2(certPath, "unity",
                 X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
             Debug.Log("[Local][HTTPS] Certificate loaded.");
             ssl.AuthenticateAsServer(cert, false, SslProtocols.Tls12, false);
@@ -169,7 +205,6 @@ public class ServerManager : MonoBehaviour
 
         var path = tokens[1] == "/" ? "/index.html" : tokens[1];
         var filePath = Path.Combine(Application.streamingAssetsPath, path.TrimStart('/'));
-
         Debug.Log("Looking for index at:" + filePath);
 
         if (File.Exists(filePath))
@@ -190,6 +225,9 @@ public class ServerManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Starts a local HTTP server on port 8080, serves files from StreamingAssets, and spawns handling thread.
+     */
     void StartHttpServer()
     {
         httpListener = new HttpListener();
@@ -198,7 +236,6 @@ public class ServerManager : MonoBehaviour
         string prefix = $"http://{ip}:8080/";
         httpListener.Prefixes.Add(prefix);
 
-        // Generate QR for clients
         QRCodeGenerator.GenerateQRCode("http://" + ip + ":8080/?hostId=8181", targetRenderer);
         Debug.Log($"[Local] HTTP server starting at {prefix}");
 
@@ -241,24 +278,25 @@ public class ServerManager : MonoBehaviour
         Debug.Log("[Local][HTTP] Server started.");
     }
 
+    /**
+     * @brief Starts a local WebSocket server (secure or insecure) on port 8181, handles OnOpen, OnClose, and OnMessage.
+     */
     void StartWebSocketServer()
     {
         FleckLog.Level = LogLevel.Debug;
         string ip = ChooseIP() ?? "0.0.0.0";
         Debug.Log(ip);
 
-        // Select secure or insecure websocket
         string wsPrefix = useSecure ? $"wss://{ip}:8181" : $"ws://{ip}:8181";
         wsServer = new WebSocketServer(wsPrefix);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
-        wsServer.Certificate = new X509Certificate2(certPath, "unity", 
+        wsServer.Certificate = new X509Certificate2(certPath, "unity",
             X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
         wsServer.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
         wsServer.Start(socket =>
         {
             socket.OnOpen = () =>
             {
-                // Create unique connection ID using IP and port
                 string connectionId = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort}";
                 Debug.Log($"[Local][WS] Client connected: {connectionId}");
                 MainThreadDispatcher.Enqueue(() =>
@@ -267,16 +305,6 @@ public class ServerManager : MonoBehaviour
                     device.remoteId = connectionId;
                     allControllers[connectionId] = device;
                     allSockets[device] = socket;
-
-                    // var message = new
-                    // {
-                    //     type = "clientinfo",
-                    //     clientId = connectionId
-                    // };
-                    // string json = JsonUtility.ToJson(message);
-                    // SendMessageToClient(connectionId, json);
-                    // TESTING CHARACTER CREATION
-                    // PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
                 });
             };
 
@@ -329,7 +357,7 @@ public class ServerManager : MonoBehaviour
             while (true)
             {
                 PingAllAsync();
-                await Task.Delay(10000); // Ping every 10 seconds
+                await Task.Delay(10000);
             }
         });
 
@@ -338,6 +366,9 @@ public class ServerManager : MonoBehaviour
 
     // ===================== Remote Servers =====================
 
+    /**
+     * @brief Initializes and connects remote HTTP and WS tunnels, sets up message handlers and dispatch loop.
+     */
     async void StartRemoteServers()
     {
         StartCoroutine(RemoteDispatchLoop());
@@ -346,7 +377,6 @@ public class ServerManager : MonoBehaviour
         string httpTunnelUrl = $"{relayBase}/unity/{hostId}/http";
         string wsTunnelUrl = $"{relayBase}/unity/{hostId}/ws";
 
-        // Generate QR for remote URLs
         QRCodeGenerator.GenerateQRCode($"https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}", targetRenderer);
         Debug.Log($"[Remote] HTTP Link = https://iparty.duckdns.org:5001/host/{hostId}/http/index.html?hostId={hostId}");
         Debug.Log($"[Remote] HTTP Tunnel = {httpTunnelUrl}");
@@ -394,11 +424,9 @@ public class ServerManager : MonoBehaviour
         wsTunnel.OnMessage += bytes =>
         {
             var rawJson = Encoding.UTF8.GetString(bytes);
-            // Debug.Log($"[Remote][WS] Raw wrapper JSON: {rawJson}");
 
             var wrapper = JsonUtility.FromJson<WSTunnelRequest>(rawJson);
 
-            // Disconnect-only
             if (wrapper.payloadBase64 == null && wrapper.@event == "disconnect")
             {
                 Debug.Log($"[Remote][WS] DISCONNECT: {wrapper.clientId}");
@@ -406,10 +434,8 @@ public class ServerManager : MonoBehaviour
                 return;
             }
 
-            // Payloads
             if (wrapper.payloadBase64 != null)
             {
-                // Reserve the slot immediately
                 if (!allControllers.ContainsKey(wrapper.clientId))
                 {
                     Debug.Log($"[Remote][WS] First payload from {wrapper.clientId}, creating controller");
@@ -418,23 +444,22 @@ public class ServerManager : MonoBehaviour
                     allControllers[wrapper.clientId] = device;
                 }
 
-                // Decode & debug log
                 var payloadBytes = Convert.FromBase64String(wrapper.payloadBase64);
                 var json = Encoding.UTF8.GetString(payloadBytes);
-                // Debug.Log($"[Remote][WS] Decoded client JSON: {json}");
 
-                // Enqueue for processing
                 commandQueue.Enqueue((json, wrapper.clientId));
             }
         };
 
-        // Connect tunnels
         try { await Task.WhenAll(httpTunnel.Connect(), wsTunnel.Connect()); }
         catch { Debug.LogError("[Remote] Connect failed"); }
 
         Debug.Log($"[Remote] HTTP={httpTunnel?.State}, WS={wsTunnel?.State}");
     }
 
+    /**
+     * @brief Dispatches pending messages for remote tunnels each frame.
+     */
     IEnumerator RemoteDispatchLoop()
     {
         while (true)
@@ -445,13 +470,21 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    // ===================== Shared Helpers =====================
+    /**
+     * @brief Chooses the first IPv4 address of this machine.
+     * @return A string IP address or null if none found.
+     */
     string ChooseIP()
     {
         var host = Dns.GetHostEntry(Dns.GetHostName());
         return host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork)?.ToString();
     }
 
+    /**
+     * @brief Determines the Content-Type header based on file extension.
+     * @param path The file system path.
+     * @return The MIME type string.
+     */
     string GetContentType(string path)
     {
         return Path.GetExtension(path).ToLowerInvariant() switch
@@ -465,6 +498,10 @@ public class ServerManager : MonoBehaviour
         };
     }
 
+    /**
+     * @brief Sends a controller switch message to all clients.
+     * @param controller The controller identifier to set.
+     */
     public static void SendtoAllSockets(string controller)
     {
         CurrentController = controller;
@@ -480,6 +517,9 @@ public class ServerManager : MonoBehaviour
         SendMessages(json);
     }
 
+    /**
+     * @brief Closes all connections and clears internal state.
+     */
     public void CloseConnections()
     {
         Debug.Log("[ServerManager] Closing WebSocket connections and clearing state...");
@@ -495,17 +535,19 @@ public class ServerManager : MonoBehaviour
             httpsThread?.Abort();
             tcpListener?.Stop();
         }
-
         allControllers.Clear();
         allSockets.Clear();
         takenColors.Clear();
     }
 
+    /**
+     * @brief Sends a JSON string to all connected clients (remote or local).
+     * @param json The JSON payload to send.
+     */
     public static void SendMessages(string json)
     {
         if (instance.useRemote)
         {
-            // Remote mode: send via wsTunnel to each remote client
             if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
             {
                 string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
@@ -526,7 +568,6 @@ public class ServerManager : MonoBehaviour
         }
         else
         {
-            // Local mode: send directly via IWebSocketConnection
             foreach (var sock in allSockets.Values.ToArray())
             {
                 sock.Send(json);
@@ -534,6 +575,10 @@ public class ServerManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Sends a control-clearing message to a specific client socket.
+     * @param controller The VirtualController whose socket to send to.
+     */
     public static void SendtoSocket(VirtualController controller)
     {
         var messageObject = new MessagePlayers
@@ -541,12 +586,14 @@ public class ServerManager : MonoBehaviour
             type = "clear-text",
             controller = controller.name
         };
-
         var sock = allSockets[controller];
         string json = JsonUtility.ToJson(messageObject);
         sock.Send(json);
     }
 
+    /**
+     * @brief Checks each WebSocket connection for availability and schedules reconnection or cleanup if needed.
+     */
     public void CheckAllSockets()
     {
         foreach (var socket in allSockets.Values.ToArray())
@@ -574,6 +621,10 @@ public class ServerManager : MonoBehaviour
             }
         }
     }
+
+    /**
+     * @brief Logs a ping, clears awaiting pongs, and invokes socket checks.
+     */
     public void PingAllAsync()
     {
         Debug.Log("Ping...");
@@ -581,7 +632,12 @@ public class ServerManager : MonoBehaviour
         CheckAllSockets();
     }
 
-    // FIXED: InputSystem device removal
+    /**
+     * @brief Handles a reconnection request by swapping devices and sockets when clients reconnect.
+     * @param key The new controller key (clientId).
+     * @param ip The IP part of the old controller key.
+     * @param port The port part of the old controller key.
+     */
     public void HandleReconnect(string key, string ip, string port)
     {
         string oldKey = $"{ip}:{port}";
@@ -607,11 +663,16 @@ public class ServerManager : MonoBehaviour
         FindAnyObjectByType<Reconnect>()?.ReconnectEvent();
         CheckAllSockets();
     }
+
+    /**
+     * @brief Sends a JSON message to a single client, using remote or local transport as configured.
+     * @param clientId The identifier of the target client.
+     * @param json The JSON payload to send.
+     */
     public static void SendMessageToClient(string clientId, string json)
     {
         if (instance.useRemote)
         {
-            // Remote mode: send to one client via wsTunnel
             if (instance.wsTunnel != null && instance.wsTunnel.State == WebSocketState.Open)
             {
                 string base64Payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
@@ -627,7 +688,6 @@ public class ServerManager : MonoBehaviour
         }
         else
         {
-            // Local mode: find the socket and send directly
             if (allControllers.TryGetValue(clientId, out var device) && allSockets.TryGetValue(device, out var socket))
             {
                 socket.Send(json);
@@ -639,6 +699,11 @@ public class ServerManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Processes a single command message JSON on the main Unity thread, updating input state or handling player/config commands.
+     * @param json The command message payload.
+     * @param sender The clientId of the sender.
+     */
     void HandleCommandOnMainThread(string json, string sender)
     {
         try
@@ -774,17 +839,21 @@ public class ServerManager : MonoBehaviour
         }
     }
 
+    /**
+     * @brief Instantiates a new VirtualController for a given clientId and stores it.
+     * @param clientId The unique identifier for the new controller.
+     */
     void SpawnController(string clientId)
     {
         var device = InputSystem.AddDevice<VirtualController>();
         device.remoteId = clientId;
         allControllers[clientId] = device;
-
-        // Spawned by HandleCommand
-        // PlayerInputManager.instance.JoinPlayer(-1, -1, null, device);
     }
 
-    // FIXED: Thread-safe access to shared dictionaries
+    /**
+     * @brief Cleans up and removes a client’s controller, UI, and resources on disconnect.
+     * @param clientId The clientId whose controller to remove.
+     */
     private readonly object controllerLock = new();
 
     void CleanupController(string clientId)
@@ -809,8 +878,9 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-
-    // FIXED: Graceful shutdown using CancellationToken
+    /**
+     * @brief Unity event called when the application quits; cancels tasks and closes all connections.
+     */
     private CancellationTokenSource cancelSource = new();
 
     void OnApplicationQuit()
@@ -828,6 +898,8 @@ public class ServerManager : MonoBehaviour
             wsServer?.Dispose();
         }
     }
+
+    // ===================== Serializable Message Types =====================
 
     [Serializable]
     public class CommandMessage

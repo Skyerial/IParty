@@ -172,7 +172,6 @@ public class GameManager : MonoBehaviour
             gameActive = false;
             Debug.Log("Game Over!");
             Debug.Log("The winner is: " + gamePlayers[0]);
-            deathOrder.Reverse();
             foreach (var dev in deathOrder)
             {
                 PlayerManager.instance.tempRankAdd(dev);

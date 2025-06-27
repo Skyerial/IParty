@@ -3,8 +3,8 @@
 ## Overview
 iParty is a Unity-based digital party game where you use your mobile phone as your controller! Player compete in minigames to gain an advantage in moving higher in the world and to win it all. This project was developed for the Project Software Engineering course at the University of Amsterdam.
 
-Check out [our website](http://83.96.253.147/)<br>
-[Our links](http://83.96.253.147/d2/d15/md_files.html)<br>
+Check out [our website](http://83.96.253.147/)!<br>
+[Links](http://83.96.253.147/d2/d15/md_files.html)<br>
 [Testing](http://83.96.253.147/de/d6a/md_testing.html)<br>
 [Green Thinking](http://83.96.253.147/de/dc7/md_greenthinking.html)<br>
 [Security](http://83.96.253.147/d3/d79/md_security.html)<br>
