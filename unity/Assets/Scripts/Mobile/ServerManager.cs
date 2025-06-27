@@ -144,10 +144,20 @@ public class ServerManager : MonoBehaviour
         using var stream = client.GetStream();
         using var ssl = new SslStream(stream, false);
         string certPath = Path.Combine(Application.streamingAssetsPath, "iparty.pfx");
-        Debug.Log("Looking for cert at:" + certPath);
 
-        var cert = new X509Certificate2(certPath, "unity");
-        ssl.AuthenticateAsServer(cert, false, SslProtocols.Tls12, false);
+        try
+        {
+            var cert = new X509Certificate2(certPath, "unity", 
+                X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            Debug.Log("[Local][HTTPS] Certificate loaded.");
+            ssl.AuthenticateAsServer(cert, false, SslProtocols.Tls12, false);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("[Local][HTTPS] SSL Auth failed: " + ex.Message);
+            if (ex.InnerException != null)
+                Debug.LogError("Inner Exception: " + ex.InnerException.Message);
+        }
 
         using var reader = new StreamReader(ssl);
         using var writer = new StreamWriter(ssl) { AutoFlush = true };
