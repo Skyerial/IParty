@@ -44,3 +44,5 @@ Most bugs can be stopped by preventing reconnection is needed. Reconnection work
 - The remote server does not allow reconnections; leaving the browser causes the player unable to play.
 - Skyglutes occasionally stops some players from spawning, skipping their turn or even fataly stopping the game.
 - Random reconnection prompt (rarely happens)
+- Moving back and forth from Lobby to Main Menu stops QR-code generation
+
