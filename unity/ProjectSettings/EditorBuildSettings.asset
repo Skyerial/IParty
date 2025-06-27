@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WinScreen3D.unity
     guid: 7d1e5932e051fcd498e7cd928b1995d5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileSandbox.unity
     guid: 6cd82f28518635c4498c186539e5fb0a
   - enabled: 1
@@ -50,7 +50,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SkyGlutes.unity
     guid: fb83d9897a9fe39ae84b3f616997d372
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/NewBoard.unity
     guid: 47f2b583004d450c9b614fd9a256ad5b
   m_configObjects:

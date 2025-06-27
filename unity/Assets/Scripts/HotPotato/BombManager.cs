@@ -221,7 +221,7 @@ public class BombManager : MonoBehaviour
     private System.Collections.IEnumerator DelayedSceneSwitch()
     {
         yield return new WaitForSeconds(3f);
-        switchScene.LoadNewScene("Winscreen");
+        switchScene.LoadNewScene("WinScreen");
     }
 
     /**

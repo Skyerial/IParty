@@ -1,0 +1,8 @@
+Eyes sharp, brain sharper!
+In this lightning-fast pattern-matching challenge, you’ll scan a grid of colorful cards and race to find sets — groups of three cards that are all the same or all different in every way.
+
+Shape, color, number, and fill — they all matter.
+See a set? Tap it fast before someone else does!
+
+The player with the most sets when time’s up wins the match!
+Ready, set... SET!

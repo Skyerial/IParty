@@ -96,7 +96,7 @@ public class Bomb : MonoBehaviour
                 {
                     if (text.text == playerName)
                     {
-                        Destroy(text.gameObject);
+                        Destroy(text.transform.parent.parent.gameObject);
                         break;
                     }
                 }
